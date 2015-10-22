@@ -14,3 +14,6 @@ Skov is a visual programming system based on Factor and inspired by Lisp.
 * Copy the `skov` directory from this repository into the `extra` directory
 * Drag and drop the `make-skov.factor` script onto the Factor application
 
+## Typeface
+
+Skov uses the *Linux Biolinum* typeface. You will need to download it from [here](http://www.linuxlibertine.org/index.php?id=91&L=1) and install it on your system.
