@@ -14,10 +14,10 @@ IN: skov.animation
 
 :: repulsion ( node1 node2 -- force )
     node1 node2 square-distance :> rsq
-    node1 x>> node2 x>> - 200 * rsq /
-    node1 y>> node2 y>> - 200 * rsq /
-    node1 node2 upstream? [ 2 * abs ] when
-    node1 node2 downstream? [ 2 * abs neg ] when
+    node1 x>> node2 x>> - 150 * rsq /
+    node1 y>> node2 y>> - 150 * rsq /
+    node1 node2 upstream? [ 4 * abs ] when
+    node1 node2 downstream? [ 4 * abs neg ] when
     2array ;
 
 :: attraction ( node1 node2 -- force )
