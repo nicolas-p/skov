@@ -44,7 +44,7 @@ M: lambda inputs>>  drop { } ;
     } cond ] map ] [ ] bi 2array ;
 
 : ordered-graph ( word -- seq )
-    contents>> [ outputs>> empty? ] filter [ walk ] map flatten members ;
+    contents>> [ outputs>> empty? ] filter [ walk ] map flatten members-eq ;
 
 : write-id ( obj -- str )
     id number>string "#" prepend ;

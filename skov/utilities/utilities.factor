@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: arrays classes kernel math math.vectors prettyprint
-sequences ;
+USING: arrays classes combinators.smart kernel math math.vectors
+prettyprint sequences ;
 IN: skov.utilities
 
 : 5array ( x x x x x -- seq )
@@ -13,3 +13,6 @@ IN: skov.utilities
 
 : v-sum ( seq -- n )
     { 0 0 } [ v+ ] reduce ;
+
+: members-eq ( seq -- seq )
+    { } [ [ swap member-eq? not ] [ suffix ] [ drop ] smart-if ] reduce ;
