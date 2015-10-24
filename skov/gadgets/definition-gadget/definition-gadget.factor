@@ -13,13 +13,13 @@ M: definition-gadget pref-dim*
      [ children>> length 1 = ] [ call-next-method ] [ dim>> ] smart-if ;
 
 M: definition-gadget layout*
-   [ [ dup pref-dim swap dim<< ] each-child ] 
+   [ [ dup pref-dim swap dim<< ] each-child ]
    [ [ children>> length 1 = ] [ call-next-method ] smart-when* ] bi ;
 
 : add-connections ( definition-gadget -- )
-    dup children>> 
-    [ inputs>> 
-      [ modell>> connected? ] filter 
+    dup children>>
+    [ inputs>>
+      [ modell>> connected? ] filter
       [ dup link 2dup connect <connection-gadget> ] map
     ] map concat [ add-gadget ] each drop ;
 
