@@ -24,7 +24,7 @@ IN: skov.gadgets.connector-gadget
 
 :: link ( connector-gadget -- connector-gadget )
     connector-gadget parent>> parent>> children>>
-    [ outputs>> [ modell>> connector-gadget modell>> link>> = ] filter ] map
+    [ outputs>> [ modell>> connector-gadget modell>> link>> eq? ] filter ] map
     concat first ;
 
 : proto-connection>> ( definition-gadget -- pc ) children>> [ proto-connection? ] filter first ;
