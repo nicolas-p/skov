@@ -2,7 +2,7 @@
 USING: images.loader io.directories io.directories.hierarchy
 io.pathnames kernel memory sequences ui.gadgets.icons
 ui.gadgets.panes ui.images splitting system io.files io.encodings.utf8
-ui ui.gadgets.borders skov ;
+ui ui.gadgets.borders skov listener namespaces ;
 
 image-path "factor.image" "" replace set-current-directory
 
@@ -50,6 +50,11 @@ MAIN: skov-window
 IN: ui.tools.listener
 : show-listener ( -- ) [ border? ] find-window [ raise-window ] [ skov-window ] if* ;
 : listener-window ( -- ) skov-window ;
+
+interactive-vocabs [ { 
+  "io.encodings.utf8"
+  "io.directories"
+} append ] change-global
 
 save
 "factor.image" "skov.image" move-file
