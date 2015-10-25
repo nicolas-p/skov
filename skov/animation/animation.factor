@@ -4,6 +4,18 @@ math.order math.vectors random sequences skov.code skov.gadgets
 skov.utilities ;
 IN: skov.animation
 
+: (related-nodes) ( connectors -- seq )
+    [ connected? ] filter [ links>> ] map concat [ parent>> ] map ;
+    
+: upstream-nodes ( node -- seq )  inputs>> (related-nodes) ;
+: downstream-nodes ( node -- seq )  outputs>> (related-nodes) ;
+
+: upstream? ( node node -- ? )  swap upstream-nodes member? ;
+: downstream? ( node node -- ? )  swap downstream-nodes member? ;
+
+: connected-nodes ( node -- seq )
+    [ upstream-nodes ] [ downstream-nodes ] bi append ;
+
 : all-other-nodes ( node-gadget -- seq )
     dup parent>> children>> [ node-gadget? ] filter [ dupd = not ] filter nip ;
 

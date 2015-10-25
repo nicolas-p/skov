@@ -27,6 +27,9 @@ IN: skov.gadgets.connector-gadget
     [ outputs>> [ modell>> connector-gadget modell>> link>> eq? ] filter ] map
     concat first ;
 
+: connect ( connector1 connector2 -- )
+    dupd [ swap suffix ] change-links swap [ swap suffix ] change-links drop ;
+
 : proto-connection>> ( definition-gadget -- pc ) children>> [ proto-connection? ] filter first ;
 
 : create-connection ( connector-gadget -- )
@@ -48,10 +51,10 @@ M: connector-gadget graft*
     connector-theme drop ;
 
 M: connector-gadget connected?
-    link>> connector-gadget? ;
+    links>> [ connector-gadget? ] any? ;
     
 : connector-status-text ( connector-gadget -- str )
-    modell>> [ name>> ] [ connected? ] bi [ "     ( d to disconnect )" append ] when ;
+    [ modell>> name>> ] [ connected? ] bi [ "     ( d to disconnect )" append ] when ;
 
 connector-gadget H{
     { T{ button-down f f 1 }  [ [ inside-word? ] [ create-proto-connection ] smart-when* ] }

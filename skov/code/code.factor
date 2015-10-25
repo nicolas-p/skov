@@ -8,8 +8,8 @@ IN: skov.code
 TUPLE: element  name parent contents path ;
 TUPLE: vocab < element ;
 TUPLE: word < element  result ;
-TUPLE: connector < element  link ;
-TUPLE: input < connector ;
+TUPLE: connector < element ;
+TUPLE: input < connector  link ;
 TUPLE: output < connector  id ;
 
 GENERIC: outputs>> ( obj -- seq )
@@ -75,27 +75,15 @@ GENERIC: connected? ( connector -- ? )
 M: connector connected?
     link>> connector? ;
 
-: connect ( connector1 connector2 -- )
-    2dup link<< swap link<< ;
-
-: disconnect ( connector -- )
-    dup link>> [ f >>link drop ] bi@ ;
+: disconnect ( input -- )
+    f swap link<< ;
 
 : ?connect ( connector connector -- )
     [ [ connector? ] bi@ and ]
     [ order-connectors 
       [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
-      [ connect ] smart-when* 
+      [ link<< ] smart-when* 
     ] smart-when* ;
-
-: upstream-nodes ( node -- seq )  inputs>> [ connected? ] filter [ link>> parent>> ] map ;
-: downstream-nodes ( node -- seq )  outputs>> [ connected? ] filter [ link>> parent>> ] map ;
-
-: upstream? ( node node -- ? )  swap upstream-nodes member? ;
-: downstream? ( node node -- ? )  swap downstream-nodes member? ;
-
-: connected-nodes ( node -- seq )
-    [ upstream-nodes ] [ downstream-nodes ] bi append ;
 
 : executable? ( word -- ? )
     [ inputs>> empty? ] [ outputs>> empty? ] [ words>> empty? not ] tri and and ;
