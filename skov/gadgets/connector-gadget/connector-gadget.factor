@@ -19,7 +19,11 @@ IN: skov.gadgets.connector-gadget
     connector-gadget new model >>modell { 8 8 } >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
-    dup [ parent>> modell>> class>string ] [ parent>> selected? [ "-selected" append ] when ] bi
+    dup [ 
+      [ modell>> special-connector? ] 
+      [ drop "special" ] 
+      [ parent>> modell>> class>string ] smart-if 
+    ] [ parent>> selected? [ "-selected" append ] when ] bi
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
 :: link ( connector-gadget -- connector-gadget )
@@ -27,7 +31,7 @@ IN: skov.gadgets.connector-gadget
     [ outputs>> [ modell>> connector-gadget modell>> link>> eq? ] filter ] map
     concat first ;
 
-: connect ( connector1 connector2 -- )
+M: connector-gadget connect
     dupd [ swap suffix ] change-links swap [ swap suffix ] change-links drop ;
 
 : proto-connection>> ( definition-gadget -- pc ) children>> [ proto-connection? ] filter first ;

@@ -40,11 +40,12 @@ M: lambda inputs>>  drop { } ;
     [ inputs>> [ {
         { [ dup unevaluated? ] [ link>> parent>> walk <lambda> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
+        { [ dup special-input? ] [ drop { } ] }
         [ lambda-input new >>link drop { } ]
     } cond ] map ] [ ] bi 2array ;
 
 : ordered-graph ( word -- seq )
-    contents>> [ outputs>> empty? ] filter [ walk ] map flatten members-eq ;
+    contents>> [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members-eq ;
 
 : write-id ( obj -- str )
     id number>string "#" prepend ;
@@ -52,9 +53,9 @@ M: lambda inputs>>  drop { } ;
 GENERIC: write ( obj -- seq )
 
 M: element write
-    [ inputs>> [ link>> write-id ] map ]
+    [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
     [ name>> replacements ]
-    [ outputs>> [ write-id ] map ]
+    [ outputs>> [ special-output? ] reject [ write-id ] map ]
     tri dup empty? [ "" ] [ ":>" ] if swap 4array ;
 
 M: output write
@@ -63,7 +64,10 @@ M: output write
 M: lambda write
     [ lambda-inputs>> [ write-id ] map { "[|" } { "|" } surround ]
     [ contents>> [ write ] map ]
-    [ lambda-output>> write-id dup "] :>" swap 3array ] tri 3array ;
+    [ lambda-output>> [ special-output? not ]
+        [ write-id dup "] :>" swap 3array ]
+        [ write-id "] :>" swap 2array ] smart-if
+    ] tri 3array ;
 
 : path ( word -- str )
     [ path>> ] [ path>> ] 

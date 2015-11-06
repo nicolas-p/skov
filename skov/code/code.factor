@@ -8,9 +8,13 @@ IN: skov.code
 TUPLE: element  name parent contents path ;
 TUPLE: vocab < element ;
 TUPLE: word < element  result ;
-TUPLE: connector < element ;
-TUPLE: input < connector  link ;
+TUPLE: connector < element  link ;
+TUPLE: input < connector ;
 TUPLE: output < connector  id ;
+
+TUPLE: special-input < input ;
+TUPLE: special-output < output ;
+UNION: special-connector  special-input special-output ;
 
 GENERIC: outputs>> ( obj -- seq )
 M: element vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
@@ -52,6 +56,10 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
         [ name search dup vocabulary>> word path<< stack-effect convert-stack-effect ]
       } cond ] with-interactive-vocabs ;
 
+: add-special-connectors ( node -- node )
+    [ inputs>> empty? ] [ special-input add ] smart-when
+    [ outputs>> empty? ] [ special-output add ] smart-when ;
+
 GENERIC: add-connectors ( node -- node )
 M: input add-connectors  f >>contents dup name>> output add-with-name ;
 M: output add-connectors  f >>contents dup name>> input add-with-name ;
@@ -59,7 +67,8 @@ M: output add-connectors  f >>contents dup name>> input add-with-name ;
 M: word add-connectors
     f >>contents dup in-out
     [ [ input add-with-name ] each ]
-    [ [ output add-with-name ] each ] bi* ;
+    [ [ output add-with-name ] each ] bi*
+    add-special-connectors ;
 
 : order-connectors ( connector connector -- connector connector )
     dup output? [ swap ] when ;
@@ -75,14 +84,19 @@ GENERIC: connected? ( connector -- ? )
 M: connector connected?
     link>> connector? ;
 
-: disconnect ( input -- )
-    f swap link<< ;
+GENERIC: connect ( connector1 connector2 -- )
+
+M: connector connect
+    2dup link<< swap link<< ;
+
+: disconnect ( connector -- )
+    dup link>> [ f >>link drop ] bi@ ;
 
 : ?connect ( connector connector -- )
     [ [ connector? ] bi@ and ]
     [ order-connectors 
       [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
-      [ link<< ] smart-when* 
+      [ connect ] smart-when* 
     ] smart-when* ;
 
 : executable? ( word -- ? )
