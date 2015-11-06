@@ -70,7 +70,7 @@ M: lambda write
     ] tri 3array ;
 
 : path ( word -- str )
-    [ path>> ] [ path>> ] 
+    [ path>> ] [ path>> ]
     [ parents reverse rest but-last [ name>> replacements ] map "." join ] smart-if
     dup empty? [ drop "scratchpad" ] when ;
 
@@ -95,6 +95,6 @@ M: lambda write
     [ name>> replacements ] [ write-word ( -- ) eval ] smart-when* ;
 
 : run-word ( word -- )
-    [ eval-word ] 
-    [ [ write-import " " join ] [ name>> replacements ] bi " " glue eval>string ] 
+    [ eval-word ]
+    [ [ write-import " " join ] [ name>> replacements ] bi " " glue eval>string ]
     [ result<< ] tri ;
