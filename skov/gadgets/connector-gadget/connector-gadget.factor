@@ -15,7 +15,7 @@ IN: skov.gadgets.connector-gadget
     { [ dup modell>> word? ] [ [ [ environment-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
   } cond ;
 
-:: <connector-gadget> ( model -- connection-gadget )
+:: <connector-gadget> ( model -- connector-gadget )
     connector-gadget new model >>modell { 8 8 } >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
