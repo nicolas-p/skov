@@ -54,7 +54,8 @@ GENERIC: write ( obj -- seq )
 
 M: element write
     [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
-    [ name>> replacements ]
+    [ [ name>> replacements 1array ] keep 
+      [ variadic? ] [ inputs>> length 2 - [ dup last 2array ] times ] smart-when* ]
     [ outputs>> [ special-output? ] reject [ write-id ] map ]
     tri dup empty? [ "" ] [ ":>" ] if swap 4array ;
 

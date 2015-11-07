@@ -1,6 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors combinators combinators.smart kernel locals
-namespaces sequences skov.code skov.gadgets skov.gadgets.buttons
+math namespaces sequences skov.code skov.gadgets
+skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
 skov.theme ui.commands ui.gadgets ui.gadgets.borders
 ui.gadgets.editors ui.gadgets.packs ui.gadgets.tracks
@@ -74,6 +75,20 @@ M: environment-gadget update
       [ f >>name request-focus ] when* drop
     ] make-keyboard-safe ;
 
+: more-inputs ( env -- )
+    [ hand-gadget get-global [ node-gadget? ] find-parent
+      [ [ modell>> variadic? ]
+        [ dup modell>> input add inputs>> last <connector-gadget> add-gadget drop ] smart-when*
+      ] when* drop
+    ] make-keyboard-safe ;
+
+: less-inputs ( env -- )
+    [ hand-gadget get-global [ node-gadget? ] find-parent
+      [ [ modell>> [ variadic? ] [ inputs>> length 2 > ] bi and ]
+        [ dup modell>> [ but-last ] change-contents drop inputs>> last unparent ] smart-when*
+      ] when* drop
+    ] make-keyboard-safe ;
+
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
     { T{ key-up f f "i" } add-input }
@@ -83,4 +98,6 @@ environment-gadget "general" f {
     { T{ key-up f f "d" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }
     { T{ key-up f f "e" } edit-node-gadget }
+    { T{ key-up f f "m" } more-inputs }
+    { T{ key-up f f "l" } less-inputs }
 } define-command-map
