@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors colors colors.constants colors.hex io.pathnames
-sequences ui.images ui.pens.solid ;
+kernel sequences system ui.images ui.pens.solid ;
 IN: skov.theme
 
 CONSTANT: content-background-colour HEXCOLOR: 002b36
@@ -24,3 +24,7 @@ CONSTANT: node-light-text-colour HEXCOLOR: 93A1A1
 
 : 2-theme-image ( prefix suffix -- image-name )
     "--" glue theme-image ;
+
+! This will need to be removed if the Windows transparency bug is fixed one day
+: transparent* ( -- colour )
+    os windows? [ COLOR: white ] [ transparent ] if ;

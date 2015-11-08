@@ -31,7 +31,7 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     node-gadget dup [ modell>> class>string ] [ selected? [ "-selected" append ] when ] bi
     "left" "middle" "right"
     [ 2-theme-image ] tri-curry@ tri
-    transparent
+    transparent*
     node-gadget selected? [ node-dark-text-colour ] [ node-light-text-colour ] if <tile-pen> >>interior 
     horizontal >>orientation ;
 
@@ -46,7 +46,8 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 
 : add-name-field ( node-gadget -- node-gadget )
     dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
-    transparent <solid> >>boundary { 0 0 } >>size
+    transparent* <solid> >>boundary
+    transparent* <solid> >>interior { 0 0 } >>size
     [ set-font ] change-editor add-gadget ;
 
 : add-name-label ( node-gadget -- node-gadget )
