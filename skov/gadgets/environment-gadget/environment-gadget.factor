@@ -67,7 +67,7 @@ M: environment-gadget update
     [ hand-gadget get-global [ node-gadget? ] find-parent
       [ [ outputs>> [ links>> [ modell>> disconnect ] each ] each ]
         [ modell>> remove-from-parent ] bi 
-      ] when* definition>> update drop
+      ] when* update drop
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
