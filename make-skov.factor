@@ -2,7 +2,7 @@
 USING: images.loader io.directories io.directories.hierarchy
 io.pathnames kernel memory sequences ui.gadgets.icons
 ui.gadgets.panes ui.images splitting system io.files io.encodings.utf8
-ui ui.gadgets.borders skov listener namespaces ;
+ui ui.gadgets.borders skov listener namespaces lists.lazy ;
 
 image-path "factor.image" "" replace set-current-directory
 
@@ -54,6 +54,7 @@ IN: ui.tools.listener
 interactive-vocabs [ { 
   "io.encodings.utf8"
   "io.directories"
+  "lists.lazy"
 } append ] change-global
 
 save
