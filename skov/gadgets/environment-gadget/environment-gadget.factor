@@ -89,6 +89,9 @@ M: environment-gadget update
       ] when* drop
     ] make-keyboard-safe ;
 
+: show-result ( env -- )
+    [ dup definition>> modell>> dup run-word result>> >>modell update drop ] make-keyboard-safe ;
+
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
     { T{ key-up f f "i" } add-input }
@@ -100,4 +103,5 @@ environment-gadget "general" f {
     { T{ key-up f f "e" } edit-node-gadget }
     { T{ key-up f f "m" } more-inputs }
     { T{ key-up f f "l" } less-inputs }
+    { T{ key-up f f "BACKSPACE" } show-result }
 } define-command-map
