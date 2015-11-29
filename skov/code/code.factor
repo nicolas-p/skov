@@ -31,11 +31,29 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 : remove-from-parent ( child -- )
      dup parent>> contents>> remove-eq! drop ;
 
+:: change-name ( str pair -- str )
+    str pair first = [ pair second ] [ str ] if ;
+
 : replacements ( str -- str )
+    { 
+      { "add" "+" }
+      { "sub" "-" }
+      { "mul" "*" }
+      { "div" "/" }
+      { "greater" ">" }
+      { "greater equal" ">=" }
+      { "less" "<" }
+      { "less equal" "<=" }
+      { "display" "." }
+      { "display gadget" "gadget." }
+      { "lazy filter" "lfilter" }
+    }
+    [ change-name ] each
     " >>" ">>" replace
     " <<" "<<" replace
     ">> " ">>" replace
-    dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and [ " " "-" replace ] when ;
+    dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
+    [ " " "-" replace ] when ;
 
 : replace-quot ( seq -- seq )
     [ dup array? [ drop "quot" ] [ ] if ] map ;
@@ -105,4 +123,4 @@ M: connector connect
 CONSTANT: variadic-words { "+" "*" "and" "or" }
 
 : variadic? ( word -- ? )
-    name>> variadic-words member? ;
+    name>> replacements variadic-words member? ;
