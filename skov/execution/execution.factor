@@ -93,7 +93,7 @@ M: lambda write
     } cleave 5array ";" suffix flatten harvest " " join ;
 
 : eval-word ( word -- )
-    [ name>> replacements ] [ write-word ( -- ) eval ] smart-when* ;
+    [ name>> replacements ] [ '[ _ write-word ( -- ) eval ] try ] smart-when* ;
 
 : run-word ( word -- )
     [ eval-word ]
