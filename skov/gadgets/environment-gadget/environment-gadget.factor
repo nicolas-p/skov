@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors combinators combinators.smart kernel locals
-math namespaces sequences skov.code skov.gadgets
+math namespaces sequences skov.code skov.execution skov.gadgets
 skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
 skov.theme ui.commands ui.gadgets ui.gadgets.borders
