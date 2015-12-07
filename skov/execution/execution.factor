@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays combinators combinators.smart eval
-kernel locals math math.parser namespaces sequences
+USING: accessors arrays combinators combinators.smart debugger
+eval fry kernel locals math math.parser namespaces sequences
 sequences.deep sets skov.code skov.utilities ui.gadgets
 vocabs.parser ;
 IN: skov.execution
