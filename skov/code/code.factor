@@ -65,9 +65,16 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 : add-to-interactive-vocabs ( vocab-name -- )
     '[ _ suffix ] interactive-vocabs swap change-global ;
 
+: same-name-as-parent? ( word -- ? )
+    dup parent>> [ name>> ] bi@ = ;
+
+: input-output-names ( word -- seq seq )
+    [ inputs>> ] [ outputs>> ] bi [ [ name>> ] map ] bi@ ;
+
 :: in-out ( word -- seq seq )
     word name>> replacements :> name
-    [ { { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
+    [ { { [ word same-name-as-parent? ] [ word parent>> input-output-names ] }
+        { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
         { [ name CHAR: " swap member? ] [ { } { "string" } ] }
         { [ name string>number ] [ { } { "number" } ] }
         { [ name search not ] [ { } { } ] }
