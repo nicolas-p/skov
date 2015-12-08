@@ -2,6 +2,8 @@
 
 Skov is a visual programming system based on Factor and inspired by Lisp.
 
+![Skov screenshot](https://cloud.githubusercontent.com/assets/11431580/10673934/aed51b62-78f8-11e5-8c03-96b19671f3e1.png)
+
 ## Using Skov as a Factor vocabulary
 
 * Copy the `skov` directory into the `extra` directory of your Factor installation
