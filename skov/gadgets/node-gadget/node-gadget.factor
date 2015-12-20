@@ -7,11 +7,9 @@ ui.gadgets ui.gadgets.editors ui.gadgets.labels
 ui.gadgets.worlds ui.gestures ui.pens.solid ui.pens.tile ;
 IN: skov.gadgets.node-gadget
 
-M: node-gadget inputs>> ( node-gadget -- seq )
-    children>> [ connector-gadget? ] filter [ modell>> input? ] filter ;
-
-M: node-gadget outputs>> ( node-gadget -- seq )
-    children>> [ connector-gadget? ] filter [ modell>> output? ] filter ;
+: connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
+M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ modell>> input? ] filter ;
+M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ modell>> output? ] filter ;
 
 M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 / >integer ] bi + ;
 M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
@@ -68,6 +66,9 @@ M: node-gadget name<<
     width nb 1 + / >integer :> gap
     nb [ gap ] replicate :> gaps
     gaps nb iota [ 8 * 8 min ] map v+ cum-sum ;
+
+M: node-gadget connected?
+    connectors>> [ connected? ] any? ;
 
 M: node-gadget layout*
     { [ call-next-method ]

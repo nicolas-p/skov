@@ -1,55 +1,39 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays combinators kernel locals math
+USING: accessors arrays assocs combinators kernel locals math
 math.order math.vectors random sequences skov.code skov.gadgets
-skov.utilities ;
+skov.gadgets.node-gadget skov.utilities ;
 IN: skov.animation
 
-: (related-nodes) ( connectors -- seq )
-    [ connected? ] filter [ links>> ] map concat [ parent>> ] map ;
-    
-: upstream-nodes ( node -- seq )  inputs>> (related-nodes) ;
-: downstream-nodes ( node -- seq )  outputs>> (related-nodes) ;
+: nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
+: connected-nodes>> ( def -- seq )  nodes>> [ connected? ] filter ;
+: unconnected-nodes>> ( def -- seq )  nodes>> [ connected? ] reject ;
 
-: upstream? ( node node -- ? )  swap upstream-nodes member? ;
-: downstream? ( node node -- ? )  swap downstream-nodes member? ;
+: connector-pairs ( node -- seq )
+    connectors>> [ connected? ] filter [ dup links>> [ dupd 2array ] map nip ] map concat ;
 
-: connected-nodes ( node -- seq )
-    [ upstream-nodes ] [ downstream-nodes ] bi append ;
+: connector-position ( connector-gadget -- xy )
+    dup modell>> input? [ -1 swap dup parent>> inputs>> ] [ 1 swap dup parent>> outputs>> ] if
+    [ index 0.5 + ] keep length 2 / - swap 2array ;
 
-: all-other-nodes ( node-gadget -- seq )
-    dup parent>> children>> [ node-gadget? ] filter [ dupd = not ] filter nip ;
+: connector-position* ( seq -- xy )
+    [ connector-position ] map first2 swap v- ;
 
-:: square-distance ( node1 node2 -- rsq )
-    node1 x>> node2 x>> - square
-    node1 y>> node2 y>> - square +
-    1 max ;
+: centre ( definition -- xy )
+    dim>> [ 2 / >integer ] map ;
 
-:: repulsion ( node1 node2 -- force )
-    node1 node2 square-distance :> rsq
-    node1 x>> node2 x>> - 150 * rsq /
-    node1 y>> node2 y>> - 150 * rsq /
-    node1 node2 upstream? [ 4 * abs ] when
-    node1 node2 downstream? [ 4 * abs neg ] when
-    2array ;
+CONSTANT: k 0.05
+CONSTANT: sat 0.5
 
-:: attraction ( node1 node2 -- force )
-    node2 x>> node1 x>> - 0.02 *
-    node2 y>> node1 y>> - 0.02 *
-    2array ;
+:: spring-force ( dx dx0 -- f )
+    dx0 0 >= [ dx0 dx - k * sat neg max ] [ dx0 dx - k * sat min ] if ;
 
-: centre ( definition -- x y )
-    dim>> [ 2 / >integer ] map first2 ;
-
-:: attraction-to-centre ( node -- force )
-    node parent>> centre :> ( xc yc )
-    xc node x>> - 0.02 * 
-    yc node y>> - 0.02 *
+:: force ( node1 node2 pos -- force )
+    node1 x>> node2 x>> - pos first 100 * spring-force
+    node1 y>> node2 y>> - pos second 50 * spring-force
     2array ;
 
 : net-force ( node -- force )
-    { [ dup all-other-nodes [ dupd repulsion ] map v-sum nip ]
-      [ dup connected-nodes [ dupd attraction ] map v-sum nip ]
-      [ attraction-to-centre ] } cleave v+ v+ ;
+    dup connector-pairs [ dupd [ second parent>> ] [ connector-position* ] bi force ] map v-sum nip ;
 
 : update-acceleration ( node -- node )
     dup net-force >>acc ;
@@ -66,11 +50,11 @@ IN: skov.animation
 : stop? ( seq -- ? )
     [ acc>> [ abs ] map supremum 0.01 <= ] all? ;
 
-: random-vector ( -- a )
-    -10 10 uniform-random-float -10 10 uniform-random-float 2array ;
+: place-nodes ( def -- def )
+     connected-nodes>>
+     [ { 0 1 } >>acc { 0 0 } >>vel ] map
+     [ dup stop? ] [ move-nodes ] until ;
 
-: place-nodes ( definition-gadget -- )
-     children>> 
-     [ node-gadget? ] filter
-     [ random-vector >>acc random-vector >>vel ] map
-     [ dup stop? ] [ move-nodes ] until drop ;
+: place-unconnected-nodes ( def -- def )
+    dup unconnected-nodes>>
+    dup length iota zip [ first2 50 * 10 swap 2array >>loc drop ] each ;
