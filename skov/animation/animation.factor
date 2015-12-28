@@ -25,7 +25,9 @@ CONSTANT: k 0.05
 CONSTANT: sat 0.5
 
 :: spring-force ( dx dx0 -- f )
-    dx0 0 >= [ dx0 dx - k * sat neg max ] [ dx0 dx - k * sat min ] if ;
+    dx0 dx - k *
+    dx0 0 >= [ sat neg max ] when
+    dx0 0 <= [ sat min ] when ;
 
 :: force ( node1 node2 pos -- force )
     node1 x>> node2 x>> - pos first 100 * spring-force
