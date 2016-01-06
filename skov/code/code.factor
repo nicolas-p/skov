@@ -47,6 +47,8 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
       { "display" "." }
       { "display gadget" "gadget." }
       { "lazy filter" "lfilter" }
+      { "while" "while-skov" }
+      { "until" "until-skov" }
     }
     [ change-name ] each
     " >>" ">>" replace

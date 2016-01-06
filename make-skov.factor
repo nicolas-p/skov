@@ -44,6 +44,13 @@ os windows = [
   "factor.com" delete-file
 ] when
 
+IN: kernel
+: while-skov ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
+    swap [ dup ] swap compose do compose [ loop ] curry when ; inline
+
+: until-skov ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
+    [ [ not ] compose ] dip while-skov ; inline
+
 IN: ui.tools
 MAIN: skov-window
 
