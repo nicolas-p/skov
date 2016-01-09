@@ -47,8 +47,10 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
       { "display" "." }
       { "display gadget" "gadget." }
       { "lazy filter" "lfilter" }
-      { "while" "while-skov" }
-      { "until" "until-skov" }
+      { "while" "special-while" }
+      { "until" "special-until" }
+      { "true" "t" }
+      { "false" "special-false" }
     }
     [ change-name ] each
     " >>" ">>" replace
@@ -58,7 +60,7 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
     [ " " "-" replace ] when ;
 
 : replace-quot ( seq -- seq )
-    [ dup array? [ drop "quot" ] [ ] if ] map ;
+    [ dup array? [ first "quotation" " " glue ] [ ] if ] map ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
     [ in>> replace-quot ] [ out>> replace-quot ]

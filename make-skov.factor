@@ -2,7 +2,7 @@
 USING: images.loader io.directories io.directories.hierarchy
 io.pathnames kernel memory sequences ui.gadgets.icons
 ui.gadgets.panes ui.images splitting system io.files io.encodings.utf8
-ui ui.gadgets.borders skov listener namespaces lists.lazy ;
+ui ui.gadgets.borders skov listener namespaces lists.lazy combinators.smart ;
 
 image-path "factor.image" "" replace set-current-directory
 
@@ -45,11 +45,14 @@ os windows = [
 ] when
 
 IN: kernel
-: while-skov ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
-    swap [ dup ] swap compose do compose [ loop ] curry when ; inline
+: special-while ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
+    [ [ preserving ] curry ] dip while ; inline
 
-: until-skov ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
-    [ [ not ] compose ] dip while-skov ; inline
+: special-until ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
+    [ [ preserving ] curry ] dip until ; inline
+
+IN: syntax
+: special-false ( -- false )  f ;
 
 IN: ui.tools
 MAIN: skov-window
