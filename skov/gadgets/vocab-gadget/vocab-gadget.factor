@@ -22,7 +22,7 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <result-button> ( -- button )
     [ associated-word dup modell>> run-word select-result ] "result" <word-button> 
-    "Display result ( r )" >>tooltip ;
+    "Display result ( backspace )" >>tooltip ;
 
 :: <vocab-gadget> ( model -- vocab-gadget )
      vocab-gadget new vertical >>orientation model >>modell { 0 5 } >>gap 1/2 >>align ;
