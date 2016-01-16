@@ -11,21 +11,14 @@ image-path "factor.image" "" replace set-current-directory
 [ ".png" swap subseq? ] filter
 [ "vocab:skov/theme/" prepend-path <image-name> <icon> gadget. ] each
 
-"basis" delete-tree
-"core" delete-tree
-"extra" delete-tree
-"misc" delete-tree
-"work" delete-tree
-"README.md" delete-tree
-"git-id" delete-tree
-"Hello world (console)" delete-tree
-
 os macosx = [
   "factor" delete-file
   "libfactor-ffi-test.dylib" delete-file
   "libfactor.dylib" delete-file
   "Factor.app" "Skov.app" move-file
   "Skov.app/Contents/MacOS/factor" "Skov.app/Contents/MacOS/skov" move-file
+  "misc/icons/Skov.icns" "Skov.app/Contents/Resources/Skov.icns" move-file
+  "Skov.app/Contents/Resources/Factor.icns" delete-file
 
   "Skov.app/Contents/Info.plist" utf8 2dup file-lines 
   [ ">factor<" ">skov<" replace
@@ -43,6 +36,16 @@ os windows = [
   ".dir-locals.el" delete-file
   "factor.com" delete-file
 ] when
+
+"basis" delete-tree
+"core" delete-tree
+"extra" delete-tree
+"misc" delete-tree
+"work" delete-tree
+"README.md" delete-tree
+"git-id" delete-tree
+"Hello world (console)" delete-tree
+"make-skov.factor" delete-file
 
 IN: kernel
 : special-while ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
