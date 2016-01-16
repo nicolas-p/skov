@@ -30,7 +30,10 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     "left" "middle" "right"
     [ 2-theme-image ] tri-curry@ tri
     transparent*
-    node-gadget selected? [ node-dark-text-colour ] [ node-light-text-colour ] if <tile-pen> >>interior 
+    node-gadget {
+      { [ dup selected? not ] [ drop node-faded-text-colour ] } 
+      { [ dup modell>> connector? ] [ drop node-light-text-colour ] }
+      [ drop node-dark-text-colour ] } cond <tile-pen> >>interior 
     horizontal >>orientation ;
 
 : add-connector-gadgets ( node-gadget -- node-gadget )

@@ -8,7 +8,8 @@ CONSTANT: connection-colour HEXCOLOR: 93A1A1
 
 CONSTANT: content-text-colour HEXCOLOR: E5E5E5
 CONSTANT: node-dark-text-colour COLOR: black
-CONSTANT: node-light-text-colour HEXCOLOR: 93A1A1
+CONSTANT: node-light-text-colour HEXCOLOR: C4DCDE
+CONSTANT: node-faded-text-colour HEXCOLOR: 93A1A1
 
 : set-font ( label -- label )
     [ 17 >>size "Linux Biolinum O" >>name t >>bold? transparent >>background ] change-font ;
