@@ -31,7 +31,7 @@ CONSTANT: sat 0.5
 
 :: force ( node1 node2 pos -- force )
     node1 x>> node2 x>> - pos first 100 * spring-force
-    node1 y>> node2 y>> - pos second 50 * spring-force
+    node1 y>> node2 y>> - pos second 40 * spring-force
     2array ;
 
 : net-force ( node -- force )
