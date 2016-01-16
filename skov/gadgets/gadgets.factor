@@ -5,7 +5,7 @@ IN: skov.gadgets
 
 TUPLE: environment-gadget < tool  modell ;
 TUPLE: definition-gadget < border  modell timer ;
-TUPLE: vocab-gadget < pack  modell ;
+TUPLE: vocab-gadget < pack  modell { scroll-position initial: 0 } ;
 TUPLE: node-gadget < border  modell { acc initial: { 0 0 } } { vel initial: { 0 0 } } ;
 TUPLE: connector-gadget < icon  modell { links initial: { } } ;
 TUPLE: connection-gadget < gadget  start end ;
