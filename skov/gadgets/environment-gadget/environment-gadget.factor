@@ -24,10 +24,10 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
     <pile> 1 track-add
     input [ parent>> parent>> input add-to-definition ] <plus-button>
     "Add input ( i )" >>tooltip f track-add
-    <pile> 1/2 track-add
+    <pile> 1/3 track-add
     word [ parent>> parent>> word add-to-definition ] <plus-button>
     "Add word ( w )" >>tooltip f track-add
-    <pile> 1/2 track-add
+    <pile> 1/3 track-add
     output [ parent>> parent>> output add-to-definition ] <plus-button>
     "Add output ( o )" >>tooltip f track-add
     <pile> 1 track-add ;
