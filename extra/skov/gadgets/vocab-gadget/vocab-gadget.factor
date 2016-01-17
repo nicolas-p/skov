@@ -1,8 +1,8 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors arrays combinators.smart kernel locals math
-math.vectors namespaces sequences skov.code skov.execution
-skov.gadgets skov.gadgets.buttons skov.gadgets.node-gadget
-ui.gadgets ui.gadgets.packs ui.gestures ;
+math.order math.vectors namespaces sequences skov.code
+skov.execution skov.gadgets skov.gadgets.buttons
+skov.gadgets.node-gadget ui.gadgets ui.gadgets.packs ui.gestures ;
 IN: skov.gadgets.vocab-gadget
 
 TUPLE: space < gadget ;
@@ -50,15 +50,19 @@ M: vocab-gadget update
 M:: vocab-gadget layout* ( gadget -- )
     gadget call-next-method 
     gadget children>> [ [ pack? not ] [ [ { 15 0 } v+ ] change-loc drop ] smart-when* ] each
-    gadget children>> [ [ 0 gadget scroll-position>> 3 * 2array v- ] change-loc drop ] each ;
+    gadget children>> [ [ 0 gadget scroll-position>> 2array v- ] change-loc drop ] each ;
 
 M: vocab-gadget pref-dim*
     [ call-next-method ]
     [ children>> dup [ [ pack? ] [ children>> second ] smart-when ] map 
     pref-dims dup supremum swap index swap nth pack? not [ { 20 0 } v+ ] when ] bi ;
 
+: vocab-list-height ( vocab-gadget -- x )
+    children>> [ last loc>> second ] [ first loc>> second ] bi - ;
+
 : do-mouse-scroll ( vocab-gadget -- )
-    [ scroll-direction get-global second + ] change-scroll-position relayout-1 ;
+    dup vocab-list-height 120 - swap
+    [ scroll-direction get-global second 3 * + 0 max min ] change-scroll-position relayout-1 ;
 
 vocab-gadget H{
     { mouse-scroll [ do-mouse-scroll ] }
