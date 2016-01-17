@@ -1,5 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: images.loader io.directories io.directories.hierarchy
+USING: calendar calendar.format images.loader io.directories io.directories.hierarchy
 io.pathnames kernel memory sequences ui.gadgets.icons
 ui.gadgets.panes ui.images splitting system io.files io.encodings.utf8
 ui ui.gadgets.borders skov listener namespaces lists.lazy combinators.smart ;
@@ -23,8 +23,8 @@ os macosx = [
   "Skov.app/Contents/Info.plist" utf8 2dup file-lines 
   [ ">factor<" ">skov<" replace
     ">Factor<" ">Skov<" replace 
-    ">0.98<" ">0<" replace
-    ">Factor developers<" ">Factor and Skov developers<" replace
+    ">0.98<" gmt timestamp>ymd ">" "<" surround replace
+    "Factor developers<" "Factor and Skov developers<" replace
     "Factor.icns" "Skov.icns" replace
   ] map -rot set-file-lines
 ] when
