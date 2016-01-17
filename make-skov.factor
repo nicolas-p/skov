@@ -24,8 +24,8 @@ os macosx = [
   [ ">factor<" ">skov<" replace
     ">Factor<" ">Skov<" replace 
     ">0.98<" ">0<" replace
-    ">Factor developers<" 
-    ">Factor and Skov developers<" replace
+    ">Factor developers<" ">Factor and Skov developers<" replace
+    "Factor.icns" "Skov.icns" replace
   ] map -rot set-file-lines
 ] when
 
