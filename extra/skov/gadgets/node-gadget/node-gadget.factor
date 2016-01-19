@@ -61,7 +61,7 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     node-gadget new model >>modell add-name ;
 
 M: node-gadget name<<
-    [ modell>> name<< ] [ dup clear-gadget ?add-connectors add-name ] bi node-theme drop ;
+    [ modell>> name<< ] [ dup clear-gadget ?add-connectors add-name ] bi node-theme ?select ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb
