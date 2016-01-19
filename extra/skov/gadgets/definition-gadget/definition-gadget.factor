@@ -1,7 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors arrays assocs combinators
 combinators.smart kernel locals math sequences skov.animation
-skov.code skov.gadgets skov.gadgets.connection-gadget
+skov.code skov.execution skov.gadgets skov.gadgets.connection-gadget
 skov.gadgets.connector-gadget skov.gadgets.node-gadget
 skov.theme strings ui.gadgets ui.gadgets.icons
 ui.gadgets.labels ;
@@ -33,7 +33,7 @@ M: definition-gadget layout*
 M: definition-gadget update
     dup clear-gadget
     dup modell>>
-    { { [ dup word? ] [ drop add-nodes add-connections place-unconnected-nodes place-nodes ] }
+    { { [ dup word? ] [ eval-word add-nodes add-connections place-unconnected-nodes place-nodes ] }
       { [ dup string? ] [ <label> set-light-font add-gadget ] }
       [ drop "skov-logo" theme-image <icon> add-gadget ]
     } cond ;
