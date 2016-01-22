@@ -1,29 +1,40 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors combinators combinators.smart kernel locals
+USING: accessors colors combinators combinators.smart kernel locals
 namespaces sequences skov.code skov.gadgets
 skov.gadgets.connection-gadget skov.theme skov.utilities
-ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
+ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image system ;
 IN: skov.gadgets.connector-gadget
 
 : in-vocab? ( node-gadget -- ? )
     [ vocab-gadget? ] find-parent ;
 
 : selected? ( node-gadget -- ? )
-  { { [ dup in-vocab? not ] [ drop t ] }
-    { [ dup modell>> name>> empty? ] [ drop t ] }
-    { [ dup modell>> vocab? ] [ [ [ vocab-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
-    { [ dup modell>> word? ] [ [ [ environment-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
-  } cond ;
+    { { [ dup in-vocab? not ] [ drop t ] }
+      { [ dup modell>> name>> empty? ] [ drop t ] }
+      { [ dup modell>> vocab? ] [ [ [ vocab-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
+      { [ dup modell>> word? ] [ [ [ environment-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
+    } cond ;
+
+: (node-theme) ( node-gadget -- img-name bg-colour text-colour )
+    dup selected?
+    [ modell>>
+       { { [ dup connector? ] [ drop "round-dark" mid-dark-background light-text-colour ] }
+        { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
+        { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
+        } cond
+    ] [ modell>>
+      { { [ dup vocab? ] [ drop "pointy-faded" dark-background faded-text-colour ] }
+        { [ dup word? ] [ drop "round-faded" dark-background faded-text-colour ] }
+      } cond ] if
+    [ os windows? not [ drop transparent ] when ] dip ;
 
 :: <connector-gadget> ( model -- connector-gadget )
     connector-gadget new model >>modell { 8 8 } >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
-    dup [ 
-      [ modell>> special-connector? ] 
-      [ drop "special" ] 
-      [ parent>> modell>> class>string ] smart-if 
-    ] [ parent>> selected? [ "-selected" append ] when ] bi
+    dup [ modell>> special-connector? ] 
+    [ drop "special" ] 
+    [ parent>> (node-theme) 2drop ] smart-if 
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
 :: link ( connector-gadget -- connector-gadget )

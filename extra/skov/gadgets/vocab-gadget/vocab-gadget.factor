@@ -10,11 +10,11 @@ TUPLE: space < gadget ;
 M: space pref-dim*  drop { 0 25 } ;
 
 : <new-vocab-button> ( -- button )
-    vocab [ parent>> [ vocab add ] change-modell update drop ] <plus-button> 
+    "orange" [ parent>> [ vocab add ] change-modell update drop ] <plus-button> 
     "New vocabulary ( v )" >>tooltip ;
 
 : <new-word-button> ( -- button )
-    word [ parent>> [ word add ] change-modell update drop ] <plus-button>
+    "green" [ parent>> [ word add ] change-modell update drop ] <plus-button>
     "New word in vocabulary ( n )" >>tooltip ;
 
 : associated-word ( button -- word )

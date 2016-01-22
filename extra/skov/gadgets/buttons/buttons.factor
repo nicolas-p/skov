@@ -12,11 +12,11 @@ M: round-button pref-dim*
 : <round-button> ( quot -- button )
     "" swap round-button new-button ;
 
-: <plus-button-pen> ( node-class -- pen )
-    class>string "plus-button" 2-theme-image <image-pen> dup
+: <plus-button-pen> ( str -- pen )
+    "plus-button" 2-theme-image <image-pen> dup
     "pressed" "button" 2-theme-image <image-pen> dup dup <button-pen> ;
 
-: <plus-button> ( node-class quot -- button )
+: <plus-button> ( str quot -- button )
     <round-button> swap <plus-button-pen> >>interior ;
 
 :: <word-button-pen> ( str -- pen )

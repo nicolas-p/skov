@@ -22,13 +22,13 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 : <plus-button-bar> ( -- pile )
     vertical <track>
     <pile> 1 track-add
-    input [ parent>> parent>> input add-to-definition ] <plus-button>
+    "dark" [ parent>> parent>> input add-to-definition ] <plus-button>
     "Add input ( i )" >>tooltip f track-add
     <pile> 1/3 track-add
-    word [ parent>> parent>> word add-to-definition ] <plus-button>
+    "green" [ parent>> parent>> word add-to-definition ] <plus-button>
     "Add word ( w )" >>tooltip f track-add
     <pile> 1/3 track-add
-    output [ parent>> parent>> output add-to-definition ] <plus-button>
+    "dark" [ parent>> parent>> output add-to-definition ] <plus-button>
     "Add output ( o )" >>tooltip f track-add
     <pile> 1 track-add ;
 

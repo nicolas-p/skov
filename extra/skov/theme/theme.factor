@@ -6,13 +6,18 @@ IN: skov.theme
 CONSTANT: content-background-colour HEXCOLOR: 002b36
 CONSTANT: connection-colour HEXCOLOR: 93A1A1
 
+CONSTANT: dark-background HEXCOLOR: 0E4153
+CONSTANT: mid-dark-background HEXCOLOR: 214A53
+CONSTANT: orange-background HEXCOLOR: FF6F5A
+CONSTANT: green-background HEXCOLOR: A8D83B
+
 CONSTANT: content-text-colour HEXCOLOR: E5E5E5
-CONSTANT: node-dark-text-colour COLOR: black
-CONSTANT: node-light-text-colour HEXCOLOR: C4DCDE
-CONSTANT: node-faded-text-colour HEXCOLOR: 93A1A1
+CONSTANT: dark-text-colour COLOR: black
+CONSTANT: light-text-colour HEXCOLOR: C4DCDE
+CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
 
 : set-font ( label -- label )
-    [ 17 >>size "Linux Biolinum O" >>name t >>bold? transparent >>background ] change-font ;
+    [ 17 >>size "Linux Biolinum O" >>name t >>bold? ] change-font ;
 
 : set-light-font ( label -- label )
     set-font [ content-text-colour >>foreground ] change-font ;
@@ -25,7 +30,3 @@ CONSTANT: node-faded-text-colour HEXCOLOR: 93A1A1
 
 : 2-theme-image ( prefix suffix -- image-name )
     "--" glue theme-image ;
-
-! This will need to be removed if the Windows transparency bug is fixed one day
-: transparent* ( -- colour )
-    os windows? [ COLOR: white ] [ transparent ] if ;

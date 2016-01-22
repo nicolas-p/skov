@@ -1,5 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays colors combinators combinators.smart fry
+USING: accessors arrays combinators combinators.smart fry
 kernel locals math math.order math.statistics math.vectors
 sequences skov.code skov.execution skov.gadgets
 skov.gadgets.connector-gadget skov.theme skov.utilities
@@ -25,15 +25,10 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : select-result ( node-gadget -- )
     [ [ environment-gadget? ] find-parent ] [ modell>> result>> ] bi >>modell update drop ;
 
-:: node-theme ( node-gadget -- node-gadget )
-    node-gadget dup [ modell>> class>string ] [ selected? [ "-selected" append ] when ] bi
-    "left" "middle" "right"
-    [ 2-theme-image ] tri-curry@ tri
-    transparent*
-    node-gadget {
-      { [ dup selected? not ] [ drop node-faded-text-colour ] } 
-      { [ dup modell>> connector? ] [ drop node-light-text-colour ] }
-      [ drop node-dark-text-colour ] } cond <tile-pen> >>interior 
+: node-theme ( node-gadget -- node-gadget )
+    dup (node-theme)
+    [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
+    <tile-pen> >>interior 
     horizontal >>orientation ;
 
 : add-connector-gadgets ( node-gadget -- node-gadget )
@@ -45,11 +40,14 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : ?add-connectors ( node-gadget -- node-gadget )
     dup [ parent>> definition-gadget? ] [ modell>> add-connectors drop ] smart-when* ;
 
-: add-name-field ( node-gadget -- node-gadget )
-    dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
-    transparent* <solid> >>boundary
-    transparent* <solid> >>interior { 0 0 } >>size
-    [ set-font ] change-editor add-gadget ;
+:: add-name-field ( node-gadget -- node-gadget )
+    node-gadget dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
+    node-gadget (node-theme) :> text-colour :> bg-colour drop
+    bg-colour <solid> >>boundary
+    bg-colour <solid> >>interior 
+    { 0 0 } >>size
+    [ set-font [ text-colour >>foreground bg-colour >>background ] change-font ] change-editor 
+    add-gadget ;
 
 : add-name-label ( node-gadget -- node-gadget )
     dup modell>> name>> <label> set-font add-gadget ;
@@ -87,14 +85,6 @@ M: node-gadget focusable-child*
 
 M: node-gadget graft*
    node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
-
-: node-action ( node-gadget -- )
-   [ in-vocab? ] [ 
-       [ modell>> vocab? ] 
-       [ [ parent>> ] [ modell>> ] bi >>modell update drop ]
-       [ [ parent>> parent>> gadget-child ] [ modell>> ] bi >>modell update drop ]
-       smart-if
-   ] smart-when* ;
 
 : node-status-text ( node-gadget -- str )
     "( r to remove )" swap modell>>
