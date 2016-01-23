@@ -18,13 +18,13 @@ IN: skov.gadgets.connector-gadget
 : (node-theme) ( node-gadget -- img-name bg-colour text-colour )
     dup selected?
     [ modell>>
-       { { [ dup connector? ] [ drop "round-dark" mid-dark-background light-text-colour ] }
+       { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
         { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
         } cond
     ] [ modell>>
-      { { [ dup vocab? ] [ drop "pointy-faded" dark-background faded-text-colour ] }
-        { [ dup word? ] [ drop "round-faded" dark-background faded-text-colour ] }
+      { { [ dup vocab? ] [ drop "pointy-faded" faded-background faded-text-colour ] }
+        { [ dup word? ] [ drop "round-faded" faded-background faded-text-colour ] }
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 

@@ -6,8 +6,8 @@ IN: skov.theme
 CONSTANT: content-background-colour HEXCOLOR: 002b36
 CONSTANT: connection-colour HEXCOLOR: 93A1A1
 
-CONSTANT: dark-background HEXCOLOR: 0E4153
-CONSTANT: mid-dark-background HEXCOLOR: 214A53
+CONSTANT: faded-background HEXCOLOR: 0E4153
+CONSTANT: dark-background HEXCOLOR: 214A53
 CONSTANT: orange-background HEXCOLOR: FF6F5A
 CONSTANT: green-background HEXCOLOR: A8D83B
 
