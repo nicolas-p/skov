@@ -2,12 +2,16 @@
 USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors namespaces sequences skov.code
 skov.execution skov.gadgets skov.gadgets.buttons
-skov.gadgets.node-gadget ui.gadgets ui.gadgets.packs ui.gestures ;
+skov.gadgets.node-gadget skov.theme ui.gadgets ui.gadgets.icons
+ui.gadgets.packs ui.gestures ;
 IN: skov.gadgets.vocab-gadget
 
 TUPLE: space < gadget ;
 : <space> ( -- gadget ) space new ;
 M: space pref-dim*  drop { 0 25 } ;
+
+: <separator> ( -- img )
+    "separator" theme-image <icon> ;
 
 : <new-vocab-button> ( -- button )
     "orange" [ parent>> [ vocab add ] change-modell update drop ] <plus-button> 
@@ -39,6 +43,8 @@ M: space pref-dim*  drop { 0 25 } ;
 M: vocab-gadget update
     dup clear-gadget
     dup modell>> parents reverse [ <node-gadget> add-gadget ] each
+    <space> add-gadget
+    <separator> add-gadget
     <space> add-gadget
     dup modell>> vocabs>> [ <node-gadget> add-gadget ] each
     <new-vocab-button> add-gadget
