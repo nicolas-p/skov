@@ -3,9 +3,9 @@ USING: accessors combinators combinators.smart kernel locals
 math namespaces sequences skov.code skov.execution skov.gadgets
 skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
-skov.theme ui.commands ui.gadgets ui.gadgets.borders
-ui.gadgets.editors ui.gadgets.packs ui.gadgets.tracks
-ui.gestures ui.tools.common ;
+skov.theme skov.utilities ui.commands ui.gadgets
+ui.gadgets.borders ui.gadgets.editors ui.gadgets.packs
+ui.gadgets.tracks ui.gestures ui.tools.common ;
 IN: skov.gadgets.environment-gadget
 
 M: environment-gadget definition>>  children>> [ definition-gadget? ] filter first ;
@@ -92,6 +92,14 @@ M: environment-gadget update
 : show-result ( env -- )
     [ dup definition>> modell>> dup run-word result>> >>modell update drop ] make-keyboard-safe ;
 
+:: next-nth-word ( env n -- )
+    env [ dup modell>> word? [ 
+      [ vocab>> modell>> words>> ] [ modell>> n next-nth ] [ swap >>modell update ] tri
+    ] when drop ] make-keyboard-safe ;
+
+: previous-word ( env -- )  -1 next-nth-word ;
+: next-word ( env -- )  +1 next-nth-word ;
+
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
     { T{ key-up f f "i" } add-input }
@@ -104,4 +112,6 @@ environment-gadget "general" f {
     { T{ key-up f f "m" } more-inputs }
     { T{ key-up f f "l" } less-inputs }
     { T{ key-up f f "BACKSPACE" } show-result }
+    { T{ key-up f f "UP" } previous-word }
+    { T{ key-up f f "DOWN" } next-word }
 } define-command-map
