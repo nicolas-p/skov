@@ -131,7 +131,7 @@ M: connector connect
 : executable? ( word -- ? )
     [ inputs>> empty? ] [ outputs>> empty? ] [ words>> empty? not ] tri and and ;
 
-CONSTANT: variadic-words { "+" "*" "and" "or" }
+CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
 : variadic? ( word -- ? )
-    name>> replacements variadic-words member? ;
+    name>> variadic-words member? ;
