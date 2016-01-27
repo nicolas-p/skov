@@ -11,6 +11,11 @@ image-path "factor.image" "" replace set-current-directory
 [ ".png" swap subseq? ] filter
 [ "vocab:skov/theme/" prepend-path <image-name> <icon> gadget. ] each
 
+"basis/definitions/icons" directory-files
+[ first CHAR: . = ] reject
+[ ".png" swap subseq? ] filter
+[ "vocab:definitions/icons/" prepend-path <image-name> <icon> gadget. ] each
+
 os macosx = [
   "factor" delete-file
   "libfactor-ffi-test.dylib" delete-file
