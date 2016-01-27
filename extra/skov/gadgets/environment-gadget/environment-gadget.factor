@@ -90,7 +90,8 @@ M: environment-gadget update
     ] make-keyboard-safe ;
 
 : show-result ( env -- )
-    [ dup definition>> modell>> dup run-word result>> >>modell update drop ] make-keyboard-safe ;
+    [ dup definition>> modell>> [ word? ] [ dup run-word result>> >>modell update ] smart-when* drop ] 
+    make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
     env [ dup modell>> word? [ 
