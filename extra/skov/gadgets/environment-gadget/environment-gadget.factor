@@ -1,7 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors combinators combinators.smart kernel locals
-math namespaces sequences skov.code skov.execution skov.gadgets
-skov.gadgets.buttons skov.gadgets.connector-gadget
+math memory namespaces sequences skov.code skov.execution
+skov.gadgets skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
 skov.theme skov.utilities ui.commands ui.gadgets
 ui.gadgets.borders ui.gadgets.editors ui.gadgets.packs
@@ -101,6 +101,9 @@ M: environment-gadget update
 : previous-word ( env -- )  -1 next-nth-word ;
 : next-word ( env -- )  +1 next-nth-word ;
 
+: save-skov-image ( env -- )
+    [ drop save ] make-keyboard-safe ;
+
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
     { T{ key-up f f "i" } add-input }
@@ -112,6 +115,7 @@ environment-gadget "general" f {
     { T{ key-up f f "e" } edit-node-gadget }
     { T{ key-up f f "m" } more-inputs }
     { T{ key-up f f "l" } less-inputs }
+    { T{ key-up f f "s" } save-skov-image }
     { T{ key-up f f "BACKSPACE" } show-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
