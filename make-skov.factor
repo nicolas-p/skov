@@ -73,6 +73,7 @@ interactive-vocabs [ {
   "io.encodings.utf8"
   "io.directories"
   "lists.lazy"
+  "splitting"
 } append ] change-global
 
 save
