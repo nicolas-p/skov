@@ -1,0 +1,24 @@
+body {
+  background-color: #002B36;
+  color: white;
+	font-family: "Linux Biolinum O", "Linux Biolinum", verdana, geneva, sans-serif;
+  font-size: 14pt;
+}
+#site {
+  max-width: 830px;
+  text-align: left;
+  line-height: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5em;
+}
+.title {
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+  height: 300px;
+}
+a {
+  text-decoration: none;
+  color: #C4DCDE;
+}
