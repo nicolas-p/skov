@@ -6,13 +6,92 @@
 <body>
 
 <div id="site">
-<div class="title"><img src="images/website-logo.png" /></div>
+<div class="centred">
 
-<p>Skov is a visual programming system based on Factor and inspired by Lisp.</p>
+<img src="images/website-logo.png" alt="Skov - A visual programming system"/>
 
-<p>Latest release: 2016-01-27</p>
-<p><a href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-macosx-64bit-2016-01-27.dmg">Download Skov for Mac (64 bit)</a> (22 MB)</p>
-<p><a href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-windows-64bits-2016-01-27.zip">Download Skov for Windows (64 bit)</a> (20 MB)</p>
+<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-macosx-64bit-2016-01-27.dmg">Skov 2016-01-27 for Mac (64 bit)</a> <br /> (22 MB)</p>
+<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-windows-64bits-2016-01-27.zip">Skov 2016-01-27 for Windows (64 bit)</a> <br /> (20 MB)</p>
+
+<img src="images/screenshot.png" alt="Skov - A visual programming system"/>
+
+</div>
+
+<p>Skov is a visual programming system based on <a href="http://factorcode.org">Factor</a> and inspired by Lisp.</p>
+
+<p>The project started with the realisation that it was not possible to accurately represent the structure of a functional program as a one-dimensional stream of text. A graphical, or visual, two-dimensional representation shows the program's structure explicitely and avoids the workarounds found in textual languages.</p>
+
+<div>
+  <p class="bloc">This is a vocabulary:</p>
+  <img class="bloc" src="images/screenshot-vocab.png" />
+  <p class="bloc">It contains words as well as sub-vocabularies.</p>
+</div>
+<div>
+  <p class="bloc">This is a word:</p>
+  <img class="bloc" src="images/screenshot-word.png" />
+  <p class="bloc">It has connectors (inputs at the top, outputs at the bottom).</p>
+</div>
+<div>
+  <p class="bloc">A word with only one output can be a number:</p>
+  <img class="bloc" src="images/screenshot-number.png" />
+</div>
+<div>
+  <p class="bloc">or a constant that you have defined:</p>
+  <img class="bloc" src="images/screenshot-constant.png" />
+</div>
+<div>
+  <p class="bloc">A word that has only inputs is useful only for its side effects, like writing a file:</p>
+  <img class="bloc" src="images/screenshot-inputs-only.png" />
+</div>
+<div>
+  <p class="bloc">A word that has both inputs and outputs is an operation that modifies data:</p>
+  <img class="bloc" src="images/screenshot-word-2.png" />
+</div>
+<div>
+  <p class="bloc">This is an input:</p>
+  <img class="bloc" src="images/screenshot-input.png" />
+</div>
+<div>
+  <p class="bloc">This is an output:</p>
+  <img class="bloc" src="images/screenshot-output.png" />
+</div>
+<p>To define a new word, you simple connect together some inputs, outputs and words, like so:</p>
+<div class="centred"><img src="images/screenshot-definition.png" /></div>
+
+
+<p>Reading the program from top to bottom shows data flow. Reading it from bottom to top shows the structure.</p>
+
+<p>You can see the result of a program by clicking the arrow next to a word:</p>
+<div class="centred"><img src="images/screenshot-result.png" /></div>
+
+<p>Skov has the following features:</p>
+<ul>
+<li>works on Mac OS X, Windows and Linux</li>
+<li>small footprint (100 MB)</li>
+<li>no installation required</li>
+<li>self-contained, "small world" system</li>
+<li>"batteries included": lots of vocabularies to handle most common tasks</li>
+<li>image-based program storage</li>
+<li>functional programming</li>
+<li>higher-order functions</li>
+<li>explicit data flow</li>
+<li>explicit program structure</li>
+<li>easy to use, easy to learn</li>
+<li>programs are super-easy to read</li>
+<li>probably fantastic for teaching or learning programming</li>
+<li>single-key keyboard shortcuts</li>
+<li>fast and responsive user interface</li>
+<li>fast program execution</li>
+<li>compiles to machine code</li>
+<li>open source, BSD licence</li>
+</ul>
+
+<p>This is a very young project (started in August 2015) so it has certain limitations at the moment:</p>
+<ul>
+<li>no access to the object system from the user interface</li>
+<li>all words defined by the user will be stuck in the image, without any way to share them, or move them to a future version of Skov</li>
+<li>the documentation is from Factor and hasn't yet been adapted for Skov</li>
+</ul>
 
 <p>Follow the development on <a href="https://github.com/nicolas-p/skov">GitHub</a>.</p>
 

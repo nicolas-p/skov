@@ -12,13 +12,28 @@ body {
   margin-right: auto;
   padding: 0 1.5em;
 }
-.title {
-  margin-left: auto;
-  margin-right: auto;
-  width: 250px;
-  height: 300px;
+.centred {
+  text-align: center;
 }
 a {
   text-decoration: none;
   color: #C4DCDE;
+}
+a:hover {
+  text-decoration: underline;
+}
+a.download-link {
+  background-color: #BFE950;
+  border-radius: 10px;
+  padding: 5px 10px;
+  color: black;
+  font-weight: bold;
+}
+a.download-link:hover {
+  text-decoration: none;
+  background-color: white;
+}
+.bloc {
+  display:inline-block;
+  vertical-align:middle;
 }
