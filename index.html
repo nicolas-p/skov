@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>Skov - A visual programming system</title>
@@ -8,72 +9,71 @@
 <div id="site">
 <div class="centred">
 
-<img src="images/website-logo.png" alt="Skov - A visual programming system"/>
+<img src="images/website-logo.png" alt="Skov - A visual programming system">
 
 <p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-macosx-64bit-2016-01-27.dmg">Skov 2016-01-27 for Mac (64 bit)</a> <br /> (22 MB)</p>
 <p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-01-27/skov-windows-64bits-2016-01-27.zip">Skov 2016-01-27 for Windows (64 bit)</a> <br /> (20 MB)</p>
 
-<img src="images/screenshot.png" alt="Skov - A visual programming system"/>
+<img src="images/screenshot.png" alt="Skov - A visual programming system">
 
 </div>
 
 <p>Skov is a visual programming system based on <a href="http://factorcode.org">Factor</a> and inspired by Lisp.</p>
 
-<p>The project started with the realisation that it was not possible to accurately represent the structure of a functional program as a one-dimensional stream of text. A graphical, or visual, two-dimensional representation shows the program's structure explicitely and avoids the workarounds found in textual languages.</p>
+<p>The project started with the realisation that a two-dimensional visual representation was much better at conveying the structure of a functional program than any one-dimensional textual representation. The program becomes easier to read and to reason about and the probability of making mistakes is greatly reduced. Skov shows the program's structure explicitely and avoids the workarounds found in textual languages.</p>
 
 <div>
   <p class="bloc">This is a vocabulary:</p>
-  <img class="bloc" src="images/screenshot-vocab.png" />
+  <img class="bloc" src="images/screenshot-vocab.png">
   <p class="bloc">It contains words as well as sub-vocabularies.</p>
 </div>
 <div>
   <p class="bloc">This is a word:</p>
-  <img class="bloc" src="images/screenshot-word.png" />
+  <img class="bloc" src="images/screenshot-word.png">
   <p class="bloc">It has connectors (inputs at the top, outputs at the bottom).</p>
 </div>
 <div>
   <p class="bloc">A word with only one output can be a number:</p>
-  <img class="bloc" src="images/screenshot-number.png" />
+  <img class="bloc" src="images/screenshot-number.png">
 </div>
 <div>
   <p class="bloc">or a constant that you have defined:</p>
-  <img class="bloc" src="images/screenshot-constant.png" />
+  <img class="bloc" src="images/screenshot-constant.png">
 </div>
 <div>
   <p class="bloc">A word that has only inputs is useful only for its side effects, like writing a file:</p>
-  <img class="bloc" src="images/screenshot-inputs-only.png" />
+  <img class="bloc" src="images/screenshot-inputs-only.png">
 </div>
 <div>
   <p class="bloc">A word that has both inputs and outputs is an operation that modifies data:</p>
-  <img class="bloc" src="images/screenshot-word-2.png" />
+  <img class="bloc" src="images/screenshot-word-2.png">
 </div>
 <div>
   <p class="bloc">This is an input:</p>
-  <img class="bloc" src="images/screenshot-input.png" />
+  <img class="bloc" src="images/screenshot-input.png">
 </div>
 <div>
   <p class="bloc">This is an output:</p>
-  <img class="bloc" src="images/screenshot-output.png" />
+  <img class="bloc" src="images/screenshot-output.png">
 </div>
-<p>To define a new word, you simple connect together some inputs, outputs and words, like so:</p>
-<div class="centred"><img src="images/screenshot-definition.png" /></div>
+<p>To define a new word, you simply connect together some inputs, outputs and words, like so:</p>
+<div class="centred"><img src="images/screenshot-definition.png"></div>
 
 
 <p>Reading the program from top to bottom shows data flow. Reading it from bottom to top shows the structure.</p>
 
 <p>You can see the result of a program by clicking the arrow next to a word:</p>
-<div class="centred"><img src="images/screenshot-result.png" /></div>
+<div class="centred"><img src="images/screenshot-result.png"></div>
 
 <p>Skov has the following features:</p>
 <ul>
-<li>works on Mac OS X, Windows and Linux</li>
+<li>works on Mac OS X, Linux and Windows</li>
 <li>small footprint (100 MB)</li>
 <li>no installation required</li>
 <li>self-contained, "small world" system</li>
 <li>"batteries included": lots of vocabularies to handle most common tasks</li>
 <li>image-based program storage</li>
 <li>functional programming</li>
-<li>higher-order functions</li>
 <li>explicit data flow</li>
 <li>explicit program structure</li>
 <li>easy to use, easy to learn</li>

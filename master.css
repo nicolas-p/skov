@@ -1,7 +1,16 @@
+@font-face {
+    font-family: biolinum;
+    src: url(fonts/LinBiolinum_R.woff);
+}
+@font-face {
+    font-family: biolinum;
+    src: url(fonts/LinBiolinum_RB.woff);
+    font-weight: bold;
+}
 body {
   background-color: #002B36;
   color: white;
-	font-family: "Linux Biolinum O", "Linux Biolinum", verdana, geneva, sans-serif;
+	font-family: "Linux Biolinum O", "Linux Biolinum", biolinum, sans-serif;
   font-size: 14pt;
 }
 #site {
