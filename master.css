@@ -13,6 +13,13 @@ body {
 	font-family: "Linux Biolinum O", "Linux Biolinum", biolinum, sans-serif;
   font-size: 14pt;
 }
+#language {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 10px;
+  font-size: 13pt;
+}
 #site {
   max-width: 830px;
   text-align: left;
