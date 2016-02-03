@@ -1,11 +1,12 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors combinators combinators.smart kernel locals
-math memory namespaces sequences skov.code skov.execution
+USING: accessors combinators combinators.smart kernel listener
+locals math memory namespaces sequences skov.code skov.execution
 skov.gadgets skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
 skov.theme skov.utilities ui.commands ui.gadgets
 ui.gadgets.borders ui.gadgets.editors ui.gadgets.packs
-ui.gadgets.tracks ui.gestures ui.tools.browser ui.tools.common ;
+ui.gadgets.tracks ui.gestures ui.tools.browser ui.tools.common
+vocabs.parser ;
 IN: skov.gadgets.environment-gadget
 
 M: environment-gadget definition>>  children>> [ definition-gadget? ] filter first ;
@@ -105,7 +106,10 @@ M: environment-gadget update
     [ drop save ] make-keyboard-safe ;
 
 : show-help ( env -- )
-    [ drop show-browser ] make-keyboard-safe ;
+    [ hand-gadget get-global [ node-gadget? ] find-parent
+      [ [ modell>> name>> replacements search (browser-window) ] with-interactive-vocabs ]
+      [ show-browser ] if* drop
+    ] make-keyboard-safe ;
 
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
