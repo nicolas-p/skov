@@ -23,6 +23,7 @@ os macosx = [
   "Factor.app" "Skov.app" move-file
   "Skov.app/Contents/MacOS/factor" "Skov.app/Contents/MacOS/skov" move-file
   "misc/icons/Skov.icns" "Skov.app/Contents/Resources/Skov.icns" move-file
+  "misc/fonts" "Skov.app/Contents/Resources/Fonts" move-file
   "Skov.app/Contents/Resources/Factor.icns" delete-file
 
   "Skov.app/Contents/Info.plist" utf8 2dup file-lines 
@@ -30,7 +31,9 @@ os macosx = [
     ">Factor<" ">Skov<" replace 
     ">0.98<" gmt timestamp>ymd ">" "<" surround replace
     "Factor developers<" "Factor and Skov developers<" replace
-    "Factor.icns" "Skov.icns" replace
+    "Factor.icns" "Skov.icns</string>
+    <key>ATSApplicationFontsPath</key>
+    <string>Fonts" replace
   ] map -rot set-file-lines
 ] when
 
