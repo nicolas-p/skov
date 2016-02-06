@@ -77,8 +77,10 @@ M: node-gadget layout*
       [ [ outputs>> dup ] [ width ] bi spread [ 28 2array ] map [ swap loc<< ] 2each ]
     } cleave ;
 
-M: node-gadget pref-dim*
-    gadget-child pref-dim first 28 + 40 max 36 2array ;
+M:: node-gadget pref-dim* ( node -- dim )
+    node gadget-child pref-dim first 28 +
+    node inputs>> length node outputs>> length max 20 * max
+    40 max 36 2array ;
 
 M: node-gadget focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
