@@ -15,10 +15,10 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 { 700 600 } environment-gadget set-tool-dim
 
 :: add-to-definition ( env class -- )
-    env definition>> dup modell>> word? [ [ class add ] change-modell update ] when drop ;
+    env definition>> dup modell>> word? [ [ class add-element ] change-modell update ] when drop ;
 
 :: add-to-vocab ( env class -- )
-    env vocab>> [ class add ] change-modell update drop ;
+    env vocab>> [ class add-element ] change-modell update drop ;
 
 : <plus-button-bar> ( -- pile )
     vertical <track>
@@ -79,7 +79,7 @@ M: environment-gadget update
 : more-inputs ( env -- )
     [ hand-gadget get-global [ node-gadget? ] find-parent
       [ [ modell>> variadic? ]
-        [ dup modell>> input add inputs>> last <connector-gadget> add-gadget drop ] smart-when*
+        [ dup modell>> input add-element inputs>> last <connector-gadget> add-gadget drop ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 

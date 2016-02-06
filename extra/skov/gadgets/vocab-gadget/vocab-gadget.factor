@@ -14,11 +14,11 @@ M: space pref-dim*  drop { 0 25 } ;
     "separator" theme-image <icon> ;
 
 : <new-vocab-button> ( -- button )
-    "orange" [ parent>> [ vocab add ] change-modell update drop ] <plus-button> 
+    "orange" [ parent>> [ vocab add-element ] change-modell update drop ] <plus-button> 
     "New vocabulary ( v )" >>tooltip ;
 
 : <new-word-button> ( -- button )
-    "green" [ parent>> [ word add ] change-modell update drop ] <plus-button>
+    "green" [ parent>> [ word add-element ] change-modell update drop ] <plus-button>
     "New word in vocabulary ( n )" >>tooltip ;
 
 : associated-word ( button -- word )

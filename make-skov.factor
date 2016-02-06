@@ -1,20 +1,20 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: calendar calendar.format images.loader io.directories io.directories.hierarchy
-io.pathnames kernel memory sequences ui.gadgets.icons
-ui.gadgets.panes ui.images splitting system io.files io.encodings.utf8
-ui ui.gadgets.borders skov listener namespaces lists.lazy combinators.smart ;
+USING: calendar calendar.format images.loader io.directories
+io.directories.hierarchy io.pathnames kernel memory sequences
+ui.images splitting system io.files io.encodings.utf8 skov parser ;
 
 image-path "factor.image" "" replace set-current-directory
 
-"extra/skov/theme" directory-files
-[ first CHAR: . = ] reject
-[ ".png" swap subseq? ] filter
-[ "vocab:skov/theme/" prepend-path <image-name> <icon> gadget. ] each
-
-"basis/definitions/icons" directory-files
-[ first CHAR: . = ] reject
-[ ".png" swap subseq? ] filter
-[ "vocab:definitions/icons/" prepend-path <image-name> <icon> gadget. ] each
+{ 
+  "vocab:skov/theme/"
+  "vocab:definitions/icons/"
+  "vocab:ui/gadgets/theme/"
+} [ 
+  dup directory-files
+  [ first CHAR: . = ] reject
+  [ file-extension [ "png" = ] [ "tiff" = ] bi or ] filter
+  [ dupd append-path <image-name> cached-image drop ] each drop
+] each
 
 os macosx = [
   "factor" delete-file
@@ -45,6 +45,8 @@ os windows = [
   "factor.com" delete-file
 ] when
 
+"word-changes.factor" run-file
+
 "basis" delete-tree
 "core" delete-tree
 "extra" delete-tree
@@ -54,30 +56,7 @@ os windows = [
 "git-id" delete-tree
 "Hello world (console)" delete-tree
 "make-skov.factor" delete-file
-
-IN: kernel
-: special-while ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
-    [ [ preserving ] curry ] dip while ; inline
-
-: special-until ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
-    [ [ preserving ] curry ] dip until ; inline
-
-IN: syntax
-: special-false ( -- false )  f ;
-
-IN: ui.tools
-MAIN: skov-window
-
-IN: ui.tools.listener
-: show-listener ( -- ) [ border? ] find-window [ raise-window ] [ skov-window ] if* ;
-: listener-window ( -- ) skov-window ;
-
-interactive-vocabs [ { 
-  "io.encodings.utf8"
-  "io.directories"
-  "lists.lazy"
-  "splitting"
-} append ] change-global
+"word-changes.factor" delete-file
 
 save
 "factor.image" "skov.image" move-file

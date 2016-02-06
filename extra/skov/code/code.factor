@@ -22,7 +22,7 @@ M: element words>> ( elt -- seq ) contents>> [ word? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 
-:: add ( parent child-class -- parent )
+:: add-element ( parent child-class -- parent )
      child-class new parent >>parent parent [ ?push ] change-contents ;
 
 :: add-with-name ( parent child-name child-class -- parent )
@@ -36,21 +36,9 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 
 : replacements ( str -- str )
     { 
-      { "add" "+" }
-      { "sub" "-" }
-      { "mul" "*" }
-      { "div" "/" }
-      { "greater" ">" }
-      { "greater equal" ">=" }
-      { "less" "<" }
-      { "less equal" "<=" }
-      { "display" "." }
-      { "display gadget" "gadget." }
       { "lazy filter" "lfilter" }
       { "while" "special-while" }
       { "until" "special-until" }
-      { "true" "t" }
-      { "false" "special-false" }
     }
     [ change-name ] each
     " >>" ">>" replace
@@ -86,8 +74,8 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
       } cond ] with-interactive-vocabs ;
 
 : add-special-connectors ( node -- node )
-    [ inputs>> empty? ] [ special-input add ] smart-when
-    [ outputs>> empty? ] [ special-output add ] smart-when ;
+    [ inputs>> empty? ] [ special-input add-element ] smart-when
+    [ outputs>> empty? ] [ special-output add-element ] smart-when ;
 
 GENERIC: add-connectors ( node -- node )
 M: input add-connectors  f >>contents dup name>> output add-with-name ;
