@@ -1,5 +1,5 @@
 ! Copyright (C) 2016 Nicolas Pénet.
-USING: combinators.smart listener namespaces
+USING: colors.hex combinators.smart listener namespaces
 sequences skov ui ui.gadgets.borders ui.gadgets.panes ;
 IN: ui.tools.listener
 
@@ -42,3 +42,6 @@ interactive-vocabs [ {
   "lists.lazy"
   "splitting"
 } append ] change-global
+
+IN: ui.gadgets.theme
+CONSTANT: help-header-background HEXCOLOR: EDF4D9
