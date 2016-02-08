@@ -20,6 +20,9 @@ M: definition-gadget layout*
    [ [ dup pref-dim swap dim<< ] each-child ]
    [ [ contains-only-icon-or-text? ] [ call-next-method ] smart-when* ] bi ;
 
+: centre ( definition -- xy )
+    dim>> [ 2 / >integer ] map ;
+
 : add-nodes ( def -- def )
     dup modell>> contents>> [ <node-gadget> dupd swap centre >>loc add-gadget ] each ;
 

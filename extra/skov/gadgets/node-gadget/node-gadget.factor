@@ -10,11 +10,14 @@ IN: skov.gadgets.node-gadget
 : connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
 M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ modell>> input? ] filter ;
 M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ modell>> output? ] filter ;
+: connected-inputs>> ( node-gadget -- seq )  inputs>> [ connected? ] filter ;
+: connected-outputs>> ( node-gadget -- seq )  outputs>> [ connected? ] filter ;
 
 M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 / >integer ] bi + ;
 M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 
 : width ( node-gadget -- w ) pref-dim first ;
+: half-width ( node-gadget -- w ) width 2 / ;
 
 : select ( node-gadget -- )
     [ [ environment-gadget? ] find-parent ] [ modell>> ] bi >>modell update drop ;

@@ -1,6 +1,7 @@
-! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays assocs combinators combinators.smart kernel locals math
-math.order math.vectors random sequences skov.code skov.gadgets
+! Copyright (C) 2015-2016 Nicolas Pénet.
+USING: accessors arrays assocs combinators combinators.smart
+kernel locals math math.order math.vectors random sequences
+sequences.deep sets skov.code skov.gadgets
 skov.gadgets.node-gadget skov.utilities ;
 IN: skov.animation
 
@@ -8,67 +9,56 @@ IN: skov.animation
 : connected-nodes>> ( def -- seq )  nodes>> [ connected? ] filter ;
 : unconnected-nodes>> ( def -- seq )  nodes>> [ connected? ] reject ;
 
-: connector-pairs ( node -- seq )
-    connectors>> [ connected? ] filter [ dup links>> [ dupd 2array ] map nip ] map concat ;
+:: add-vertical-springs ( node -- node )
+    node [
+      node connected-inputs>> [ links>> first parent>> { 0 1 } 2array ] map
+      node connected-outputs>> [ links>> [ parent>> { 0 -1 } 2array ] map ] map concat
+      append append
+    ] change-springs ;
 
-: connector-position ( connector-gadget -- xy )
-    dup modell>> input? [ -1 swap dup parent>> inputs>> ] [ 1 swap dup parent>> outputs>> ] if
-    [ index 0.5 + ] keep length 2 / - swap 2array ;
+: all-nodes-above ( connector -- seq )
+    links>> [ parent>> dup connected-inputs>> [ all-nodes-above ] map 2array ] map flatten ;
 
-: connector-position* ( pair -- xy )
-    [ connector-position ] map first2 swap v- ;
+: all-nodes-below ( connector -- seq )
+    links>> [ parent>> dup connected-outputs>> [ all-nodes-below ] map 2array ] map flatten ;
 
-: initial-springs ( node -- seq )
-    connector-pairs [ [ second parent>> ] [ connector-position* ] bi 2array ] map ;
+:: each-pair ( seq quot -- )
+    seq [ but-last ] [ rest ] bi quot 2each ; inline
 
-:: add-spring ( node1 node2 -- )
-    node1 [ node2 -1 1000 2array 2array suffix ] change-springs drop
-    node2 [ node1 1 1000 2array 2array suffix ] change-springs drop ;
+: if-more-than-one ( seq quot -- )
+    [ length 1 > ] swap smart-when* ; inline
 
-SINGLETONS: above below left right ;
-: which-connectors ( node above/below -- seq )  above? [ inputs>> ] [ outputs>> ] if ;
-: which-side ( seq left/right -- elt )  left? [ first ] [ last ] if ;
+:: add-left-right-springs ( node1 node2 -- )
+    node1 [ { node2 { -1 0 } } suffix ] change-springs drop
+    node2 [ { node1 { 1 0 } } suffix ] change-springs drop ;
 
-:: search-node ( node above/below left/right -- node' )
-    node above/below which-connectors [ connected? ] filter 
-    [ empty? ] [ drop node ] 
-    [ left/right which-side links>> first parent>> above/below left/right search-node ] smart-if ;
+: reject-common ( set1 set2 -- set1' set2' )
+    [ diff ] [ swap diff ] 2bi ;
 
-:: find-left-right ( left-connector right-connector above/below -- )
-    left-connector links>> first parent>> above/below right search-node
-    right-connector links>> first parent>> above/below left search-node
-    [ eq? not ] [ add-spring ] smart-when* ;
+:: process-connector-row ( seq quot -- )
+    seq [ [ quot bi@ reject-common [ add-left-right-springs ] cartesian-each ] each-pair ] if-more-than-one ; inline
 
-:: (add-extra-springs) ( node above/below -- node )
-    node above/below which-connectors [ connected? ] filter [ length 1 > ] 
-    [ [ but-last ] [ rest ] bi [ above/below find-left-right ] 2each ] smart-when* node ;
-
-: add-extra-springs ( node -- node )
-    above (add-extra-springs) 
-    below (add-extra-springs) ;
-
-: centre ( definition -- xy )
-    dim>> [ 2 / >integer ] map ;
+: add-horizontal-springs ( node -- node )
+    dup connected-inputs>> [ all-nodes-above ] process-connector-row
+    dup connected-outputs>> [ all-nodes-below ] process-connector-row ;
 
 CONSTANT: k 0.05
-CONSTANT: sat 0.5
+CONSTANT: sat 0.1
 
 :: spring-force ( dx dx0 -- f )
     dx0 dx - k *
-    dx0 0 >= [ sat neg max ] when
-    dx0 0 <= [ sat min ] when ;
+    dx0 0 > [ sat neg max ] when
+    dx0 0 < [ sat min ] when ;
 
 :: force ( node1 node2 pos -- force )
-    node1 x>> node2 x>> - pos first 100 * spring-force
-    node1 y>> node2 y>> - pos second 40 * spring-force
-    pos second 1000 = [ drop 0 ] when
+    node1 x>> node1 half-width pos first * -
+    node2 x>> node2 half-width pos first * + - pos first 50 * spring-force
+    node1 y>> node2 y>> - pos second 80 * spring-force
+    pos first 0 = not [ drop 5 * 0 ] when
     2array ;
 
-: net-force ( node -- force )
-    dup springs>> [ dupd first2 force ] map v-sum nip ;
-
 : update-acceleration ( node -- node )
-    dup net-force >>acc ;
+    dup springs>> [ dupd first2 force ] map v-sum >>acc ;
 
 :: update-velocity ( node -- node )
     node [ node acc>> v+ 0.85 v*n ] change-vel ;
@@ -77,15 +67,15 @@ CONSTANT: sat 0.5
     node [ node vel>> v+ ] change-loc ;
 
 : move-nodes ( seq -- seq )
-    [ update-acceleration update-velocity update-position ] map ;
+    [ update-acceleration ] map [ update-velocity ] map [ update-position ] map ;
 
 : stop? ( seq -- ? )
     [ acc>> [ abs ] map supremum 0.01 <= ] all? ;
 
 : place-nodes ( def -- def )
      connected-nodes>>
-     [ dup initial-springs >>springs ] map
-     [ add-extra-springs ] map
+     [ add-vertical-springs ] map
+     [ add-horizontal-springs ] map
      [ dup stop? ] [ move-nodes ] until ;
 
 : place-unconnected-nodes ( def -- def )
