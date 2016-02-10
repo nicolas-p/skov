@@ -10,6 +10,7 @@ CONSTANT: faded-background HEXCOLOR: 0E4153
 CONSTANT: dark-background HEXCOLOR: 214A53
 CONSTANT: orange-background HEXCOLOR: FF6F5A
 CONSTANT: green-background HEXCOLOR: A8D83B
+CONSTANT: grey-background HEXCOLOR: E5ECEC
 
 CONSTANT: content-text-colour HEXCOLOR: E5E5E5
 CONSTANT: dark-text-colour COLOR: black

@@ -52,8 +52,15 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     [ set-font [ text-colour >>foreground bg-colour >>background ] change-font ] change-editor 
     add-gadget ;
 
+: replace-space ( char -- char )
+    [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
+
+: make-spaces-visible ( str -- str )
+    [ length 0 > ] [ unclip replace-space prefix ] smart-when
+    [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
+
 : add-name-label ( node-gadget -- node-gadget )
-    dup modell>> name>> <label> set-font add-gadget ;
+    dup modell>> name>> make-spaces-visible <label> set-font add-gadget ;
 
 : add-name ( node-gadget -- node-gadget )
     [ modell>> name>> ] [ add-name-label add-connector-gadgets ] [ add-name-field ] smart-if ;

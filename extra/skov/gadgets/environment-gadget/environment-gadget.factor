@@ -29,6 +29,9 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
     "green" [ parent>> parent>> word add-to-definition ] <plus-button>
     "Add word ( w )" >>tooltip f track-add
     <pile> 1/3 track-add
+    "grey" [ parent>> parent>> text add-to-definition ] <plus-button>
+    "Add text ( t )" >>tooltip f track-add
+    <pile> 1/3 track-add
     "dark" [ parent>> parent>> output add-to-definition ] <plus-button>
     "Add output ( o )" >>tooltip f track-add
     <pile> 1 track-add ;
@@ -55,6 +58,7 @@ M: environment-gadget update
 
 : add-input ( env -- ) [ input add-to-definition ] make-keyboard-safe ;
 : add-output ( env -- ) [ output add-to-definition ] make-keyboard-safe ;
+: add-text ( env -- ) [ text add-to-definition ] make-keyboard-safe ;
 : add-word ( env -- ) [ word add-to-definition ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
 : add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
@@ -115,6 +119,7 @@ environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
     { T{ key-up f f "i" } add-input }
     { T{ key-up f f "o" } add-output }
+    { T{ key-up f f "t" } add-text }
     { T{ key-up f f "v" } add-vocab }
     { T{ key-up f f "n" } add-word-in-vocab }
     { T{ key-up f f "d" } disconnect-connector-gadget }

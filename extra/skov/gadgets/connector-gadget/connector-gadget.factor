@@ -21,6 +21,7 @@ IN: skov.gadgets.connector-gadget
        { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
         { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
+        { [ dup text? ] [ drop "round-grey" grey-background dark-text-colour ] }
         } cond
     ] [ modell>>
       { { [ dup vocab? ] [ drop "pointy-faded" faded-background faded-text-colour ] }

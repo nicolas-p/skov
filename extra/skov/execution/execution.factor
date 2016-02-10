@@ -62,6 +62,9 @@ M: element write
 M: output write
     inputs>> [ link>> write-id ] map ;
 
+M: text write
+    [ name>> "\"" "\"" surround ] [ drop ":>" ] [ outputs>> first write-id ] tri 3array ;
+
 M: lambda write
     [ lambda-inputs>> [ write-id ] map { "[|" } { "|" } surround ]
     [ contents>> [ write ] map ]

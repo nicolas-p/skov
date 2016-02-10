@@ -11,6 +11,7 @@ TUPLE: word < element  result ;
 TUPLE: connector < element  link ;
 TUPLE: input < connector ;
 TUPLE: output < connector  id ;
+TUPLE: text < element ;
 
 TUPLE: special-input < input ;
 TUPLE: special-output < output ;
@@ -80,6 +81,7 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 GENERIC: add-connectors ( node -- node )
 M: input add-connectors  f >>contents dup name>> output add-with-name ;
 M: output add-connectors  f >>contents dup name>> input add-with-name ;
+M: text add-connectors  f >>contents dup name>> output add-with-name ;
 
 M: word add-connectors
     f >>contents dup in-out
