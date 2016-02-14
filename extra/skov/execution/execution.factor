@@ -56,8 +56,8 @@ M: element write
     [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
     [ [ name>> replacements 1array ] keep 
       [ variadic? ] [ inputs>> length 2 - [ dup last 2array ] times ] smart-when* ]
-    [ outputs>> [ special-output? ] reject [ write-id ] map ]
-    tri dup empty? [ "" ] [ ":>" ] if swap 4array ;
+    [ outputs>> [ special-output? ] reject [ write-id ":>" swap 2array ] map reverse ]
+    tri 3array ;
 
 M: output write
     inputs>> [ link>> write-id ] map ;
@@ -79,26 +79,45 @@ M: lambda write
     dup empty? [ drop "scratchpad" ] when ;
 
 :: write-vocab ( word -- seq )
-    "IN:" word path "::" 3array ;
+    "IN:" word path 2array ;
+
+: assemble ( seq -- str )
+    output>array flatten harvest " " join ; inline
 
 :: write-import ( word -- seq )
-    "FROM:" word path "=>" word name>> replacements ";" 5array ;
+    [ "FROM:" word path "=>" word name>> replacements ";" ] assemble ;
 
 : write-imports ( word -- seq )
     words>> [ path>> ] filter [ write-import ] map "USE: locals" suffix ;
 
-: write-word ( word -- seq )
-    { [ write-imports ]
-      [ write-vocab ]
-      [ name>> replacements ]
-      [ write-stack-effect ]
-      [ ordered-graph [ write ] map ]
-    } cleave 5array ";" suffix flatten harvest " " join ;
+:: write-word ( word -- seq )
+    [ word write-imports
+      word write-vocab
+      "::"
+      word name>> replacements
+      word write-stack-effect
+      word ordered-graph [ write ] map
+      ";"
+    ] assemble ;
 
 : eval-word ( word -- )
-    [ name>> replacements ] [ '[ _ write-word ( -- ) eval ] try ] smart-when* ;
+    [ name>> ] [ '[ _ write-word ( -- ) eval ] try ] smart-when* ;
 
 : run-word ( word -- )
     [ eval-word ]
-    [ [ write-import " " join ] [ name>> replacements ] bi " " glue eval>string ]
+    [ [ write-import ] [ name>> replacements ] bi " " glue eval>string ]
     [ result<< ] tri ;
+
+:: write-tuple ( tup -- seq )
+    tup name>> replacements :> name
+    tup contents>> [ name>> ] map :> slots
+    [ "USE: locals"
+      "USE: accessors"
+      tup write-vocab
+      "TUPLE:" name slots ";"
+      "C:" name "<" ">" surround name
+      "::" name ">" "<" surround "(" name "--" slots ")" slots [ ">>" append name swap 2array ] map ";"
+    ] assemble ;
+
+: eval-tuple ( tuple -- )
+    [ name>> ] [ '[ _ write-tuple ( -- ) eval ] try ] smart-when* ;

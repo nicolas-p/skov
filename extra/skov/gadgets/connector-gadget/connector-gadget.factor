@@ -13,19 +13,23 @@ IN: skov.gadgets.connector-gadget
       { [ dup modell>> name>> empty? ] [ drop t ] }
       { [ dup modell>> vocab? ] [ [ [ vocab-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
       { [ dup modell>> word? ] [ [ [ environment-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
+      { [ dup modell>> tuplee? ] [ [ [ environment-gadget? ] find-parent modell>> ] [ modell>> ] bi eq? ] }
     } cond ;
 
 : (node-theme) ( node-gadget -- img-name bg-colour text-colour )
     dup selected?
     [ modell>>
-       { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
+      { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
         { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
         { [ dup text? ] [ drop "round-grey" grey-background dark-text-colour ] }
-        } cond
+        { [ dup tuplee? ] [ drop "cut-blue" blue-background dark-text-colour ] }
+        { [ dup slot? ] [ drop "square-dark" dark-background light-text-colour ] }
+      } cond
     ] [ modell>>
       { { [ dup vocab? ] [ drop "pointy-faded" faded-background faded-text-colour ] }
         { [ dup word? ] [ drop "round-faded" faded-background faded-text-colour ] }
+        { [ dup tuplee? ] [ drop "cut-faded" faded-background faded-text-colour ] }
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 

@@ -14,8 +14,11 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 
 { 700 600 } environment-gadget set-tool-dim
 
+: word-or-tuple? ( obj -- ? )  [ word? ] [ tuplee? ] bi or ;
+
 :: add-to-definition ( env class -- )
-    env definition>> dup modell>> word? [ [ class add-element ] change-modell update ] when drop ;
+    env definition>> dup modell>> word-or-tuple? 
+    [ [ class add-element ] change-modell update ] when drop ;
 
 :: add-to-vocab ( env class -- )
     env vocab>> [ class add-element ] change-modell update drop ;
@@ -59,9 +62,11 @@ M: environment-gadget update
 : add-input ( env -- ) [ input add-to-definition ] make-keyboard-safe ;
 : add-output ( env -- ) [ output add-to-definition ] make-keyboard-safe ;
 : add-text ( env -- ) [ text add-to-definition ] make-keyboard-safe ;
+: add-slot ( env -- ) [ slot add-to-definition ] make-keyboard-safe ;
 : add-word ( env -- ) [ word add-to-definition ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
 : add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
+: add-tuple-in-vocab ( env -- ) [ tuplee add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
     [ hand-gadget get-global [ connector-gadget? ] 
@@ -99,8 +104,9 @@ M: environment-gadget update
     make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
-    env [ dup modell>> word? [ 
-      [ vocab>> modell>> words>> ] [ modell>> n next-nth ] [ swap >>modell update ] tri
+    env [ dup modell>> word-or-tuple? [ 
+      [ vocab>> modell>> [ tuples>> ] [ words>> ] bi append ] 
+      [ modell>> n next-nth ] [ swap >>modell update ] tri
     ] when drop ] make-keyboard-safe ;
 
 : previous-word ( env -- )  -1 next-nth-word ;
@@ -120,14 +126,16 @@ environment-gadget "general" f {
     { T{ key-up f f "i" } add-input }
     { T{ key-up f f "o" } add-output }
     { T{ key-up f f "t" } add-text }
+    { T{ key-up f f "s" } add-slot }
     { T{ key-up f f "v" } add-vocab }
     { T{ key-up f f "n" } add-word-in-vocab }
+    { T{ key-up f f "u" } add-tuple-in-vocab }
     { T{ key-up f f "d" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }
     { T{ key-up f f "e" } edit-node-gadget }
     { T{ key-up f f "m" } more-inputs }
     { T{ key-up f f "l" } less-inputs }
-    { T{ key-up f f "s" } save-skov-image }
+    { T{ key-up f { A+ } "s" } save-skov-image }
     { T{ key-up f f "h" } show-help }
     { T{ key-up f f "BACKSPACE" } show-result }
     { T{ key-up f f "UP" } previous-word }

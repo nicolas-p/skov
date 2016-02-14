@@ -19,7 +19,11 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <new-word-button> ( -- button )
     "green" [ parent>> [ word add-element ] change-modell update drop ] <plus-button>
-    "New word in vocabulary ( n )" >>tooltip ;
+    "New word ( n )" >>tooltip ;
+
+: <new-tuple-button> ( -- button )
+    "blue" [ parent>> [ tuplee add-element ] change-modell update drop ] <plus-button>
+    "New tuple class ( u )" >>tooltip ;
 
 : associated-word ( button -- word )
     parent>> children>> last ;
@@ -48,6 +52,9 @@ M: vocab-gadget update
     <space> add-gadget
     dup modell>> vocabs>> [ <node-gadget> add-gadget ] each
     <new-vocab-button> add-gadget
+    <space> add-gadget
+    dup modell>> tuples>> [ <node-gadget> add-gadget ] each
+    <new-tuple-button> add-gadget
     <space> add-gadget
     dup modell>> words>> [ <node-gadget> ?add-result-button add-gadget ] each
     <new-word-button> add-gadget ?select-result-button

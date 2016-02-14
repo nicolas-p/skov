@@ -12,16 +12,22 @@ TUPLE: connector < element  link ;
 TUPLE: input < connector ;
 TUPLE: output < connector  id ;
 TUPLE: text < element ;
+TUPLE: tuplee < element ;
+TUPLE: slot < element  initial-value ;
 
 TUPLE: special-input < input ;
 TUPLE: special-output < output ;
 UNION: special-connector  special-input special-output ;
 
 GENERIC: outputs>> ( obj -- seq )
+GENERIC: tuples>> ( obj -- seq )
+GENERIC: slots>> ( obj -- seq )
 M: element vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
 M: element words>> ( elt -- seq ) contents>> [ word? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
+M: element tuples>> ( elt -- seq ) contents>> [ tuplee? ] filter ;
+M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 
 :: add-element ( parent child-class -- parent )
      child-class new parent >>parent parent [ ?push ] change-contents ;
@@ -42,9 +48,13 @@ M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
       { "until" "special-until" }
     }
     [ change-name ] each
-    " >>" ">>" replace
-    " <<" "<<" replace
-    ">> " ">>" replace
+    [ [ first CHAR: < = ] [ last CHAR: > = ] bi and ]
+    [ "< " "<" replace " >" ">" replace ] smart-when
+    [ [ first CHAR: > = ] [ last CHAR: < = ] bi and ]
+    [ "> " ">" replace " <" "<" replace ] smart-when
+    " <" "<<" replace
+    " >" ">>" replace
+    "> " ">>" replace
     dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
     [ " " "-" replace ] when ;
 
@@ -82,6 +92,7 @@ GENERIC: add-connectors ( node -- node )
 M: input add-connectors  f >>contents dup name>> output add-with-name ;
 M: output add-connectors  f >>contents dup name>> input add-with-name ;
 M: text add-connectors  f >>contents dup name>> output add-with-name ;
+M: slot add-connectors  f >>contents ;
 
 M: word add-connectors
     f >>contents dup in-out

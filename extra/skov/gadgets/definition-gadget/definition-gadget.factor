@@ -33,10 +33,14 @@ M: definition-gadget layout*
       [ dup link 2dup connect <connection-gadget> ] map
     ] map concat [ add-gadget ] each ;
 
+: add-slots ( def -- def )
+    dup modell>> contents>> [ <node-gadget> add-gadget ] each ;
+
 M: definition-gadget update
     dup clear-gadget
     dup modell>>
     { { [ dup word? ] [ eval-word add-nodes add-connections place-unconnected-nodes place-nodes ] }
+      { [ dup tuplee? ] [ eval-tuple add-slots place-unconnected-nodes ] }
       { [ dup string? ] [ <label> set-light-font add-gadget ] }
       [ drop "skov-logo" theme-image <icon> add-gadget ]
     } cond ;
