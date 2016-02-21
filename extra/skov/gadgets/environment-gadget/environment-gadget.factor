@@ -73,20 +73,20 @@ M: environment-gadget update
 : add-tuple-in-vocab ( env -- ) [ tuplee add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
-    [ hand-gadget get-global [ connector-gadget? ] 
+    [ hand-gadget get-global [ connector-gadget? ]
       [ modell>> disconnect ] smart-when* update drop
     ] make-keyboard-safe ;
 
 : remove-node-gadget ( env -- )
     [ hand-gadget get-global [ node-gadget? ] find-parent
       [ [ outputs>> [ links>> [ modell>> disconnect ] each ] each ]
-        [ modell>> remove-from-parent ] bi 
+        [ modell>> remove-from-parent ] bi
       ] when* update drop
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent 
-      [ f >>name request-focus ] when* drop
+    [ hand-gadget get-global [ node-gadget? ] find-parent
+      [ dup in-vocab? [ f >>name ] when request-focus ] when* drop
     ] make-keyboard-safe ;
 
 : more-inputs ( env -- )
@@ -104,12 +104,12 @@ M: environment-gadget update
     ] make-keyboard-safe ;
 
 : show-result ( env -- )
-    [ dup definition>> modell>> [ word? ] [ dup run-word result>> >>modell update ] smart-when* drop ] 
+    [ dup definition>> modell>> [ word? ] [ dup run-word result>> >>modell update ] smart-when* drop ]
     make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
-    env [ dup modell>> word-or-tuple? [ 
-      [ vocab>> modell>> [ tuples>> ] [ words>> ] bi append ] 
+    env [ dup modell>> word-or-tuple? [
+      [ vocab>> modell>> [ tuples>> ] [ words>> ] bi append ]
       [ modell>> n next-nth ] [ swap >>modell update ] tri
     ] when drop ] make-keyboard-safe ;
 
