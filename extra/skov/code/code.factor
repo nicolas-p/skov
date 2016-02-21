@@ -113,11 +113,11 @@ M: word add-connectors
 
 GENERIC: connected? ( connector -- ? )
 
+M: element connected?
+    connectors>> [ connected? ] any? ;
+
 M: connector connected?
     link>> connector? ;
-
-M: word connected?
-    connectors>> [ connected? ] any? ;
 
 GENERIC: connect ( connector1 connector2 -- )
 
