@@ -7,7 +7,7 @@ ui.gadgets ui.gadgets.editors ui.gadgets.labels
 ui.gadgets.worlds ui.gestures ui.pens.solid ui.pens.tile ;
 IN: skov.gadgets.node-gadget
 
-: connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
+M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
 M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ modell>> input? ] filter ;
 M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ modell>> output? ] filter ;
 : connected-inputs>> ( node-gadget -- seq )  inputs>> [ connected? ] filter ;

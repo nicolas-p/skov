@@ -32,6 +32,10 @@ M: space pref-dim*  drop { 0 25 } ;
     [ associated-word dup modell>> run-word select-result ] "result" <word-button> 
     "Display result ( backspace )" >>tooltip ;
 
+: <error-button> ( -- button )
+    [ drop ] "error" <word-button> 
+    "There is an error in this word" >>tooltip ;
+
 :: <vocab-gadget> ( model -- vocab-gadget )
      vocab-gadget new vertical >>orientation model >>modell { 0 5 } >>gap 1/2 >>align ;
 
@@ -43,6 +47,10 @@ M: space pref-dim*  drop { 0 25 } ;
 : ?add-result-button ( node-gadget -- gadget )
     dup modell>> executable? 
     [ <shelf> 1/2 >>align <result-button> add-gadget swap add-gadget ] when ;
+
+: ?add-error-button ( node-gadget -- gadget )
+    dup node-gadget? [ dup modell>> error? 
+    [ <shelf> 1/2 >>align <error-button> add-gadget swap add-gadget ] when ] when ;
 
 M: vocab-gadget update
     dup clear-gadget
@@ -56,7 +64,7 @@ M: vocab-gadget update
     dup modell>> tuples>> [ <node-gadget> add-gadget ] each
     <new-tuple-button> add-gadget
     <space> add-gadget
-    dup modell>> words>> [ <node-gadget> ?add-result-button add-gadget ] each
+    dup modell>> words>> [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget ?select-result-button
     dup modell>> name>> add-to-interactive-vocabs ;
 

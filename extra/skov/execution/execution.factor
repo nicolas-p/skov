@@ -101,7 +101,7 @@ M: lambda write
     ] assemble ;
 
 : eval-word ( word -- )
-    [ name>> ] [ '[ _ write-word ( -- ) eval ] try ] smart-when* ;
+    [ name>> ] [ '[ _ dup f >>defined? write-word ( -- ) eval t >>defined? drop ] try ] smart-when* ;
 
 : run-word ( word -- )
     [ eval-word ]

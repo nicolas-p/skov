@@ -17,7 +17,7 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 : word-or-tuple? ( obj -- ? )  [ word? ] [ tuplee? ] bi or ;
 
 :: add-to-definition ( env class -- )
-    env definition>> dup modell>> word-or-tuple? 
+    env dup definition>> modell>> word-or-tuple? 
     [ [ class add-element ] change-modell update ] when drop ;
 
 :: add-to-vocab ( env class -- )

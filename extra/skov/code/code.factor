@@ -7,7 +7,7 @@ IN: skov.code
 
 TUPLE: element  name parent contents path ;
 TUPLE: vocab < element ;
-TUPLE: word < element  result ;
+TUPLE: word < element  defined? result ;
 TUPLE: connector < element  link ;
 TUPLE: input < connector ;
 TUPLE: output < connector  id ;
@@ -22,8 +22,10 @@ UNION: special-connector  special-input special-output ;
 GENERIC: outputs>> ( obj -- seq )
 GENERIC: tuples>> ( obj -- seq )
 GENERIC: slots>> ( obj -- seq )
+GENERIC: connectors>> ( obj -- seq )
 M: element vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
 M: element words>> ( elt -- seq ) contents>> [ word? ] filter ;
+M: element connectors>> ( elt -- seq ) contents>> [ connector? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 M: element tuples>> ( elt -- seq ) contents>> [ tuplee? ] filter ;
@@ -114,6 +116,9 @@ GENERIC: connected? ( connector -- ? )
 M: connector connected?
     link>> connector? ;
 
+M: word connected?
+    connectors>> [ connected? ] any? ;
+
 GENERIC: connect ( connector1 connector2 -- )
 
 M: connector connect
@@ -129,8 +134,16 @@ M: connector connect
       [ connect ] smart-when* 
     ] smart-when* ;
 
+: complete-graph? ( word -- ? )
+    contents>> [ connected? ] reject empty? ;
+
 : executable? ( word -- ? )
-    [ inputs>> empty? ] [ outputs>> empty? ] [ words>> empty? not ] tri and and ;
+   { [ complete-graph? ] [ inputs>> empty? ] [ outputs>> empty? ]
+     [ words>> empty? not ] [ defined?>> ] } cleave and and and and ;
+
+: error? ( word -- ? )
+   { [ name>> empty? not ] [ complete-graph? not ]
+     [ complete-graph? ] [ defined?>> not ] } cleave and or and ;
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
