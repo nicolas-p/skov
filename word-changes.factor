@@ -1,7 +1,6 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 USING: colors.hex combinators.smart listener namespaces
 sequences skov ui ui.gadgets.borders ui.gadgets.panes ;
-IN: ui.tools.listener
 
 IN: kernel
 : special-while ( initial pred: ( a -- ? ) body: ( b -- a ) -- final )
@@ -19,6 +18,13 @@ IN: math
 : sub ( x y -- subtraction )  - ;
 : mul ( x y -- product )  * ;
 : div ( x y -- division )  / ;
+: half ( x -- x/2 )  2 / ;
+
+IN: math.functions
+: exp ( x -- e^x )  e^ ;
+: pow ( x a -- x^a )  ^ ;
+: pow-2 ( x y -- 2^x )  2^ ;
+: pow-10 ( x y -- 10^x )  10^ ;
 
 IN: prettyprint
 : display ( object -- )  . ;
@@ -41,6 +47,7 @@ interactive-vocabs [ {
   "io.directories"
   "lists.lazy"
   "splitting"
+  "math.functions"
 } append ] change-global
 
 IN: ui.gadgets.theme
