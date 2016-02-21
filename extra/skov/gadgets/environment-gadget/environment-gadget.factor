@@ -16,8 +16,12 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 
 : word-or-tuple? ( obj -- ? )  [ word? ] [ tuplee? ] bi or ;
 
-:: add-to-definition ( env class -- )
-    env dup definition>> modell>> word-or-tuple? 
+:: add-to-tuple ( env class -- )
+    env dup definition>> modell>> tuple? 
+    [ [ class add-element ] change-modell update ] when drop ;
+
+:: add-to-word ( env class -- )
+    env dup definition>> modell>> word? 
     [ [ class add-element ] change-modell update ] when drop ;
 
 :: add-to-vocab ( env class -- )
@@ -26,16 +30,16 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 : <plus-button-bar> ( -- pile )
     vertical <track>
     <pile> 1 track-add
-    "dark" [ parent>> parent>> input add-to-definition ] <plus-button>
+    "dark" [ parent>> parent>> input add-to-word ] <plus-button>
     "Add input ( i )" >>tooltip f track-add
     <pile> 1/3 track-add
-    "green" [ parent>> parent>> word add-to-definition ] <plus-button>
+    "green" [ parent>> parent>> word add-to-word ] <plus-button>
     "Add word ( w )" >>tooltip f track-add
     <pile> 1/3 track-add
-    "grey" [ parent>> parent>> text add-to-definition ] <plus-button>
+    "grey" [ parent>> parent>> text add-to-word ] <plus-button>
     "Add text ( t )" >>tooltip f track-add
     <pile> 1/3 track-add
-    "dark" [ parent>> parent>> output add-to-definition ] <plus-button>
+    "dark" [ parent>> parent>> output add-to-word ] <plus-button>
     "Add output ( o )" >>tooltip f track-add
     <pile> 1 track-add ;
 
@@ -59,11 +63,11 @@ M: environment-gadget update
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
 
-: add-input ( env -- ) [ input add-to-definition ] make-keyboard-safe ;
-: add-output ( env -- ) [ output add-to-definition ] make-keyboard-safe ;
-: add-text ( env -- ) [ text add-to-definition ] make-keyboard-safe ;
-: add-slot ( env -- ) [ slot add-to-definition ] make-keyboard-safe ;
-: add-word ( env -- ) [ word add-to-definition ] make-keyboard-safe ;
+: add-input ( env -- ) [ input add-to-word ] make-keyboard-safe ;
+: add-output ( env -- ) [ output add-to-word ] make-keyboard-safe ;
+: add-text ( env -- ) [ text add-to-word ] make-keyboard-safe ;
+: add-slot ( env -- ) [ slot add-to-tuple ] make-keyboard-safe ;
+: add-word ( env -- ) [ word add-to-word ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
 : add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
 : add-tuple-in-vocab ( env -- ) [ tuplee add-to-vocab ] make-keyboard-safe ;
