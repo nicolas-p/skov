@@ -68,8 +68,13 @@ M: vocab-gadget update
     <new-word-button> add-gadget ?select-result-button
     dup modell>> name>> add-to-interactive-vocabs ;
 
+: contents-height ( vocab-gadget -- x )
+    children>> [ last loc>> second ] [ first loc>> second ] bi - ;
+
 M:: vocab-gadget layout* ( gadget -- )
-    gadget call-next-method 
+    gadget call-next-method
+    gadget [ contents-height ] [ dim>> second ] bi - 50 + 0 max 
+    gadget [ min 0 max ] change-scroll-position drop
     gadget children>> [ [ pack? not ] [ [ { 15 0 } v+ ] change-loc drop ] smart-when* ] each
     gadget children>> [ [ 0 gadget scroll-position>> 2array v- ] change-loc drop ] each ;
 
@@ -78,12 +83,8 @@ M: vocab-gadget pref-dim*
     [ children>> dup [ [ pack? ] [ children>> second ] smart-when ] map 
     pref-dims dup supremum swap index swap nth pack? not [ { 20 0 } v+ ] when ] bi ;
 
-: vocab-list-height ( vocab-gadget -- x )
-    children>> [ last loc>> second ] [ first loc>> second ] bi - ;
-
 : do-mouse-scroll ( vocab-gadget -- )
-    dup vocab-list-height 120 - swap
-    [ scroll-direction get-global second 3 * + 0 max min ] change-scroll-position relayout-1 ;
+    [ scroll-direction get-global second 3 * + ] change-scroll-position relayout-1 ;
 
 vocab-gadget H{
     { mouse-scroll [ do-mouse-scroll ] }
