@@ -64,7 +64,7 @@ CONSTANT: sat 0.1
     node [ node acc>> v+ 0.85 v*n ] change-vel ;
 
 :: update-position ( node -- node )
-    node [ node vel>> v+ ] change-loc ;
+    node [ node vel>> v+ ] change-pos ;
 
 : move-nodes ( seq -- seq )
     [ update-acceleration ] map [ update-velocity ] map [ update-position ] map ;

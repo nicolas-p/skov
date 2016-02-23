@@ -6,7 +6,9 @@ IN: skov.gadgets
 TUPLE: environment-gadget < tool  modell ;
 TUPLE: definition-gadget < border  modell ;
 TUPLE: vocab-gadget < pack  modell { scroll-position initial: 0 } ;
-TUPLE: node-gadget < border  modell { acc initial: { 0 1 } } { vel initial: { 0 0 } } springs ;
+TUPLE: node-gadget < border  modell springs { acc initial: { 0 1 } } 
+                                            { vel initial: { 0 0 } } 
+                                            { pos initial: { 0 0 } } ;
 TUPLE: connector-gadget < icon  modell { links initial: { } } ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;

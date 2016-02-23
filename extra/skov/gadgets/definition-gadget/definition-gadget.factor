@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: accessors arrays assocs combinators
-combinators.smart kernel locals math sequences skov.animation
+combinators.smart kernel locals math math.vectors sequences skov.animation
 skov.code skov.execution skov.gadgets skov.gadgets.connection-gadget
 skov.gadgets.connector-gadget skov.gadgets.node-gadget
 skov.theme strings ui.gadgets ui.gadgets.icons
@@ -16,15 +16,19 @@ M: definition-gadget pref-dim*
 : contains-only-icon-or-text? ( def -- ? )
     children>> [ empty? not ] [ first node-gadget? not ] smart-when ;
 
-M: definition-gadget layout*
-   [ [ dup pref-dim swap dim<< ] each-child ]
-   [ [ contains-only-icon-or-text? ] [ call-next-method ] smart-when* ] bi ;
-
-: centre ( definition -- xy )
+: centre ( def -- xy )
     dim>> [ 2 / >integer ] map ;
 
+: centre-graph ( def -- )
+    [ centre ] [ connected-nodes>> [ dupd [ pos>> v+ ] [ loc<< ] bi ] each drop ] bi ;
+
+M: definition-gadget layout*
+   [ [ dup pref-dim swap dim<< ] each-child ]
+   [ centre-graph ]
+   [ [ contains-only-icon-or-text? ] [ call-next-method ] smart-when* ] tri ;
+
 : add-nodes ( def -- def )
-    dup modell>> contents>> [ <node-gadget> dupd swap centre >>loc add-gadget ] each ;
+    dup modell>> contents>> [ <node-gadget> add-gadget ] each ;
 
 : add-connections ( def -- def )
     dup children>>
