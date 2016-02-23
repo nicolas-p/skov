@@ -22,7 +22,7 @@ IN: skov.gadgets.connector-gadget
       { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
         { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
-        { [ dup text? ] [ drop "round-grey" grey-background dark-text-colour ] }
+        { [ dup text? ] [ drop "chamfer-grey" grey-background dark-text-colour ] }
         { [ dup tuplee? ] [ drop "cut-blue" blue-background dark-text-colour ] }
         { [ dup slot? ] [ drop "square-dark" dark-background light-text-colour ] }
       } cond
