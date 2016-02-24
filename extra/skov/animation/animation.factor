@@ -2,7 +2,7 @@
 USING: accessors arrays assocs combinators combinators.smart
 kernel locals math math.order math.vectors random sequences
 sequences.deep sets skov.code skov.gadgets
-skov.gadgets.node-gadget skov.utilities ;
+skov.gadgets.node-gadget skov.utilities ui.gadgets ;
 IN: skov.animation
 
 : nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
@@ -73,11 +73,23 @@ CONSTANT: sat 0.1
     [ acc>> [ abs ] map supremum 0.01 <= ] all? ;
 
 : place-nodes ( def -- def )
-     connected-nodes>>
+     dup connected-nodes>>
      [ add-vertical-springs ] map
      [ add-horizontal-springs ] map
-     [ dup stop? ] [ move-nodes ] until ;
+     [ dup stop? ] [ move-nodes ] until drop ;
 
-: place-unconnected-nodes ( def -- def )
-    dup unconnected-nodes>>
-    dup length iota zip [ first2 50 * 10 swap 2array >>loc drop ] each ;
+: left-edge ( seq -- x )
+    [ empty? not ] [ [ pos>> first ] map infimum ] [ 70 ] smart-if* ;
+
+: max-width ( seq -- w )
+    [ empty? not ] [ [ pref-dim first ] map supremum ] [ 0 ] smart-if* ;
+
+:: place-unconnected-nodes ( def -- def )
+    def connected-nodes>> left-edge 70 - :> x
+    def unconnected-nodes>> max-width :> w
+    def unconnected-nodes>>
+    dup length :> l
+    l iota
+    [ [ dup pref-dim first w - 2 / x swap - w - >integer ] dip 
+      l 2 / - 50 * 2array >>pos drop ] 2each
+    def ;

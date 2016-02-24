@@ -20,7 +20,7 @@ M: definition-gadget pref-dim*
     dim>> [ 2 / >integer ] map ;
 
 : centre-graph ( def -- )
-    [ centre ] [ connected-nodes>> [ dupd [ pos>> v+ ] [ loc<< ] bi ] each drop ] bi ;
+    [ centre ] [ nodes>> [ dupd [ pos>> v+ ] [ loc<< ] bi ] each drop ] bi ;
 
 M: definition-gadget layout*
    [ [ dup pref-dim swap dim<< ] each-child ]
@@ -43,7 +43,7 @@ M: definition-gadget layout*
 M: definition-gadget update
     dup clear-gadget
     dup modell>>
-    { { [ dup word? ] [ eval-word add-nodes add-connections place-unconnected-nodes place-nodes ] }
+    { { [ dup word? ] [ eval-word add-nodes add-connections place-nodes place-unconnected-nodes ] }
       { [ dup tuplee? ] [ eval-tuple add-slots place-unconnected-nodes ] }
       { [ dup string? ] [ <label> set-light-font add-gadget ] }
       [ drop "skov-logo" theme-image <icon> add-gadget ]
