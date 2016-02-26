@@ -67,6 +67,10 @@ M: environment-gadget update
 : add-output ( env -- ) [ output add-to-word ] make-keyboard-safe ;
 : add-text ( env -- ) [ text add-to-word ] make-keyboard-safe ;
 : add-slot ( env -- ) [ slot add-to-tuple ] make-keyboard-safe ;
+: add-constructor ( env -- ) [ constructor add-to-word ] make-keyboard-safe ;
+: add-destructor ( env -- ) [ destructor add-to-word ] make-keyboard-safe ;
+: add-accessor ( env -- ) [ accessor add-to-word ] make-keyboard-safe ;
+: add-mutator ( env -- ) [ mutator add-to-word ] make-keyboard-safe ;
 : add-word ( env -- ) [ word add-to-word ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
 : add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
@@ -121,7 +125,7 @@ M: environment-gadget update
 
 : show-help ( env -- )
     [ hand-gadget get-global [ node-gadget? ] find-parent
-      [ [ modell>> name>> replacements search (browser-window) ] with-interactive-vocabs ]
+      [ [ modell>> factor-name search (browser-window) ] with-interactive-vocabs ]
       [ show-browser ] if* drop
     ] make-keyboard-safe ;
 
@@ -131,14 +135,18 @@ environment-gadget "general" f {
     { T{ key-up f f "o" } add-output }
     { T{ key-up f f "t" } add-text }
     { T{ key-up f f "s" } add-slot }
+    { T{ key-up f f "c" } add-constructor }
+    { T{ key-up f f "d" } add-destructor }
+    { T{ key-up f f "a" } add-accessor }
+    { T{ key-up f f "m" } add-mutator }
     { T{ key-up f f "v" } add-vocab }
     { T{ key-up f f "n" } add-word-in-vocab }
     { T{ key-up f f "u" } add-tuple-in-vocab }
-    { T{ key-up f f "d" } disconnect-connector-gadget }
+    { T{ key-up f f "x" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }
     { T{ key-up f f "e" } edit-node-gadget }
-    { T{ key-up f f "m" } more-inputs }
-    { T{ key-up f f "l" } less-inputs }
+    { T{ key-up f f "RIGHT" } more-inputs }
+    { T{ key-up f f "LEFT" } less-inputs }
     { T{ key-up f { A+ } "s" } save-skov-image }
     { T{ key-up f f "h" } show-help }
     { T{ key-up f f "BACKSPACE" } show-result }

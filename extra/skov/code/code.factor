@@ -14,6 +14,10 @@ TUPLE: output < connector  id ;
 TUPLE: text < element ;
 TUPLE: tuplee < element ;
 TUPLE: slot < element  initial-value ;
+TUPLE: constructor < word ;
+TUPLE: destructor < word ;
+TUPLE: accessor < word ;
+TUPLE: mutator < word ;
 
 TUPLE: special-input < input ;
 TUPLE: special-output < output ;
@@ -43,22 +47,35 @@ M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
-: replacements ( str -- str )
-    { 
+GENERIC: factor-name ( obj -- str )
+
+M: element factor-name
+    name>> " " "-" replace ;
+
+M: word factor-name
+    name>> { 
       { "lazy filter" "lfilter" }
       { "while" "special-while" }
       { "until" "special-until" }
     }
     [ change-name ] each
-    [ [ first CHAR: < = ] [ last CHAR: > = ] bi and ]
-    [ "< " "<" replace " >" ">" replace ] smart-when
-    [ [ first CHAR: > = ] [ last CHAR: < = ] bi and ]
-    [ "> " ">" replace " <" "<" replace ] smart-when
-    " <" "<<" replace
-    " >" ">>" replace
-    "> " ">>" replace
     dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
     [ " " "-" replace ] when ;
+
+M: constructor factor-name
+    name>> " " "-" replace "<" ">" surround ;
+
+M: destructor factor-name
+    name>> " " "-" replace ">" "<" surround ;
+
+M: accessor factor-name
+    name>> " " "-" replace ">>" append ;
+
+M: mutator factor-name
+    name>> " " "-" replace ">>" swap append ;
+
+M: text factor-name
+    name>> "\"" "\"" surround ;
 
 : replace-quot ( seq -- seq )
     [ dup array? [ first "quotation" " " glue ] [ ] if ] map ;
@@ -77,10 +94,9 @@ M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
     [ inputs>> ] [ outputs>> ] bi [ [ name>> ] map ] bi@ ;
 
 :: in-out ( word -- seq seq )
-    word name>> replacements :> name
+    word factor-name :> name
     [ { { [ word same-name-as-parent? ] [ word parent>> input-output-names ] }
         { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
-        { [ name CHAR: " swap member? ] [ { } { "string" } ] }
         { [ name string>number ] [ { } { "number" } ] }
         { [ name search not ] [ { } { } ] }
         [ name search dup vocabulary>> word path<< stack-effect convert-stack-effect ]

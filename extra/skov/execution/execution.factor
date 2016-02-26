@@ -29,8 +29,8 @@ M: lambda inputs>>  drop { } ;
     [ [ ] [ next-id ] if* ] change-id id>> ;
 
 : write-stack-effect ( word -- seq )
-    [ inputs>> [ name>> replacements ] map ]
-    [ outputs>> [ name>> replacements ] map ] bi
+    [ inputs>> [ factor-name ] map ]
+    [ outputs>> [ factor-name ] map ] bi
     { "--" } glue { "(" } { ")" } surround ;
 
 : unevaluated? ( connector -- ? )
@@ -54,7 +54,7 @@ GENERIC: write ( obj -- seq )
 
 M: element write
     [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
-    [ [ name>> replacements 1array ] keep 
+    [ [ factor-name 1array ] keep 
       [ variadic? ] [ inputs>> length 2 - [ dup last 2array ] times ] smart-when* ]
     [ outputs>> [ special-output? ] reject [ write-id ":>" swap 2array ] map reverse ]
     tri 3array ;
@@ -63,7 +63,7 @@ M: output write
     inputs>> [ link>> write-id ] map ;
 
 M: text write
-    [ name>> "\"" "\"" surround ] [ drop ":>" ] [ outputs>> first write-id ] tri 3array ;
+    [ factor-name ] [ drop ":>" ] [ outputs>> first write-id ] tri 3array ;
 
 M: lambda write
     [ lambda-inputs>> [ write-id ] map { "[|" } { "|" } surround ]
@@ -75,7 +75,7 @@ M: lambda write
 
 : path ( word -- str )
     [ path>> ] [ path>> ]
-    [ parents reverse rest but-last [ name>> replacements ] map "." join ] smart-if
+    [ parents reverse rest but-last [ factor-name ] map "." join ] smart-if
     dup empty? [ drop "scratchpad" ] when ;
 
 :: write-vocab ( word -- seq )
@@ -85,7 +85,7 @@ M: lambda write
     output>array flatten harvest " " join ; inline
 
 :: write-import ( word -- seq )
-    [ "FROM:" word path "=>" word name>> replacements ";" ] assemble ;
+    [ "FROM:" word path "=>" word factor-name ";" ] assemble ;
 
 : write-imports ( word -- seq )
     words>> [ path>> ] filter [ write-import ] map "USE: locals" suffix ;
@@ -94,7 +94,7 @@ M: lambda write
     [ word write-imports
       word write-vocab
       "::"
-      word name>> replacements
+      word factor-name
       word write-stack-effect
       word ordered-graph [ write ] map
       ";"
@@ -105,11 +105,11 @@ M: lambda write
 
 : run-word ( word -- )
     [ eval-word ]
-    [ [ write-import ] [ name>> replacements ] bi " " glue eval>string ]
+    [ [ write-import ] [ factor-name ] bi " " glue eval>string ]
     [ result<< ] tri ;
 
 :: write-tuple ( tup -- seq )
-    tup name>> replacements :> name
+    tup factor-name :> name
     tup contents>> [ name>> ] map :> slots
     [ "USE: locals"
       "USE: accessors"
