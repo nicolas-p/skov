@@ -19,21 +19,21 @@ IN: skov.gadgets.connector-gadget
 : (node-theme) ( node-gadget -- img-name bg-colour text-colour )
     dup selected?
     [ modell>>
-      { { [ dup connector? ] [ drop "round-dark" dark-background light-text-colour ] }
-        { [ dup vocab? ] [ drop "pointy-orange" orange-background dark-text-colour ] }
-        { [ dup text? ] [ drop "chamfer-grey" grey-background dark-text-colour ] }
-        { [ dup tuplee? ] [ drop "cut-blue" blue-background dark-text-colour ] }
-        { [ dup slot? ] [ drop "square-dark" dark-background light-text-colour ] }
+      { { [ dup connector? ] [ drop "connector" dark-background light-text-colour ] }
+        { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
+        { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
+        { [ dup tuplee? ] [ drop "class" blue-background dark-text-colour ] }
+        { [ dup slot? ] [ drop "slot" dark-background light-text-colour ] }
         { [ dup constructor? ] [ drop "constructor" green-background dark-text-colour ] }
         { [ dup destructor? ] [ drop "destructor" green-background dark-text-colour ] }
         { [ dup accessor? ] [ drop "accessor" green-background dark-text-colour ] }
         { [ dup mutator? ] [ drop "mutator" green-background dark-text-colour ] }
-        { [ dup word? ] [ drop "round-green" green-background dark-text-colour ] }
+        { [ dup word? ] [ drop "word" green-background dark-text-colour ] }
       } cond
     ] [ modell>>
-      { { [ dup vocab? ] [ drop "pointy-faded" faded-background faded-text-colour ] }
-        { [ dup word? ] [ drop "round-faded" faded-background faded-text-colour ] }
-        { [ dup tuplee? ] [ drop "cut-faded" faded-background faded-text-colour ] }
+      { { [ dup vocab? ] [ drop "vocab-faded" faded-background faded-text-colour ] }
+        { [ dup word? ] [ drop "word-faded" faded-background faded-text-colour ] }
+        { [ dup tuplee? ] [ drop "class-faded" faded-background faded-text-colour ] }
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 
