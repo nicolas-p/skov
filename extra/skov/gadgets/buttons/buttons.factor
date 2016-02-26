@@ -13,7 +13,7 @@ M: round-button pref-dim*
     "" swap round-button new-button ;
 
 : <plus-button-pen> ( str -- pen )
-    "plus-button" 2-theme-image <image-pen> dup
+    "plus-button" 2-theme-image <image-pen> "dot" "button" 2-theme-image <image-pen> swap
     "pressed" "button" 2-theme-image <image-pen> dup dup <button-pen> ;
 
 : <plus-button> ( str quot -- button )

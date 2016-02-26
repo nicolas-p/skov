@@ -60,10 +60,8 @@ M: vocab-gadget update
     <space> add-gadget
     dup modell>> vocabs>> [ <node-gadget> add-gadget ] each
     <new-vocab-button> add-gadget
-    <space> add-gadget
     dup modell>> tuples>> [ <node-gadget> add-gadget ] each
     <new-tuple-button> add-gadget
-    <space> add-gadget
     dup modell>> words>> [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget ?select-result-button
     dup modell>> name>> add-to-interactive-vocabs ;

@@ -30,17 +30,22 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 : <plus-button-bar> ( -- pile )
     vertical <track>
     <pile> 1 track-add
-    "dark" [ parent>> parent>> input add-to-word ] <plus-button>
-    "Add input ( i )" >>tooltip f track-add
-    <pile> 1/3 track-add
-    "green" [ parent>> parent>> word add-to-word ] <plus-button>
-    "Add word ( w )" >>tooltip f track-add
-    <pile> 1/3 track-add
-    "grey" [ parent>> parent>> text add-to-word ] <plus-button>
-    "Add text ( t )" >>tooltip f track-add
-    <pile> 1/3 track-add
-    "dark" [ parent>> parent>> output add-to-word ] <plus-button>
-    "Add output ( o )" >>tooltip f track-add
+    "dark" [ parent>> parent>> input add-to-word ]
+    <plus-button> "Add input ( i )" >>tooltip f track-add
+    "dark" [ parent>> parent>> output add-to-word ]
+    <plus-button> "Add output ( o )" >>tooltip f track-add
+    "green" [ parent>> parent>> word add-to-word ]
+    <plus-button> "Add word ( w )" >>tooltip f track-add
+    "green" [ parent>> parent>> constructor add-to-word ]
+    <plus-button> "Add constructor ( c )" >>tooltip f track-add
+    "green" [ parent>> parent>> accessor add-to-word ]
+    <plus-button> "Add accessor ( a )" >>tooltip f track-add
+    "green" [ parent>> parent>> mutator add-to-word ]
+    <plus-button> "Add mutator ( m )" >>tooltip f track-add
+    "green" [ parent>> parent>> destructor add-to-word ]
+    <plus-button> "Add destructor ( d )" >>tooltip f track-add
+    "grey" [ parent>> parent>> text add-to-word ]
+    <plus-button> "Add text ( t )" >>tooltip f track-add
     <pile> 1 track-add ;
 
 SYMBOL: skov-root
