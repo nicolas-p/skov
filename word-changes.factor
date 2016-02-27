@@ -26,6 +26,9 @@ IN: math.functions
 : pow-2 ( x y -- 2^x )  2^ ;
 : pow-10 ( x y -- 10^x )  10^ ;
 
+IN: math.constants
+: tau ( -- tau )  2 pi * ; inline
+
 IN: prettyprint
 : display ( object -- )  . ;
 
