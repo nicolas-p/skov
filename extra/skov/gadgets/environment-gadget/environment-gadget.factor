@@ -1,5 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors combinators combinators.smart kernel listener
+USING: accessors arrays combinators combinators.smart kernel listener
 locals math memory namespaces sequences skov.code skov.execution
 skov.gadgets skov.gadgets.buttons skov.gadgets.connector-gadget
 skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
@@ -11,6 +11,8 @@ IN: skov.gadgets.environment-gadget
 
 M: environment-gadget definition>>  children>> [ definition-gadget? ] filter first ;
 M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
+
+: find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
 
 { 700 600 } environment-gadget set-tool-dim
 
@@ -27,26 +29,34 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 :: add-to-vocab ( env class -- )
     env vocab>> [ class add-element ] change-modell update drop ;
 
-: <plus-button-bar> ( -- pile )
-    vertical <track>
-    <pile> 1 track-add
-    "dark" [ parent>> parent>> input add-to-word ]
-    <plus-button> "Add input ( i )" >>tooltip f track-add
-    "dark" [ parent>> parent>> output add-to-word ]
-    <plus-button> "Add output ( o )" >>tooltip f track-add
-    "green" [ parent>> parent>> word add-to-word ]
-    <plus-button> "Add word ( w )" >>tooltip f track-add
-    "green" [ parent>> parent>> constructor add-to-word ]
-    <plus-button> "Add constructor ( c )" >>tooltip f track-add
-    "green" [ parent>> parent>> accessor add-to-word ]
-    <plus-button> "Add accessor ( a )" >>tooltip f track-add
-    "green" [ parent>> parent>> mutator add-to-word ]
-    <plus-button> "Add mutator ( m )" >>tooltip f track-add
-    "green" [ parent>> parent>> destructor add-to-word ]
-    <plus-button> "Add destructor ( d )" >>tooltip f track-add
-    "grey" [ parent>> parent>> text add-to-word ]
-    <plus-button> "Add text ( t )" >>tooltip f track-add
-    <pile> 1 track-add ;
+: plus-buttons-for-word ( -- seq )
+    [ "dark" [ find-env input add-to-word ] <plus-button> "Add input ( i )" >>tooltip
+      "dark" [ find-env output add-to-word ] <plus-button> "Add output ( o )" >>tooltip
+      <space>
+      "green" [ find-env word add-to-word ] <plus-button> "Add word ( w )" >>tooltip
+      <space>
+      "green" [ find-env constructor add-to-word ] <plus-button> "Add constructor ( c )" >>tooltip
+      "green" [ find-env accessor add-to-word ] <plus-button> "Add accessor ( a )" >>tooltip
+      "green" [ find-env mutator add-to-word ] <plus-button> "Add mutator ( m )" >>tooltip
+      "green" [ find-env destructor add-to-word ] <plus-button> "Add destructor ( d )" >>tooltip
+      <space>
+      "grey" [ find-env text add-to-word ] <plus-button> "Add text ( t )" >>tooltip
+    ] output>array ;
+
+: plus-buttons-for-tuple ( -- seq )
+    "dark" [ find-env slot add-to-tuple ] <plus-button> "Add slot ( s )" >>tooltip 1array ;
+
+: <plus-button-bar> ( -- gadget )
+    <pile> { 0 0 } <border> ;
+
+:: update-plus-buttons ( env -- env )
+    env gadget-child gadget-child dup clear-gadget
+    env modell>> {
+      { [ dup tuplee? ] [ drop plus-buttons-for-tuple ] }
+      { [ dup word? ] [ drop plus-buttons-for-word ] }
+      [ drop { } ]
+    } cond [ add-gadget ] each
+    drop env ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -63,7 +73,7 @@ vocab new "●" >>name skov-root set-global
 M: environment-gadget update
     { [ definition>> ] [ modell>> >>modell update drop ]
       [ vocab>> ] [ modell>> [ vocab? ] [ >>modell ] smart-when* update drop ] 
-      [ ] } cleave ;
+      [ update-plus-buttons ] } cleave ;
 
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
