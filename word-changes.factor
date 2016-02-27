@@ -41,13 +41,19 @@ IN: ui.tools.listener
 
 USE: lists.lazy
 USE: splitting
+USE: math.trig
 
 interactive-vocabs [ { 
   "io.encodings.utf8"
   "io.directories"
+  "io.directories.hierarchy"
   "lists.lazy"
   "splitting"
   "math.functions"
+  "math.trig"
+  "math.vectors"
+  "sequences.deep"
+  "binary-search"
 } append ] change-global
 
 IN: ui.gadgets.theme
