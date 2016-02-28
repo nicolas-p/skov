@@ -12,14 +12,12 @@ IN: skov.gadgets.environment-gadget
 M: environment-gadget definition>>  children>> [ definition-gadget? ] filter first ;
 M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 
-: find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
-
 { 700 600 } environment-gadget set-tool-dim
 
-: word-or-tuple? ( obj -- ? )  [ word? ] [ tuplee? ] bi or ;
+: word-or-tuple? ( obj -- ? )  [ word? ] [ tuple-class? ] bi or ;
 
 :: add-to-tuple ( env class -- )
-    env dup definition>> modell>> tuple? 
+    env dup definition>> modell>> tuple-class? 
     [ [ class add-element ] change-modell update ] when drop ;
 
 :: add-to-word ( env class -- )
@@ -52,7 +50,7 @@ M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
 :: update-plus-buttons ( env -- env )
     env gadget-child gadget-child dup clear-gadget
     env modell>> {
-      { [ dup tuplee? ] [ drop plus-buttons-for-tuple ] }
+      { [ dup tuple-class? ] [ drop plus-buttons-for-tuple ] }
       { [ dup word? ] [ drop plus-buttons-for-word ] }
       [ drop { } ]
     } cond [ add-gadget ] each
@@ -89,7 +87,7 @@ M: environment-gadget update
 : add-word ( env -- ) [ word add-to-word ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
 : add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
-: add-tuple-in-vocab ( env -- ) [ tuplee add-to-vocab ] make-keyboard-safe ;
+: add-tuple-in-vocab ( env -- ) [ tuple-class add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
     [ hand-gadget get-global [ connector-gadget? ]
@@ -97,26 +95,26 @@ M: environment-gadget update
     ] make-keyboard-safe ;
 
 : remove-node-gadget ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent
-      [ [ outputs>> [ links>> [ modell>> disconnect ] each ] each ]
+    [ hand-gadget get-global find-node
+      [ [ connectors>> [ links>> [ modell>> disconnect ] each ] each ]
         [ modell>> remove-from-parent ] bi
       ] when* update drop
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent
-      [ dup in-vocab? [ f >>name ] when request-focus ] when* drop
+    [ hand-gadget get-global find-node
+      [ dup find-vocab [ f >>name ] when request-focus ] when* drop
     ] make-keyboard-safe ;
 
 : more-inputs ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent
+    [ hand-gadget get-global find-node
       [ [ modell>> variadic? ]
         [ dup modell>> input add-element inputs>> last <connector-gadget> add-gadget drop ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
 : less-inputs ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent
+    [ hand-gadget get-global find-node
       [ [ modell>> [ variadic? ] [ inputs>> length 2 > ] bi and ]
         [ dup modell>> [ but-last ] change-contents drop inputs>> last unparent ] smart-when*
       ] when* drop
@@ -139,7 +137,7 @@ M: environment-gadget update
     [ drop save ] make-keyboard-safe ;
 
 : show-help ( env -- )
-    [ hand-gadget get-global [ node-gadget? ] find-parent
+    [ hand-gadget get-global find-node
       [ [ modell>> factor-name search (browser-window) ] with-interactive-vocabs ]
       [ show-browser ] if* drop
     ] make-keyboard-safe ;
@@ -162,7 +160,7 @@ environment-gadget "general" f {
     { T{ key-up f f "e" } edit-node-gadget }
     { T{ key-up f f "RIGHT" } more-inputs }
     { T{ key-up f f "LEFT" } less-inputs }
-    { T{ key-up f { A+ } "s" } save-skov-image }
+    { T{ key-down f { C+ } "s" } save-skov-image }
     { T{ key-up f f "h" } show-help }
     { T{ key-up f f "BACKSPACE" } show-result }
     { T{ key-up f f "UP" } previous-word }

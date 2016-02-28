@@ -19,14 +19,14 @@ M: node-gadget y>>  [ pos>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : width ( node-gadget -- w ) pref-dim first ;
 : half-width ( node-gadget -- w ) width 2 / ;
 
-: select ( node-gadget -- )
-    [ [ environment-gadget? ] find-parent ] [ modell>> ] bi >>modell update drop ;
+: select ( node-gadget -- node-gadget )
+    [ find-env ] [ modell>> ] bi >>modell ;
 
 : ?select ( node-gadget -- )
-    [ in-vocab? ] [ select ] smart-when* ;
+    [ find-vocab ] [ select ] smart-when find-env update drop ;
 
 : select-result ( node-gadget -- )
-    [ [ environment-gadget? ] find-parent ] [ modell>> result>> ] bi >>modell update drop ;
+    [ find-env ] [ modell>> result>> ] bi >>modell update drop ;
 
 : node-theme ( node-gadget -- node-gadget )
     dup (node-theme)

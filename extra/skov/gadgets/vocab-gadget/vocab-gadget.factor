@@ -22,7 +22,7 @@ M: space pref-dim*  drop { 0 25 } ;
     "New word ( n )" >>tooltip ;
 
 : <new-tuple-button> ( -- button )
-    "blue" [ parent>> [ tuplee add-element ] change-modell update drop ] <plus-button>
+    "blue" [ parent>> [ tuple-class add-element ] change-modell update drop ] <plus-button>
     "New tuple class ( u )" >>tooltip ;
 
 : associated-word ( button -- word )
@@ -40,7 +40,7 @@ M: space pref-dim*  drop { 0 25 } ;
      vocab-gadget new vertical >>orientation model >>modell { 0 5 } >>gap 1/2 >>align ;
 
 :: ?select-result-button ( vocab-gadget -- vocab-gadget )
-    vocab-gadget dup [ environment-gadget? ] find-parent modell>> :> env-model
+    vocab-gadget dup find-env modell>> :> env-model
     dup children>> [ pack? ] filter 
     [ children>> first2 modell>> result>> env-model eq? >>selected? drop ] each ;
 

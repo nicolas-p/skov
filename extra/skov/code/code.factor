@@ -12,7 +12,7 @@ TUPLE: connector < element  link ;
 TUPLE: input < connector ;
 TUPLE: output < connector  id ;
 TUPLE: text < element ;
-TUPLE: tuplee < element ;
+TUPLE: tuple-class < element ;
 TUPLE: slot < element  initial-value ;
 TUPLE: constructor < word ;
 TUPLE: destructor < word ;
@@ -32,7 +32,7 @@ M: element words>> ( elt -- seq ) contents>> [ word? ] filter ;
 M: element connectors>> ( elt -- seq ) contents>> [ connector? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
-M: element tuples>> ( elt -- seq ) contents>> [ tuplee? ] filter ;
+M: element tuples>> ( elt -- seq ) contents>> [ tuple-class? ] filter ;
 M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 
 :: add-element ( parent child-class -- parent )
@@ -133,7 +133,7 @@ M: element connected?
     connectors>> [ connected? ] any? ;
 
 M: connector connected?
-    link>> connector? ;
+    [ contents>> empty? ] [ link>> connector? ] [ call-next-method ] smart-if ;
 
 GENERIC: connect ( connector1 connector2 -- )
 

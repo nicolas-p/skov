@@ -44,7 +44,7 @@ M: definition-gadget update
     dup clear-gadget
     dup modell>>
     { { [ dup word? ] [ eval-word add-nodes add-connections place-nodes place-unconnected-nodes ] }
-      { [ dup tuplee? ] [ eval-tuple add-slots place-unconnected-nodes ] }
+      { [ dup tuple-class? ] [ eval-tuple add-slots place-unconnected-nodes ] }
       { [ dup string? ] [ <label> set-light-font add-gadget ] }
       [ drop "skov-logo" theme-image <icon> add-gadget ]
     } cond ;

@@ -14,3 +14,8 @@ TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
 
 GENERIC: update ( gadget -- gadget )
+
+: find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
+: find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;
+: find-def ( gadget -- def )  [ definition-gadget? ] find-parent ;
+: find-node ( gadget -- node )  [ node-gadget? ] find-parent ;
