@@ -1,4 +1,4 @@
-! Copyright (C) 2015 Nicolas Pénet.
+! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors arrays combinators combinators.smart debugger
 eval fry kernel locals math math.parser namespaces sequences
 sequences.deep sets skov.code skov.utilities ui.gadgets
@@ -90,7 +90,9 @@ M: lambda write
 : write-imports ( word -- seq )
     words>> [ path>> ] filter [ write-import ] map "USE: locals" suffix ;
 
-:: write-word ( word -- seq )
+GENERIC: write-definition ( obj -- seq )
+
+M:: word write-definition ( word -- seq )
     [ word write-imports
       word write-vocab
       "::"
@@ -100,15 +102,7 @@ M: lambda write
       ";"
     ] assemble ;
 
-: eval-word ( word -- )
-    [ name>> ] [ '[ _ dup f >>defined? write-word ( -- ) eval t >>defined? drop ] try ] smart-when* ;
-
-: run-word ( word -- )
-    [ eval-word ]
-    [ [ write-import ] [ factor-name ] bi " " glue eval>string ]
-    [ result<< ] tri ;
-
-:: write-tuple ( tup -- seq )
+M:: tuple-class write-definition ( tup -- seq )
     tup factor-name :> name
     tup contents>> [ name>> ] map :> slots
     [ "USE: locals"
@@ -119,5 +113,8 @@ M: lambda write
       "::" name ">" "<" surround "(" name "--" slots ")" slots [ ">>" append name swap 2array ] map ";"
     ] assemble ;
 
-: eval-tuple ( tuple -- )
-    [ name>> ] [ '[ _ write-tuple ( -- ) eval ] try ] smart-when* ;
+: define ( elt -- )
+    [ name>> ] [ '[ _ dup f >>defined? write-definition ( -- ) eval t >>defined? drop ] try ] smart-when* ;
+
+: run-word ( word -- )
+    [ define ] [ [ write-import ] [ factor-name ] bi " " glue eval>string ] [ save-result ] tri ;

@@ -1,77 +1,32 @@
-! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays combinators combinators.smart kernel listener
-locals math memory namespaces sequences skov.code skov.execution
-skov.gadgets skov.gadgets.buttons skov.gadgets.connector-gadget
-skov.gadgets.definition-gadget skov.gadgets.vocab-gadget
-skov.theme skov.utilities ui.commands ui.gadgets
-ui.gadgets.borders ui.gadgets.editors ui.gadgets.packs
-ui.gadgets.tracks ui.gestures ui.tools.browser ui.tools.common
-vocabs.parser ;
+! Copyright (C) 2015-2016 Nicolas Pénet.
+USING: accessors arrays combinators combinators.smart kernel
+listener locals math memory models namespaces sequences
+skov.code skov.execution skov.gadgets skov.gadgets.buttons
+skov.gadgets.connection-gadget skov.gadgets.connector-gadget
+skov.gadgets.graph-gadget skov.gadgets.node-pile
+skov.gadgets.plus-button-pile skov.gadgets.result-gadget
+skov.gadgets.vocab-gadget skov.theme skov.utilities ui.commands
+ui.gadgets ui.gadgets.borders ui.gadgets.editors
+ui.gadgets.packs ui.gadgets.tracks ui.gestures ui.tools.browser
+ui.tools.common vocabs.parser ;
 IN: skov.gadgets.environment-gadget
 
-M: environment-gadget definition>>  children>> [ definition-gadget? ] filter first ;
-M: environment-gadget vocab>>  children>> [ vocab-gadget? ] filter first ;
-
 { 700 600 } environment-gadget set-tool-dim
-
-: word-or-tuple? ( obj -- ? )  [ word? ] [ tuple-class? ] bi or ;
-
-:: add-to-tuple ( env class -- )
-    env dup definition>> modell>> tuple-class? 
-    [ [ class add-element ] change-modell update ] when drop ;
-
-:: add-to-word ( env class -- )
-    env dup definition>> modell>> word? 
-    [ [ class add-element ] change-modell update ] when drop ;
-
-:: add-to-vocab ( env class -- )
-    env vocab>> [ class add-element ] change-modell update drop ;
-
-: plus-buttons-for-word ( -- seq )
-    [ "dark" [ find-env input add-to-word ] <plus-button> "Add input ( i )" >>tooltip
-      "dark" [ find-env output add-to-word ] <plus-button> "Add output ( o )" >>tooltip
-      <space>
-      "green" [ find-env word add-to-word ] <plus-button> "Add word ( w )" >>tooltip
-      <space>
-      "green" [ find-env constructor add-to-word ] <plus-button> "Add constructor ( c )" >>tooltip
-      "green" [ find-env accessor add-to-word ] <plus-button> "Add accessor ( a )" >>tooltip
-      "green" [ find-env mutator add-to-word ] <plus-button> "Add mutator ( m )" >>tooltip
-      "green" [ find-env destructor add-to-word ] <plus-button> "Add destructor ( d )" >>tooltip
-      <space>
-      "grey" [ find-env text add-to-word ] <plus-button> "Add text ( t )" >>tooltip
-    ] output>array ;
-
-: plus-buttons-for-tuple ( -- seq )
-    "dark" [ find-env slot add-to-tuple ] <plus-button> "Add slot ( s )" >>tooltip 1array ;
-
-: <plus-button-bar> ( -- gadget )
-    <pile> { 0 0 } <border> ;
-
-:: update-plus-buttons ( env -- env )
-    env gadget-child gadget-child dup clear-gadget
-    env modell>> {
-      { [ dup tuple-class? ] [ drop plus-buttons-for-tuple ] }
-      { [ dup word? ] [ drop plus-buttons-for-word ] }
-      [ drop { } ]
-    } cond [ add-gadget ] each
-    drop env ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
 
-: <environment-gadget> ( -- gadget )
-     horizontal environment-gadget new-track
-     skov-root get-global >>modell
-     <plus-button-bar> f track-add
-     f <definition-gadget> 1 track-add
-     skov-root get-global <vocab-gadget> f track-add
-     update
-     { 10 10 } <filled-border> with-background ;
-
-M: environment-gadget update
-    { [ definition>> ] [ modell>> >>modell update drop ]
-      [ vocab>> ] [ modell>> [ vocab? ] [ >>modell ] smart-when* update drop ] 
-      [ update-plus-buttons ] } cleave ;
+:: <environment-gadget> ( -- gadget )
+    skov-root get-global <model> :> model
+    horizontal environment-gadget new-track model >>model
+    model <plus-button-pile> { 0 0 } <border> f track-add
+    <shelf> 1/2 >>align { 40 0 } >>gap
+      model <node-pile> add-gadget
+      model <result-gadget> add-gadget
+      model <graph-gadget> add-gadget
+    { 0 0 } <border> 1 track-add
+    model <vocab-gadget> f track-add
+    { 10 10 } <filled-border> with-background ;
 
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
@@ -90,15 +45,16 @@ M: environment-gadget update
 : add-tuple-in-vocab ( env -- ) [ tuple-class add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
-    [ hand-gadget get-global [ connector-gadget? ]
-      [ modell>> disconnect ] smart-when* update drop
+    [ hand-gadget get-global dup
+      [ [ connector-gadget? ] [ connected? ] bi and ] [ control-value disconnect ] smart-when*
+      find-env [ ] change-control-value drop
     ] make-keyboard-safe ;
 
 : remove-node-gadget ( env -- )
-    [ hand-gadget get-global find-node
-      [ [ connectors>> [ links>> [ modell>> disconnect ] each ] each ]
-        [ modell>> remove-from-parent ] bi
-      ] when* update drop
+    [ hand-gadget get-global find-node dup
+      [ [ connectors>> [ links>> [ control-value disconnect ] each ] each ]
+        [ control-value remove-from-parent ] bi
+      ] when* find-env [ ] change-control-value drop
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
@@ -108,26 +64,26 @@ M: environment-gadget update
 
 : more-inputs ( env -- )
     [ hand-gadget get-global find-node
-      [ [ modell>> variadic? ]
-        [ dup modell>> input add-element inputs>> last <connector-gadget> add-gadget drop ] smart-when*
+      [ [ control-value variadic? ]
+        [ dup control-value input add-element inputs>> last <connector-gadget> add-gadget drop ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
 : less-inputs ( env -- )
     [ hand-gadget get-global find-node
-      [ [ modell>> [ variadic? ] [ inputs>> length 2 > ] bi and ]
-        [ dup modell>> [ but-last ] change-contents drop inputs>> last unparent ] smart-when*
+      [ [ control-value [ variadic? ] [ inputs>> length 2 > ] bi and ]
+        [ dup control-value [ but-last ] change-contents drop inputs>> last unparent ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
 : show-result ( env -- )
-    [ dup definition>> modell>> [ word? ] [ dup run-word result>> >>modell update ] smart-when* drop ]
+    [ dup control-value [ word? ] [ dup run-word result>> swap set-control-value ] [ drop ] smart-if* ]
     make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
-    env [ dup modell>> word-or-tuple? [
-      [ vocab>> modell>> [ tuples>> ] [ words>> ] bi append ]
-      [ modell>> n next-nth ] [ swap >>modell update ] tri
+    env [ dup control-value word/tuple? [
+      [ vocab-control-value [ tuples>> ] [ words>> ] bi append ]
+      [ control-value n next-nth ] [ dupd set-control-value ] tri
     ] when drop ] make-keyboard-safe ;
 
 : previous-word ( env -- )  -1 next-nth-word ;
@@ -138,7 +94,7 @@ M: environment-gadget update
 
 : show-help ( env -- )
     [ hand-gadget get-global find-node
-      [ [ modell>> factor-name search (browser-window) ] with-interactive-vocabs ]
+      [ [ control-value factor-name search (browser-window) ] with-interactive-vocabs ]
       [ show-browser ] if* drop
     ] make-keyboard-safe ;
 

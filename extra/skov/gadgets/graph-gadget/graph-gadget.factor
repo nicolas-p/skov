@@ -1,13 +1,13 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
-USING: accessors arrays assocs combinators combinators.smart
-kernel locals math math.order math.vectors random sequences
-sequences.deep sets skov.code skov.gadgets
-skov.gadgets.node-gadget skov.utilities ui.gadgets ;
-IN: skov.animation
+USING: accessors arrays assocs combinators combinators.smart fry
+kernel locals math math.order math.vectors models random
+sequences sequences.deep sets skov.code skov.execution
+skov.gadgets skov.gadgets.connection-gadget
+skov.gadgets.connector-gadget skov.gadgets.node-gadget
+skov.utilities ui.gadgets ;
+IN: skov.gadgets.graph-gadget
 
 : nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
-: connected-nodes>> ( def -- seq )  nodes>> [ connected? ] filter ;
-: unconnected-nodes>> ( def -- seq )  nodes>> [ connected? ] reject ;
 
 :: add-vertical-springs ( node -- node )
     node [
@@ -64,7 +64,7 @@ CONSTANT: sat 0.1
     node [ node acc>> v+ 0.85 v*n ] change-vel ;
 
 :: update-position ( node -- node )
-    node [ node vel>> v+ ] change-pos ;
+    node [ node vel>> v+ ] change-loc ;
 
 : move-nodes ( seq -- seq )
     [ update-acceleration ] map [ update-velocity ] map [ update-position ] map ;
@@ -72,24 +72,40 @@ CONSTANT: sat 0.1
 : stop? ( seq -- ? )
     [ acc>> [ abs ] map supremum 0.01 <= ] all? ;
 
-: place-nodes ( def -- def )
-     dup connected-nodes>>
+: place-nodes ( graph -- graph )
+     dup nodes>>
      [ add-vertical-springs ] map
      [ add-horizontal-springs ] map
      [ dup stop? ] [ move-nodes ] until drop ;
 
-: left-edge ( seq -- x )
-    [ empty? not ] [ [ pos>> first ] map infimum ] [ 70 ] smart-if* ;
+: add-nodes ( graph -- graph )
+    dup control-value connected-contents>> [ <node-gadget> add-gadget ] each ;
 
-: max-width ( seq -- w )
-    [ empty? not ] [ [ pref-dim first ] map supremum ] [ 0 ] smart-if* ;
+: add-connections ( graph -- graph )
+    dup children>>
+    [ inputs>>
+      [ control-value connected? ] filter
+      [ dup link 2dup connect <connection-gadget> ] map
+    ] map concat [ add-gadget ] each ;
 
-:: place-unconnected-nodes ( def -- def )
-    def connected-nodes>> left-edge 70 - :> x
-    def unconnected-nodes>> max-width :> w
-    def unconnected-nodes>>
-    dup length :> l
-    l iota
-    [ [ dup pref-dim first w - 2 / x swap - w - >integer ] dip 
-      l 2 / - 50 * 2array >>pos drop ] 2each
-    def ;
+: <graph-gadget> ( model -- graph-gadget )
+    graph-gadget new swap >>model ;
+
+: top-left-corner ( graph -- xy )
+    nodes>> [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;
+
+: bottom-right-corner ( graph -- xy )
+    nodes>> [ 0 0 ] [ [ [ loc>> ] [ pref-dim ] bi v+ ] map unzip [ supremum ] bi@ ] if-empty 2array ;
+
+: fix-locations ( graph -- graph )
+    dup [ top-left-corner ] keep nodes>> [ dupd swap '[ _ v- ] change-loc drop ] each drop ;
+
+M: graph-gadget model-changed
+    dup clear-gadget swap value>> [ word/tuple? ]
+    [ define add-nodes add-connections place-nodes fix-locations ] smart-when* drop ;
+
+M: graph-gadget pref-dim*
+    bottom-right-corner ;
+
+M: graph-gadget layout*
+    [ dup pref-dim swap dim<< ] each-child ;

@@ -33,11 +33,11 @@ IN: skov.gadgets.connection-gadget
     GL_MAP1_VERTEX_3 glDisable ;
 
 M: connection-gadget draw-gadget*
-    [ start>> modell>> special-connector? ] 
+    [ start>> control-value special-connector? ]
     [ GL_LINE_STIPPLE glEnable ] [ GL_LINE_STIPPLE glDisable ] smart-if
     [ start-loc ] [ end-loc ] bi draw-curve ;
 
-:: <proto-connection> ( loc1 -- dummy-connection ) 
+:: <proto-connection> ( loc1 -- dummy-connection )
     proto-connection new loc1 >>loc1 loc1 >>loc2 ;
 
 M:: proto-connection draw-gadget* ( c -- )

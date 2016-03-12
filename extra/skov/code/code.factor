@@ -1,4 +1,4 @@
-! Copyright (C) 2015 Nicolas Pénet.
+! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors arrays combinators combinators.smart effects
 fry hashtables.private kernel listener locals math.parser
 sequences splitting vectors vocabs.parser ;
@@ -12,12 +12,13 @@ TUPLE: connector < element  link ;
 TUPLE: input < connector ;
 TUPLE: output < connector  id ;
 TUPLE: text < element ;
-TUPLE: tuple-class < element ;
+TUPLE: tuple-class < element  defined? ;
 TUPLE: slot < element  initial-value ;
 TUPLE: constructor < word ;
 TUPLE: destructor < word ;
 TUPLE: accessor < word ;
 TUPLE: mutator < word ;
+TUPLE: result < element ;
 
 TUPLE: special-input < input ;
 TUPLE: special-output < output ;
@@ -47,10 +48,12 @@ M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
+: replace-spaces ( str -- str )  " " "-" replace ;
+
 GENERIC: factor-name ( obj -- str )
 
 M: element factor-name
-    name>> " " "-" replace ;
+    name>> replace-spaces ;
 
 M: word factor-name
     name>> { 
@@ -60,19 +63,19 @@ M: word factor-name
     }
     [ change-name ] each
     dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
-    [ " " "-" replace ] when ;
+    [ replace-spaces ] when ;
 
 M: constructor factor-name
-    name>> " " "-" replace "<" ">" surround ;
+    name>> replace-spaces "<" ">" surround ;
 
 M: destructor factor-name
-    name>> " " "-" replace ">" "<" surround ;
+    name>> replace-spaces ">" "<" surround ;
 
 M: accessor factor-name
-    name>> " " "-" replace ">>" append ;
+    name>> replace-spaces ">>" append ;
 
 M: mutator factor-name
-    name>> " " "-" replace ">>" swap append ;
+    name>> replace-spaces ">>" swap append ;
 
 M: text factor-name
     name>> "\"" "\"" surround ;
@@ -135,6 +138,11 @@ M: element connected?
 M: connector connected?
     [ contents>> empty? ] [ link>> connector? ] [ call-next-method ] smart-if ;
 
+: connected-inputs>> ( elt -- seq )  inputs>> [ connected? ] filter ;
+: connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
+: connected-contents>> ( elf -- seq )  contents>> [ connected? ] filter ;
+: unconnected-contents>> ( elf -- seq )  contents>> [ connected? ] reject ;
+
 GENERIC: connect ( connector1 connector2 -- )
 
 M: connector connect
@@ -151,17 +159,19 @@ M: connector connect
     ] smart-when* ;
 
 : complete-graph? ( word -- ? )
-    contents>> [ connected? ] reject empty? ;
+    unconnected-contents>> empty? ;
 
 : executable? ( word -- ? )
    { [ complete-graph? ] [ inputs>> empty? ] [ outputs>> empty? ]
      [ words>> empty? not ] [ defined?>> ] } cleave and and and and ;
 
 : error? ( word -- ? )
-   { [ name>> empty? not ] [ complete-graph? not ]
-     [ complete-graph? ] [ defined?>> not ] } cleave and or and ;
+    [ complete-graph? not ] [ defined?>> not ] bi or ;
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
 : variadic? ( word -- ? )
     name>> variadic-words member? ;
+
+: save-result ( str word  -- )
+    swap dupd result new swap >>contents swap >>parent >>result drop ;

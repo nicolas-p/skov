@@ -1,6 +1,6 @@
-! Copyright (C) 2015 Nicolas Pénet.
-USING: accessors arrays combinators combinators.smart fry
-kernel locals math math.order math.statistics math.vectors
+! Copyright (C) 2015-2016 Nicolas Pénet.
+USING: accessors arrays combinators combinators.smart fry kernel
+locals math math.order math.statistics math.vectors models
 sequences skov.code skov.execution skov.gadgets
 skov.gadgets.connector-gadget skov.theme skov.utilities
 ui.gadgets ui.gadgets.editors ui.gadgets.labels
@@ -8,48 +8,43 @@ ui.gadgets.worlds ui.gestures ui.pens.solid ui.pens.tile ;
 IN: skov.gadgets.node-gadget
 
 M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
-M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ modell>> input? ] filter ;
-M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ modell>> output? ] filter ;
-: connected-inputs>> ( node-gadget -- seq )  inputs>> [ connected? ] filter ;
-: connected-outputs>> ( node-gadget -- seq )  outputs>> [ connected? ] filter ;
+M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ control-value input? ] filter ;
+M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ control-value output? ] filter ;
 
-M: node-gadget x>>  [ pos>> first ] [ pref-dim first 2 / >integer ] bi + ;
-M: node-gadget y>>  [ pos>> second ] [ pref-dim second 2 / >integer ] bi + ;
+M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 / >integer ] bi + ;
+M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 
 : width ( node-gadget -- w ) pref-dim first ;
 : half-width ( node-gadget -- w ) width 2 / ;
 
-: select ( node-gadget -- node-gadget )
-    [ find-env ] [ modell>> ] bi >>modell ;
+: select ( node-gadget -- )
+    [ control-value ] [ find-env ] bi set-control-value ;
 
 : ?select ( node-gadget -- )
-    [ find-vocab ] [ select ] smart-when find-env update drop ;
+    [ find-vocab ] [ select ] [ drop ] smart-if ;
 
 : select-result ( node-gadget -- )
-    [ find-env ] [ modell>> result>> ] bi >>modell update drop ;
+    [ control-value result>> ] [ find-env ] bi set-control-value ;
 
 : node-theme ( node-gadget -- node-gadget )
     dup (node-theme)
     [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
-    <tile-pen> >>interior 
+    <tile-pen> >>interior
     horizontal >>orientation ;
 
 : add-connector-gadgets ( node-gadget -- node-gadget )
-    [ modell>> vocab? ] [ ]
-    [ dup modell>> inputs>> [ <connector-gadget> add-gadget ] each
-      dup modell>> outputs>> [ <connector-gadget> add-gadget ] each ]
-    smart-if ;
+    dup control-value connectors>> [ <connector-gadget> add-gadget ] each ;
 
 : ?add-connectors ( node-gadget -- node-gadget )
-    dup [ parent>> definition-gadget? ] [ modell>> add-connectors drop ] smart-when* ;
+    dup [ find-vocab not ] [ control-value add-connectors drop ] smart-when* ;
 
 :: add-name-field ( node-gadget -- node-gadget )
     node-gadget dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
     node-gadget (node-theme) :> text-colour :> bg-colour drop
     bg-colour <solid> >>boundary
-    bg-colour <solid> >>interior 
+    bg-colour <solid> >>interior
     { 0 0 } >>size
-    [ set-font [ text-colour >>foreground bg-colour >>background ] change-font ] change-editor 
+    [ set-font [ text-colour >>foreground bg-colour >>background ] change-font ] change-editor
     add-gadget ;
 
 : replace-space ( char -- char )
@@ -60,16 +55,16 @@ M: node-gadget y>>  [ pos>> second ] [ pref-dim second 2 / >integer ] bi + ;
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
 : add-name-label ( node-gadget -- node-gadget )
-    dup modell>> name>> make-spaces-visible <label> set-font add-gadget ;
+    dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
 
 : add-name ( node-gadget -- node-gadget )
-    [ modell>> name>> ] [ add-name-label add-connector-gadgets ] [ add-name-field ] smart-if ;
+    [ control-value name>> ] [ add-name-label add-connector-gadgets ] [ add-name-field ] smart-if ;
 
-:: <node-gadget> ( model -- node )
-    node-gadget new model >>modell add-name ;
+: <node-gadget> ( value -- node )
+    <model> node-gadget new swap >>model add-name ;
 
 M: node-gadget name<<
-    [ modell>> name<< ] [ dup clear-gadget ?add-connectors add-name ] bi node-theme ?select ;
+    [ control-value name<< ] [ dup clear-gadget ?add-connectors add-name ] bi node-theme ?select ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb
@@ -99,7 +94,7 @@ M: node-gadget graft*
    node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
 : node-status-text ( node-gadget -- str )
-    "( r to remove )" swap modell>>
+    "( r : remove )" swap control-value
     [ path>> ] [ "IN: " swap path append swap "     " glue ] smart-when* ;
 
 node-gadget H{
