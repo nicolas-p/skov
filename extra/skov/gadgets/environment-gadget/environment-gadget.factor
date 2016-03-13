@@ -59,7 +59,7 @@ vocab new "●" >>name skov-root set-global
 
 : edit-node-gadget ( env -- )
     [ hand-gadget get-global find-node
-      [ dup find-vocab [ f >>name ] when request-focus ] when* drop
+      [ f >>name request-focus ] when* drop
     ] make-keyboard-safe ;
 
 : more-inputs ( env -- )

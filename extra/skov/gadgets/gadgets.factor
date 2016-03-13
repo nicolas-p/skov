@@ -1,6 +1,6 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
-USING: kernel locals ui.gadgets ui.gadgets.borders
-ui.gadgets.icons ui.gadgets.packs ui.tools.common skov.code ;
+USING: accessors kernel locals sequences skov.code ui.gadgets
+ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
 IN: skov.gadgets
 
 TUPLE: environment-gadget < tool ;
@@ -14,6 +14,12 @@ TUPLE: node-gadget < border springs { acc initial: { 0 1 } }
 TUPLE: connector-gadget < icon { links initial: { } } ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
+
+: nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
+: connections>> ( def -- seq )  children>> [ connection-gadget? ] filter ;
+M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
+M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ control-value input? ] filter ;
+M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ control-value output? ] filter ;
 
 : find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
 : find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;

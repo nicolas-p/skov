@@ -1,7 +1,8 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors arrays combinators combinators.smart kernel
-locals models sequences skov.code skov.gadgets
-skov.gadgets.buttons skov.gadgets.vocab-gadget ui.gadgets ;
+locals models namespaces sequences skov.code skov.gadgets
+skov.gadgets.buttons skov.gadgets.vocab-gadget ui.gadgets
+ui.gestures ;
 IN: skov.gadgets.plus-button-pile
 
 :: add-to-tuple ( env class -- )
@@ -9,8 +10,15 @@ IN: skov.gadgets.plus-button-pile
     [ [ class add-element ] change-control-value ] smart-when* ;
 
 :: add-to-word ( env class -- )
-    env [ control-value word? ]
-    [ [ class add-element ] change-control-value ] smart-when* ;
+    hand-gadget get-global :> hand
+    env [ control-value word? ] [
+      [ class add-element
+        hand connector-gadget?
+        [ dup contents>> last 
+          hand control-value input? [ output ] [ input ] if add-element 
+          contents>> last hand control-value ?connect ] when
+      ] change-control-value 
+    ] smart-when* ;
 
 :: add-to-vocab ( env class -- )
     env [ class add-element ] change-vocab-control-value ;

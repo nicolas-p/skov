@@ -109,17 +109,31 @@ M: text factor-name
     [ inputs>> empty? ] [ special-input add-element ] smart-when
     [ outputs>> empty? ] [ special-output add-element ] smart-when ;
 
-GENERIC: add-connectors ( node -- node )
-M: input add-connectors  f >>contents dup name>> output add-with-name ;
-M: output add-connectors  f >>contents dup name>> input add-with-name ;
-M: text add-connectors  f >>contents dup name>> output add-with-name ;
-M: slot add-connectors  f >>contents ;
+GENERIC: (add-connectors) ( node -- node )
+M: input (add-connectors)  f >>contents dup name>> output add-with-name ;
+M: output (add-connectors)  f >>contents dup name>> input add-with-name ;
+M: text (add-connectors)  f >>contents dup name>> output add-with-name ;
+M: slot (add-connectors)  f >>contents ;
 
-M: word add-connectors
+M: word (add-connectors)
     f >>contents dup in-out
     [ [ input add-with-name ] each ]
     [ [ output add-with-name ] each ] bi*
     add-special-connectors ;
+
+GENERIC: connect ( connector connector -- )
+
+: ?reconnect ( connector connector -- )
+    dup connector? [ connect ] [ drop drop ] if ;
+
+:: add-connectors ( elt -- elt )
+    elt name>> [
+      elt inputs>> [ link>> ] map :> saved-input-links
+      elt outputs>> [ link>> ] map :> saved-output-links
+      elt (add-connectors)
+      elt inputs>> saved-input-links [ ?reconnect ] 2each
+      elt outputs>> saved-output-links [ ?reconnect ] 2each
+    ] [ elt ] if ;
 
 : order-connectors ( connector connector -- connector connector )
     dup output? [ swap ] when ;
@@ -142,8 +156,6 @@ M: connector connected?
 : connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
 : connected-contents>> ( elf -- seq )  contents>> [ connected? ] filter ;
 : unconnected-contents>> ( elf -- seq )  contents>> [ connected? ] reject ;
-
-GENERIC: connect ( connector1 connector2 -- )
 
 M: connector connect
     2dup link<< swap link<< ;

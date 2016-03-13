@@ -7,8 +7,6 @@ skov.gadgets.connector-gadget skov.gadgets.node-gadget
 skov.utilities ui.gadgets ;
 IN: skov.gadgets.graph-gadget
 
-: nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
-
 :: add-vertical-springs ( node -- node )
     node [
       node connected-inputs>> [ links>> first parent>> { 0 1 } 2array ] map
@@ -80,13 +78,6 @@ CONSTANT: sat 0.1
 
 : add-nodes ( graph -- graph )
     dup control-value connected-contents>> [ <node-gadget> add-gadget ] each ;
-
-: add-connections ( graph -- graph )
-    dup children>>
-    [ inputs>>
-      [ control-value connected? ] filter
-      [ dup link 2dup connect <connection-gadget> ] map
-    ] map concat [ add-gadget ] each ;
 
 : <graph-gadget> ( model -- graph-gadget )
     graph-gadget new swap >>model ;

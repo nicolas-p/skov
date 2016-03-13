@@ -3,6 +3,7 @@ USING: accessors colors combinators combinators.smart kernel
 locals models namespaces sequences skov.code skov.gadgets
 skov.gadgets.connection-gadget skov.theme skov.utilities system
 ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
+FROM: skov.gadgets => connections>> ;
 IN: skov.gadgets.connector-gadget
 
 : word/tuple? ( obj -- ? )  [ word? ] [ tuple-class? ] bi or ;
@@ -48,6 +49,14 @@ IN: skov.gadgets.connector-gadget
     connector-gadget find-graph children>>
     [ outputs>> [ control-value connector-gadget control-value link>> eq? ] filter ] map
     concat first ;
+
+: add-connections ( graph -- graph )
+    dup connections>> [ unparent ] each
+    dup nodes>>
+    [ inputs>>
+      [ control-value connected? ] filter
+      [ dup link 2dup connect <connection-gadget> ] map
+    ] map concat [ add-gadget ] each ;
 
 M: connector-gadget connect
     dupd [ swap suffix ] change-links swap [ swap suffix ] change-links drop ;

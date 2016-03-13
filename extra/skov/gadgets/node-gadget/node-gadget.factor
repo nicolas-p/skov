@@ -2,14 +2,11 @@
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences skov.code skov.execution skov.gadgets
-skov.gadgets.connector-gadget skov.theme skov.utilities
-ui.gadgets ui.gadgets.editors ui.gadgets.labels
-ui.gadgets.worlds ui.gestures ui.pens.solid ui.pens.tile ;
+skov.gadgets.connection-gadget skov.gadgets.connector-gadget
+skov.theme skov.utilities ui.gadgets ui.gadgets.editors
+ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
+ui.pens.tile ;
 IN: skov.gadgets.node-gadget
-
-M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
-M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ control-value input? ] filter ;
-M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ control-value output? ] filter ;
 
 M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 / >integer ] bi + ;
 M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
@@ -58,13 +55,14 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
 
 : add-name ( node-gadget -- node-gadget )
-    [ control-value name>> ] [ add-name-label add-connector-gadgets ] [ add-name-field ] smart-if ;
+    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if add-connector-gadgets ;
 
 : <node-gadget> ( value -- node )
     <model> node-gadget new swap >>model add-name ;
 
 M: node-gadget name<<
-    [ control-value name<< ] [ dup clear-gadget ?add-connectors add-name ] bi node-theme ?select ;
+    [ control-value name<< ] [ dup clear-gadget ?add-connectors add-name
+      dup find-graph [ add-connections drop ] when* ] bi node-theme ?select ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb

@@ -1,6 +1,7 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors combinators.smart kernel models sequences
-skov.code skov.gadgets skov.gadgets.node-gadget ui.gadgets ;
+skov.code skov.gadgets skov.gadgets.connector-gadget
+skov.gadgets.node-gadget ui.gadgets ;
 IN: skov.gadgets.node-pile
 
 : <node-pile> ( model -- gadget )
