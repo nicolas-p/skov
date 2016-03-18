@@ -173,12 +173,24 @@ M: connector connect
 : complete-graph? ( word -- ? )
     unconnected-contents>> empty? ;
 
+: any-empty-name? ( word -- ? )
+    contents>> [ name>> empty? ] any? ;
+
 : executable? ( word -- ? )
-   { [ complete-graph? ] [ inputs>> empty? ] [ outputs>> empty? ]
-     [ words>> empty? not ] [ defined?>> ] } cleave and and and and ;
+   { [ complete-graph? ]
+     [ inputs>> empty? ]
+     [ outputs>> empty? ]
+     [ words>> empty? not ]
+     [ defined?>> ]
+     [ any-empty-name? not ]
+   } cleave and and and and and ;
 
 : error? ( word -- ? )
-    [ complete-graph? not ] [ defined?>> not ] bi or ;
+    { [ complete-graph? not ]
+      [ defined?>> not ]
+      [ any-empty-name? ] 
+      [ contents>> empty? ]
+    } cleave or or or ;
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
