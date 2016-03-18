@@ -81,7 +81,7 @@ M: text factor-name
     name>> "\"" "\"" surround ;
 
 : replace-quot ( seq -- seq )
-    [ dup array? [ first "quotation" " " glue ] [ ] if ] map ;
+    [ [ array? ] [ first ] smart-when ] map ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
     [ in>> replace-quot ] [ out>> replace-quot ]
