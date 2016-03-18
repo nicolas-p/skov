@@ -1,0 +1,3 @@
+IN: prettyprint
+
+: display ( object -- )  . ;

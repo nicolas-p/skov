@@ -45,7 +45,7 @@ os windows = [
   "factor.com" delete-file
 ] when
 
-"word-changes.factor" run-file
+"changes" directory-files [ "changes" swap append-path run-file ] each
 
 "basis" delete-tree
 "core" delete-tree
@@ -55,8 +55,8 @@ os windows = [
 "README.md" delete-tree
 "git-id" delete-tree
 "Hello world (console)" delete-tree
+"changes" delete-tree
 "make-skov.factor" delete-file
-"word-changes.factor" delete-file
 
 save
 "factor.image" "skov.image" move-file
