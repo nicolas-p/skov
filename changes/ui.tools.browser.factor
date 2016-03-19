@@ -1,4 +1,4 @@
-USING: accessors debugger fry help.apropos kernel locals
+USING: accessors debugger fry help help.apropos kernel locals
 models.arrow sequences skov.code skov.gadgets.graph-gadget
 skov.theme strings ui.gadgets ui.gadgets.borders
 ui.gadgets.packs ui.gadgets.panes vectors ;
@@ -8,7 +8,7 @@ IN: ui.tools.browser
     word new 
     topic apropos-search? not [
       topic name>> string? not [
-        topic name>> name>> word add-with-name
+        topic name>> name>> skov-name word add-with-name
         dup contents>> first add-connectors contents>> [ special-connector? ] reject [ 
           :> inside
           inside clone add-connectors :> outside
