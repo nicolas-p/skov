@@ -106,24 +106,41 @@ vocab new "●" >>name skov-root set-global
 
 environment-gadget "general" f {
     { T{ key-up f f "w" } add-word }
+    { T{ key-up f f "W" } add-word }
     { T{ key-up f f "i" } add-input }
+    { T{ key-up f f "I" } add-input }
     { T{ key-up f f "o" } add-output }
+    { T{ key-up f f "O" } add-output }
     { T{ key-up f f "t" } add-text }
+    { T{ key-up f f "T" } add-text }
     { T{ key-up f f "s" } add-slot }
+    { T{ key-up f f "S" } add-slot }
     { T{ key-up f f "c" } add-constructor }
+    { T{ key-up f f "C" } add-constructor }
     { T{ key-up f f "d" } add-destructor }
+    { T{ key-up f f "D" } add-destructor }
     { T{ key-up f f "a" } add-accessor }
+    { T{ key-up f f "A" } add-accessor }
     { T{ key-up f f "m" } add-mutator }
+    { T{ key-up f f "M" } add-mutator }
     { T{ key-up f f "v" } add-vocab }
+    { T{ key-up f f "V" } add-vocab }
     { T{ key-up f f "n" } add-word-in-vocab }
+    { T{ key-up f f "N" } add-word-in-vocab }
     { T{ key-up f f "u" } add-tuple-in-vocab }
+    { T{ key-up f f "U" } add-tuple-in-vocab }
     { T{ key-up f f "x" } disconnect-connector-gadget }
+    { T{ key-up f f "X" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }
+    { T{ key-up f f "R" } remove-node-gadget }
     { T{ key-up f f "e" } edit-node-gadget }
+    { T{ key-up f f "E" } edit-node-gadget }
     { T{ key-up f f "RIGHT" } more-inputs }
     { T{ key-up f f "LEFT" } less-inputs }
     { T{ key-down f { C+ } "s" } save-skov-image }
+    { T{ key-down f { C+ } "S" } save-skov-image }
     { T{ key-up f f "h" } show-help }
+    { T{ key-up f f "H" } show-help }
     { T{ key-up f f "BACKSPACE" } show-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
