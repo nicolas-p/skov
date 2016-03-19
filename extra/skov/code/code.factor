@@ -106,8 +106,8 @@ M: text factor-name
       } cond ] with-interactive-vocabs ;
 
 : add-special-connectors ( node -- node )
-    [ inputs>> empty? ] [ special-input add-element ] smart-when
-    [ outputs>> empty? ] [ special-output add-element ] smart-when ;
+    [ inputs>> empty? ] [ "invisible connector" special-input add-with-name ] smart-when
+    [ outputs>> empty? ] [ "invisible connector" special-output add-with-name ] smart-when ;
 
 GENERIC: (add-connectors) ( node -- node )
 M: input (add-connectors)  f >>contents dup name>> output add-with-name ;
