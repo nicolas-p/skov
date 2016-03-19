@@ -92,7 +92,7 @@ M: node-gadget graft*
    node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
 : node-status-text ( node-gadget -- str )
-    "( r : remove )" swap control-value
+    "( r : remove | e : edit | h : help )" swap control-value
     [ path>> ] [ "IN: " swap path append swap "     " glue ] smart-when* ;
 
 node-gadget H{
