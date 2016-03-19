@@ -16,10 +16,16 @@ IN: skov.gadgets.environment-gadget
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
 
+: <help-button> ( -- button )
+    [ drop show-browser ] "help" <word-button> "Help ( h )" >>tooltip ;
+
 :: <environment-gadget> ( -- gadget )
     skov-root get-global <model> :> model
     horizontal environment-gadget new-track model >>model
-    model <plus-button-pile> { 0 0 } <border> f track-add
+    vertical <track>
+      <help-button> f track-add
+      model <plus-button-pile> { 0 0 } <border> 1 track-add
+    f track-add
     <shelf> 1/2 >>align { 40 0 } >>gap
       model <node-pile> add-gadget
       model <result-gadget> add-gadget
