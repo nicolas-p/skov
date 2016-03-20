@@ -14,11 +14,9 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : width ( node-gadget -- w ) pref-dim first ;
 : half-width ( node-gadget -- w ) width 2 / ;
 
-: select ( node-gadget -- )
-    [ control-value ] [ find-env ] bi set-control-value ;
-
 : ?select ( node-gadget -- )
-    [ find-vocab ] [ select ] [ drop ] smart-if ;
+    [ [ find-vocab not ] [ find-env ] smart-when control-value ]
+    [ find-env ] bi set-control-value ;
 
 : select-result ( node-gadget -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;
