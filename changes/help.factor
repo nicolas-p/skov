@@ -17,6 +17,7 @@ M: word article-title
     [
         {
             [ \ $vocabulary swap 2array , ]
+            [ \ $graph swap 2array , ]
             [ word-help % ]
             [ \ $related swap 2array , ]
             [ dup global at [ get-global \ $value swap 2array , ] [ drop ] if ]
