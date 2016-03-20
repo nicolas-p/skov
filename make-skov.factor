@@ -45,7 +45,10 @@ os windows = [
   "factor.com" delete-file
 ] when
 
-"changes" directory-files [ "changes" swap append-path run-file ] each
+"changes" directory-tree-files
+[ first CHAR: . = ] reject
+[ file-extension "factor" = ] filter
+[ "changes" swap append-path run-file ] each
 
 "basis" delete-tree
 "core" delete-tree
