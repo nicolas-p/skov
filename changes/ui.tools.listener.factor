@@ -6,11 +6,13 @@ IN: ui.tools.listener
 : listener-window ( -- ) skov-window ;
 
 USE: lists.lazy
-USE: splitting
 USE: math.trig
 
 interactive-vocabs [ { 
   "io.encodings.utf8"
+  "io.encodings.binary"
+  "io.encodings.ascii"
+  "io.binary"
   "io.directories"
   "io.directories.hierarchy"
   "lists.lazy"
@@ -18,6 +20,13 @@ interactive-vocabs [ {
   "math.functions"
   "math.trig"
   "math.vectors"
+  "math.intervals"
   "sequences.deep"
   "binary-search"
+  "vectors"
+  "quotations"
+  "byte-arrays"
+  "deques"
+  "regexp"
+  "calendar"
 } append ] change-global
