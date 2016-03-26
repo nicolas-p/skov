@@ -1,8 +1,7 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors arrays combinators combinators.smart effects
 fry hashtables.private kernel listener locals math.parser
-sequences splitting vectors vocabs.parser ;
-FROM: namespaces => change-global ;
+namespaces sequences splitting vectors vocabs.parser ;
 IN: skov.code
 
 TUPLE: element  name parent contents path ;
@@ -199,3 +198,6 @@ CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
 : save-result ( str word  -- )
     swap dupd result new swap >>contents swap >>parent >>result drop ;
+
+SYMBOL: skov-root
+vocab new "●" >>name skov-root set-global

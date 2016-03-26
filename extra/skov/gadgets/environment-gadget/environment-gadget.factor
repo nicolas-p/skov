@@ -13,9 +13,6 @@ IN: skov.gadgets.environment-gadget
 
 { 700 600 } environment-gadget set-tool-dim
 
-SYMBOL: skov-root
-vocab new "●" >>name skov-root set-global
-
 : <help-button> ( -- button )
     [ drop show-browser ] "help" <word-button> "Help ( h )" >>tooltip ;
 
