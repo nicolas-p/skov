@@ -1,6 +1,6 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
-USING: accessors colors combinators combinators.smart kernel
-locals models namespaces sequences skov.code skov.gadgets
+USING: accessors arrays colors combinators combinators.smart
+kernel locals models namespaces sequences skov.code skov.gadgets
 skov.gadgets.connection-gadget skov.theme skov.utilities system
 ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
 FROM: skov.gadgets => connections>> ;
@@ -37,7 +37,7 @@ IN: skov.gadgets.connector-gadget
     [ os windows? not [ drop transparent ] when ] dip ;
 
 : <connector-gadget> ( value -- connector-gadget )
-    <model> connector-gadget new swap >>model { 8 8 } >>dim ;
+    <model> connector-gadget new swap >>model connector-size dup 2array >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
     dup [ control-value special-connector? ] 

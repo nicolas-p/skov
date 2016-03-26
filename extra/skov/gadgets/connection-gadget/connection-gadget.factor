@@ -10,8 +10,11 @@ IN: skov.gadgets.connection-gadget
 
 : loc-in-definition ( connector -- loc ) [ loc>> ] [ parent>> loc>> ] bi v+ ;
 
-: start-loc ( connection -- loc ) start>> loc-in-definition { 4 8 } v+ ;
-: end-loc ( connection -- loc ) end>> loc-in-definition { 4 0 } v+ ;
+: start-loc ( connection -- loc )
+    start>> loc-in-definition connector-size 2 / connector-size 2array v+ ;
+
+: end-loc ( connection -- loc )
+    end>> loc-in-definition connector-size 2 / 0 2array v+ ;
 
 :: control-points ( loc1 loc2 -- seq )
     loc1 second loc2 second + 2 / :> middle
