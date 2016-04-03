@@ -92,7 +92,7 @@ CONSTANT: sat 0.1
     dup [ top-left-corner ] keep nodes>> [ dupd swap '[ _ v- ] change-loc drop ] each drop ;
 
 M: graph-gadget model-changed
-    dup clear-gadget swap value>> [ word/tuple? ]
+    dup clear-gadget swap value>> [ definition? ]
     [ define add-nodes add-connections place-nodes fix-locations ] smart-when* drop ;
 
 M: graph-gadget pref-dim*

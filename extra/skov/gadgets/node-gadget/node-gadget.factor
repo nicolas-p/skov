@@ -30,9 +30,6 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : add-connector-gadgets ( node-gadget -- node-gadget )
     dup control-value connectors>> [ <connector-gadget> add-gadget ] each ;
 
-: ?add-connectors ( node-gadget -- node-gadget )
-    dup [ find-vocab not ] [ control-value add-connectors drop ] smart-when* ;
-
 :: add-name-field ( node-gadget -- node-gadget )
     node-gadget dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
     node-gadget (node-theme) :> text-colour :> bg-colour drop
@@ -59,7 +56,7 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
     <model> node-gadget new swap >>model add-name ;
 
 M: node-gadget name<<
-    [ control-value name<< ] [ dup clear-gadget ?add-connectors add-name
+    [ control-value swap >>name add-connectors drop ] [ dup clear-gadget add-name
       dup find-graph [ add-connections drop ] when* ] bi node-theme ?select ;
 
 :: spread ( connectors width -- seq )
@@ -91,7 +88,7 @@ M: node-gadget graft*
 
 : node-status-text ( node-gadget -- str )
     "( r : remove | e : edit | h : help )" swap control-value
-    [ path>> ] [ "IN: " swap path append swap "     " glue ] smart-when* ;
+    [ word? ] [ [ path>> ] [ "IN: " swap path>> append swap "     " glue ] smart-when* ] smart-when* ;
 
 node-gadget H{
     { T{ button-up f f 1 }  [ ?select ] }

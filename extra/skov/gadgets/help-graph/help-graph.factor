@@ -4,7 +4,7 @@ splitting ui.gadgets.borders vectors ;
 IN: skov.gadgets.help-graph
 
 :: <help-graph> ( factor-word -- gadget )
-    word new
+    definition new
     factor-word article-name 
     { { [ dup " (accessor)" swap subseq? ] [ " (accessor)" "" replace accessor ] }
       { [ dup " (mutator)" swap subseq? ] [ " (mutator)" "" replace mutator ] }
@@ -15,8 +15,9 @@ IN: skov.gadgets.help-graph
     dup contents>> first add-connectors contents>>
     [ special-connector? ] reject [ 
       :> inside
-      inside clone add-connectors :> outside
-      inside outside contents>> first connect
-      outside swap [ ?push ] change-contents
+      inside input? [ definition-input ] [ definition-output ] if new
+      inside name>> >>name add-connectors :> outside
+      inside outside contents>> first order-connectors connect
+      outside add-element
     ] each
     <model> <graph-gadget> { 20 10 } <filled-border> with-background ;

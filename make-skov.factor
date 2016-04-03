@@ -3,7 +3,7 @@ USING: calendar calendar.format images.loader io.directories
 io.directories.hierarchy io.pathnames kernel memory sequences
 ui.images splitting system io.files io.encodings.utf8 skov parser ;
 
-image-path "factor.image" "" replace set-current-directory
+image-path parent-directory set-current-directory
 
 { 
   "vocab:skov/theme/"
@@ -54,9 +54,9 @@ os windows = [
 "core" delete-tree
 "extra" delete-tree
 "misc" delete-tree
-"work" delete-tree
-"README.md" delete-tree
-"git-id" delete-tree
+"work/README.txt" delete-file
+"README.md" delete-file
+"git-id" delete-file
 "Hello world (console)" delete-tree
 "changes" delete-tree
 "make-skov.factor" delete-file

@@ -1,7 +1,7 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 USING: accessors arrays combinators combinators.smart kernel
 listener locals math memory models namespaces sequences
-skov.code skov.execution skov.gadgets skov.gadgets.buttons
+skov.code skov.execution skov.gadgets skov.import-export skov.gadgets.buttons
 skov.gadgets.connection-gadget skov.gadgets.connector-gadget
 skov.gadgets.graph-gadget skov.gadgets.node-pile
 skov.gadgets.plus-button-pile skov.gadgets.result-gadget
@@ -34,8 +34,8 @@ IN: skov.gadgets.environment-gadget
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
 
-: add-input ( env -- ) [ input add-to-word ] make-keyboard-safe ;
-: add-output ( env -- ) [ output add-to-word ] make-keyboard-safe ;
+: add-input ( env -- ) [ definition-input add-to-word ] make-keyboard-safe ;
+: add-output ( env -- ) [ definition-output add-to-word ] make-keyboard-safe ;
 : add-text ( env -- ) [ text add-to-word ] make-keyboard-safe ;
 : add-slot ( env -- ) [ slot add-to-tuple ] make-keyboard-safe ;
 : add-constructor ( env -- ) [ constructor add-to-word ] make-keyboard-safe ;
@@ -44,8 +44,8 @@ IN: skov.gadgets.environment-gadget
 : add-mutator ( env -- ) [ mutator add-to-word ] make-keyboard-safe ;
 : add-word ( env -- ) [ word add-to-word ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
-: add-word-in-vocab ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
-: add-tuple-in-vocab ( env -- ) [ tuple-class add-to-vocab ] make-keyboard-safe ;
+: add-word-in-vocab ( env -- ) [ word-definition add-to-vocab ] make-keyboard-safe ;
+: add-tuple-in-vocab ( env -- ) [ tuple-definition add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
     [ hand-gadget get-global dup
@@ -55,7 +55,7 @@ IN: skov.gadgets.environment-gadget
 
 : remove-node-gadget ( env -- )
     [ hand-gadget get-global find-node dup
-      [ [ connectors>> [ links>> [ control-value disconnect ] each ] each ]
+      [ [ outputs>> [ links>> [ control-value disconnect ] each ] each ]
         [ control-value remove-from-parent ] bi
       ] when* find-env [ ] change-control-value drop
     ] make-keyboard-safe ;
@@ -68,7 +68,7 @@ IN: skov.gadgets.environment-gadget
 : more-inputs ( env -- )
     [ hand-gadget get-global find-node
       [ [ control-value variadic? ]
-        [ dup control-value input add-element inputs>> last <connector-gadget> add-gadget drop ] smart-when*
+        [ dup control-value input add-from-class inputs>> last <connector-gadget> add-gadget drop ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
@@ -84,7 +84,7 @@ IN: skov.gadgets.environment-gadget
     make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
-    env [ dup control-value word/tuple? [
+    env [ dup control-value definition? [
       [ vocab-control-value [ tuples>> ] [ words>> ] bi append ]
       [ control-value n next-nth ] [ dupd set-control-value ] tri
     ] when drop ] make-keyboard-safe ;
@@ -93,7 +93,10 @@ IN: skov.gadgets.environment-gadget
 : next-word ( env -- )  +1 next-nth-word ;
 
 : save-skov-image ( env -- )
-    [ drop save ] make-keyboard-safe ;
+    [ drop save export-vocabs ] make-keyboard-safe ;
+
+: load-vocabs ( env -- )
+    [ update-skov-root skov-root get-global swap set-control-value ] make-keyboard-safe ;
 
 : show-help ( env -- )
     [ hand-gadget get-global find-node
@@ -136,6 +139,8 @@ environment-gadget "general" f {
     { T{ key-up f f "LEFT" } less-inputs }
     { T{ key-down f { C+ } "s" } save-skov-image }
     { T{ key-down f { C+ } "S" } save-skov-image }
+    { T{ key-down f { C+ } "l" } load-vocabs }
+    { T{ key-down f { C+ } "L" } load-vocabs }
     { T{ key-up f f "h" } show-help }
     { T{ key-up f f "H" } show-help }
     { T{ key-up f f "BACKSPACE" } show-result }

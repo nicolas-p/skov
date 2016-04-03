@@ -9,5 +9,5 @@ IN: skov.gadgets.node-pile
 
 M: node-pile model-changed
     dup clear-gadget swap value>>
-    [ word/tuple? ]
+    [ definition? ]
     [ unconnected-contents>> [ <node-gadget> add-gadget ] each ] smart-when* drop ;

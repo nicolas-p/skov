@@ -4,42 +4,61 @@ fry hashtables.private kernel listener locals math.parser
 namespaces sequences splitting vectors vocabs.parser ;
 IN: skov.code
 
-TUPLE: element  name parent contents path ;
+TUPLE: element < identity-tuple  name parent contents ;
+
 TUPLE: vocab < element ;
-TUPLE: word < element  defined? result ;
-TUPLE: connector < element  link ;
-TUPLE: input < connector ;
-TUPLE: output < connector  id ;
-TUPLE: text < element ;
-TUPLE: tuple-class < element  defined? ;
-TUPLE: slot < element  initial-value ;
+
+TUPLE: definition < element ;
+TUPLE: word-definition < definition  defined? result ;
+TUPLE: tuple-definition < definition  defined? ;
+
+TUPLE: node < element ;
+TUPLE: definition-input < node ;
+TUPLE: definition-output < node ;
+TUPLE: word < node  path ;
+TUPLE: text < node ;
+TUPLE: slot < node  initial-value ;
 TUPLE: constructor < word ;
 TUPLE: destructor < word ;
 TUPLE: accessor < word ;
 TUPLE: mutator < word ;
-TUPLE: result < element ;
+
+TUPLE: connector < element ;
+TUPLE: input < connector  link ;
+TUPLE: output < connector  id ;
 
 TUPLE: special-input < input ;
 TUPLE: special-output < output ;
+
 UNION: special-connector  special-input special-output ;
+UNION: definition-connector  definition-input definition-output ;
+
+TUPLE: result < element ;
 
 GENERIC: outputs>> ( obj -- seq )
 GENERIC: tuples>> ( obj -- seq )
 GENERIC: slots>> ( obj -- seq )
 GENERIC: connectors>> ( obj -- seq )
-M: element vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
-M: element words>> ( elt -- seq ) contents>> [ word? ] filter ;
+M: vocab vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
+M: vocab definitions>> ( elt -- seq ) contents>> [ definition? ] filter ;
+M: vocab words>> ( elt -- seq ) contents>> [ word-definition? ] filter ;
+M: vocab tuples>> ( elt -- seq ) contents>> [ tuple-definition? ] filter ;
+M: word-definition words>> ( elt -- seq ) contents>> [ word? ] filter ;
 M: element connectors>> ( elt -- seq ) contents>> [ connector? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
-M: element tuples>> ( elt -- seq ) contents>> [ tuple-class? ] filter ;
-M: element slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
+M: word-definition inputs>> ( elt -- seq ) contents>> [ definition-input? ] filter ;
+M: word-definition outputs>> ( elt -- seq ) contents>> [ definition-output? ] filter ;
+M: node slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 
-:: add-element ( parent child-class -- parent )
-     child-class new parent >>parent parent [ ?push ] change-contents ;
+:: add-element ( parent child -- parent )
+     child parent >>parent parent [ ?push ] change-contents ;
 
-:: add-with-name ( parent child-name child-class -- parent )
-     child-class new child-name >>name parent >>parent parent [ ?push ] change-contents ;
+: add-from-class ( parent child-class -- parent )
+     new add-element ;
+
+: add-with-name ( parent child-name child-class -- parent )
+     new swap >>name add-element ;
 
 : remove-from-parent ( child -- )
      dup parent>> contents>> remove-eq! drop ;
@@ -109,10 +128,10 @@ M: text factor-name
     [ outputs>> empty? ] [ "invisible connector" special-output add-with-name ] smart-when ;
 
 GENERIC: (add-connectors) ( node -- node )
-M: input (add-connectors)  f >>contents dup name>> output add-with-name ;
-M: output (add-connectors)  f >>contents dup name>> input add-with-name ;
+M: element (add-connectors)  ;
+M: definition-input (add-connectors)  f >>contents dup name>> output add-with-name ;
+M: definition-output (add-connectors)  f >>contents dup name>> input add-with-name ;
 M: text (add-connectors)  f >>contents dup name>> output add-with-name ;
-M: slot (add-connectors)  f >>contents ;
 
 M: word (add-connectors)
     f >>contents dup in-out
@@ -120,18 +139,13 @@ M: word (add-connectors)
     [ [ output add-with-name ] each ] bi*
     add-special-connectors ;
 
-GENERIC: connect ( connector connector -- )
+GENERIC: connect ( output input -- )
 
-: ?reconnect ( connector connector -- )
-    dup connector? [ connect ] [ drop drop ] if ;
-
-:: add-connectors ( elt -- elt )
+:: add-connectors ( elt -- elt )  ! Ne marche que dans un sens
     elt name>> [
-      elt inputs>> [ link>> ] map :> saved-input-links
-      elt outputs>> [ link>> ] map :> saved-output-links
+      elt inputs>> [ link>> ] map :> saved-links
       elt (add-connectors)
-      elt inputs>> saved-input-links [ ?reconnect ] 2each
-      elt outputs>> saved-output-links [ ?reconnect ] 2each
+      saved-links elt inputs>> [ connect ] 2each
     ] [ elt ] if ;
 
 : order-connectors ( connector connector -- connector connector )
@@ -145,29 +159,30 @@ GENERIC: connect ( connector connector -- )
 
 GENERIC: connected? ( connector -- ? )
 
-M: element connected?
+M: node connected?
     connectors>> [ connected? ] any? ;
 
-M: connector connected?
-    [ contents>> empty? ] [ link>> connector? ] [ call-next-method ] smart-if ;
+M: input connected?
+    link>> output? ;
+
+M: output connected?
+    dup parent>> parent>> contents>> [ inputs>> [ link>> ] map ] map concat [ dupd eq? ] any? nip ;
 
 : connected-inputs>> ( elt -- seq )  inputs>> [ connected? ] filter ;
 : connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
 : connected-contents>> ( elf -- seq )  contents>> [ connected? ] filter ;
 : unconnected-contents>> ( elf -- seq )  contents>> [ connected? ] reject ;
 
-M: connector connect
-    2dup link<< swap link<< ;
+M: input connect
+    link<< ;
 
 : disconnect ( connector -- )
-    dup link>> [ f >>link drop ] bi@ ;
+    f >>link drop ;
 
 : ?connect ( connector connector -- )
-    [ [ connector? ] bi@ and ]
-    [ order-connectors 
-      [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
-      [ connect ] smart-when* 
-    ] smart-when* ;
+    order-connectors 
+    [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
+    [ connect ] smart-when* ;
 
 : complete-graph? ( word -- ? )
     unconnected-contents>> empty? ;
@@ -201,3 +216,6 @@ CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
+
+: set-output-ids ( definition -- definition )
+    dup contents>> [ inputs>> ] map concat [ link>> ] map sift dup length iota [ >>id drop ] 2each ;

@@ -6,9 +6,6 @@ IN: skov.utilities
 : v-sum ( seq -- n )
     { 0 0 } [ v+ ] reduce ;
 
-: members-eq ( seq -- seq )
-    { } [ [ swap member-eq? not ] [ suffix ] [ drop ] smart-if ] reduce ;
-
 :: next-nth ( seq elt n -- elt' )
     seq [ elt eq? ] find drop n +
     seq length 1 - min 0 max

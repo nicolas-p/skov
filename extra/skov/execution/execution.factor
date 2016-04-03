@@ -5,9 +5,6 @@ sequences.deep sets skov.code skov.utilities ui.gadgets
 vocabs.parser ;
 IN: skov.execution
 
-SYMBOL: current-id
-0 current-id set-global
-
 TUPLE: lambda  contents ;
 TUPLE: lambda-input  id ;
 
@@ -22,12 +19,6 @@ M: lambda inputs>>  drop { } ;
 : lambda-output>> ( lambda -- output-connector )
     contents>> last outputs>> [ connected? ] filter first ;
 
-: next-id ( -- id )
-    current-id get-global 1 + [ current-id set-global ] keep ;
-
-: id ( output-connector -- id )
-    [ [ ] [ next-id ] if* ] change-id id>> ;
-
 : write-stack-effect ( word -- seq )
     [ inputs>> [ factor-name ] map ]
     [ outputs>> [ factor-name ] map ] bi
@@ -40,19 +31,18 @@ M: lambda inputs>>  drop { } ;
     [ inputs>> [ {
         { [ dup unevaluated? ] [ link>> parent>> walk <lambda> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
-        { [ dup special-input? ] [ drop { } ] }
-        [ lambda-input new >>link drop { } ]
+        [ drop { } ]
     } cond ] map ] [ ] bi 2array ;
 
 : ordered-graph ( word -- seq )
-    contents>> [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members-eq ;
+    contents>> [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members ;
 
 : write-id ( obj -- str )
-    id number>string "#" prepend ;
+    id>> number>string "#" prepend ;
 
 GENERIC: write ( obj -- seq )
 
-M: element write
+M: node write
     [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
     [ [ factor-name 1array ] keep 
       [ variadic? ] [ inputs>> length 2 - [ dup last 2array ] times ] smart-when* ]
@@ -73,26 +63,25 @@ M: lambda write
         [ write-id "] :>" swap 2array ] smart-if
     ] tri 3array ;
 
-: path ( word -- str )
-    [ path>> ] [ path>> ]
-    [ parents reverse rest but-last [ factor-name ] map "." join ] smart-if
-    dup empty? [ drop "scratchpad" ] when ;
+M: vocab path>>
+    parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
-:: write-vocab ( word -- seq )
-    "IN:" word path 2array ;
+M: word-definition path>>
+    parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
+
+:: write-vocab ( def -- seq )
+    "IN:" def path>> 2array ;
 
 : assemble ( seq -- str )
     output>array flatten harvest " " join ; inline
 
 :: write-import ( word -- seq )
-    [ "FROM:" word path "=>" word factor-name ";" ] assemble ;
+    [ "FROM:" word path>> "=>" word factor-name ";" ] assemble ;
 
 : write-imports ( word -- seq )
     words>> [ path>> ] filter [ write-import ] map "USE: locals" suffix ;
 
-GENERIC: write-definition ( obj -- seq )
-
-M:: word write-definition ( word -- seq )
+M:: word-definition write ( word -- seq )
     [ word write-imports
       word write-vocab
       "::"
@@ -102,7 +91,7 @@ M:: word write-definition ( word -- seq )
       ";"
     ] assemble ;
 
-M:: tuple-class write-definition ( tup -- seq )
+M:: tuple-definition write ( tup -- seq )
     tup factor-name :> name
     tup contents>> [ name>> ] map :> slots
     [ "USE: locals"
@@ -113,8 +102,13 @@ M:: tuple-class write-definition ( tup -- seq )
       "::" name ">" "<" surround "(" name "--" slots ")" slots [ ">>" append name swap 2array ] map ";"
     ] assemble ;
 
+: add-lambda-inputs ( definition -- definition )
+    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ special-input? ] reject
+    [ lambda-input new >>link ] map drop ;
+
 : define ( elt -- )
-    [ name>> ] [ '[ _ dup f >>defined? write-definition ( -- ) eval t >>defined? drop ] try ] smart-when* ;
+    add-lambda-inputs set-output-ids
+    [ name>> ] [ '[ _ dup f >>defined? write ( -- ) eval t >>defined? drop ] try ] smart-when* ;
 
 : run-word ( word -- )
     [ define ] [ [ write-import ] [ factor-name ] bi " " glue eval>string ] [ save-result ] tri ;

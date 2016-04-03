@@ -13,16 +13,19 @@ M: space pref-dim*  drop { 0 25 } ;
 : <separator> ( -- img )
     "separator" theme-image <icon> ;
 
+:: add-to-vocab ( env class -- )
+    env [ class add-from-class ] change-vocab-control-value ;
+
 : <new-vocab-button> ( -- button )
-    "orange" [ parent>> [ vocab add-element ] change-vocab-control-value ] <plus-button> 
+    "orange" [ parent>> vocab add-to-vocab ] <plus-button> 
     "New vocabulary ( v )" >>tooltip ;
 
 : <new-word-button> ( -- button )
-    "green" [ parent>> [ word add-element ] change-vocab-control-value ] <plus-button>
+    "green" [ parent>> word-definition add-to-vocab ] <plus-button>
     "New word ( n )" >>tooltip ;
 
 : <new-tuple-button> ( -- button )
-    "blue" [ parent>> [ tuple-class add-element ] change-vocab-control-value ] <plus-button>
+    "blue" [ parent>> tuple-definition add-to-vocab ] <plus-button>
     "New tuple class ( u )" >>tooltip ;
 
 : associated-word ( button -- word )

@@ -6,26 +6,23 @@ ui.gestures ;
 IN: skov.gadgets.plus-button-pile
 
 :: add-to-tuple ( env class -- )
-    env [ control-value tuple-class? ]
-    [ [ class add-element ] change-control-value ] smart-when* ;
+    env [ control-value tuple-definition? ]
+    [ [ class add-from-class ] change-control-value ] smart-when* ;
 
 :: add-to-word ( env class -- )
     hand-gadget get-global :> hand
-    env [ control-value word? ] [
-      [ class add-element
+    env [ control-value word-definition? ] [
+      [ class add-from-class
         hand connector-gadget?
         [ dup contents>> last 
-          hand control-value input? [ output ] [ input ] if add-element 
+          hand control-value input? [ output ] [ input ] if add-from-class 
           contents>> last hand control-value ?connect ] when
       ] change-control-value 
     ] smart-when* ;
 
-:: add-to-vocab ( env class -- )
-    env [ class add-element ] change-vocab-control-value ;
-
 : plus-buttons-for-word ( -- seq )
-    [ "dark" [ find-env input add-to-word ] <plus-button> "Add input ( i )" >>tooltip
-      "dark" [ find-env output add-to-word ] <plus-button> "Add output ( o )" >>tooltip
+    [ "dark" [ find-env definition-input add-to-word ] <plus-button> "Add input ( i )" >>tooltip
+      "dark" [ find-env definition-output add-to-word ] <plus-button> "Add output ( o )" >>tooltip
       <space>
       "green" [ find-env word add-to-word ] <plus-button> "Add word ( w )" >>tooltip
       <space>
@@ -46,7 +43,7 @@ IN: skov.gadgets.plus-button-pile
 M: plus-button-pile model-changed
     dup clear-gadget swap
     value>> {
-      { [ dup tuple-class? ] [ drop plus-buttons-for-tuple ] }
-      { [ dup word? ] [ drop plus-buttons-for-word ] }
+      { [ dup tuple-definition? ] [ drop plus-buttons-for-tuple ] }
+      { [ dup word-definition? ] [ drop plus-buttons-for-word ] }
       [ drop { } ]
     } cond [ add-gadget ] each drop ;

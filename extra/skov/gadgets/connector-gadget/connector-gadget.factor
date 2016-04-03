@@ -6,33 +6,33 @@ ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
 FROM: skov.gadgets => connections>> ;
 IN: skov.gadgets.connector-gadget
 
-: word/tuple? ( obj -- ? )  [ word? ] [ tuple-class? ] bi or ;
-
 : selected? ( node-gadget -- ? )
     { { [ dup find-vocab not ] [ drop t ] }
       { [ dup control-value name>> empty? ] [ drop t ] }
       { [ dup control-value vocab? ] [ [ find-env vocab-control-value ] [ control-value ] bi eq? ] }
-      { [ dup control-value word/tuple? ] [ [ find-env control-value ] [ control-value ] bi eq? ] }
+      { [ dup control-value definition? ] [ [ find-env control-value ] [ control-value ] bi eq? ] }
     } cond ;
 
 : (node-theme) ( node-gadget -- img-name bg-colour text-colour )
     dup selected?
     [ control-value
-      { { [ dup connector? ] [ drop "connector" dark-background light-text-colour ] }
+      { { [ dup definition-connector? ] [ drop "connector" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
         { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
-        { [ dup tuple-class? ] [ drop "class" blue-background dark-text-colour ] }
+        { [ dup tuple-definition? ] [ drop "class" blue-background dark-text-colour ] }
         { [ dup slot? ] [ drop "slot" dark-background light-text-colour ] }
         { [ dup constructor? ] [ drop "constructor" green-background dark-text-colour ] }
         { [ dup destructor? ] [ drop "destructor" green-background dark-text-colour ] }
         { [ dup accessor? ] [ drop "accessor" green-background dark-text-colour ] }
         { [ dup mutator? ] [ drop "mutator" green-background dark-text-colour ] }
         { [ dup word? ] [ drop "word" green-background dark-text-colour ] }
+        { [ dup word-definition? ] [ drop "word" green-background dark-text-colour ] }
       } cond
     ] [ control-value
       { { [ dup vocab? ] [ drop "vocab-faded" faded-background faded-text-colour ] }
         { [ dup word? ] [ drop "word-faded" faded-background faded-text-colour ] }
-        { [ dup tuple-class? ] [ drop "class-faded" faded-background faded-text-colour ] }
+        { [ dup word-definition? ] [ drop "word-faded" faded-background faded-text-colour ] }
+        { [ dup tuple-definition? ] [ drop "class-faded" faded-background faded-text-colour ] }
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 
