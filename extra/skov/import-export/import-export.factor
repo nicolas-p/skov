@@ -40,6 +40,9 @@ M: definition-input (export)
 M: definition-output (export)
     [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
+M: slot (export)
+    [ name>> ] [ initial-value>> ] bi 2array ;
+
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
     vocab factor-name ".skov" append append-path utf8 [ vocab export . ] with-file-writer
@@ -81,6 +84,9 @@ M: definition-output (import)
 
 M: output (import)
     swap first2 [ >>name ] [ >>id ] bi* ;
+
+M: slot (import)
+    swap first2 [ >>name ] [ >>initial-value ] bi* ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ dupd name>> append-path ] map nip ;
