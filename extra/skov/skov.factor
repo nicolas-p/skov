@@ -1,4 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: skov.gadgets.environment-gadget ui.gadgets.status-bar ui ;
 IN: skov
 

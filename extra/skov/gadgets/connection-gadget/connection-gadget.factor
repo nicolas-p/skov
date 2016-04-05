@@ -1,4 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators.smart kernel locals math
 math.vectors opengl opengl.gl sequences skov.code skov.gadgets
 skov.theme specialized-arrays.instances.alien.c-types.float

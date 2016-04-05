@@ -1,4 +1,5 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart kernel
 locals models namespaces sequences skov.code skov.gadgets
 skov.gadgets.buttons skov.gadgets.vocab-gadget ui.gadgets

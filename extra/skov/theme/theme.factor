@@ -1,4 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors colors colors.constants colors.hex io.pathnames
 kernel sequences system ui.images ui.pens.solid ;
 IN: skov.theme

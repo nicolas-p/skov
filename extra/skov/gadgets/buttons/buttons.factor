@@ -1,4 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors kernel locals sequences skov.theme
 skov.utilities ui.gadgets ui.gadgets.buttons ui.pens
 ui.pens.image ;

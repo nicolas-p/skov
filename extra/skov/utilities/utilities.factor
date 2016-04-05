@@ -1,4 +1,5 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: arrays classes combinators.smart kernel locals math
 math.order math.vectors prettyprint sequences ;
 IN: skov.utilities

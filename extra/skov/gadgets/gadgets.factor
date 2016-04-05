@@ -1,4 +1,5 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors kernel locals sequences skov.code ui.gadgets
 ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
 IN: skov.gadgets

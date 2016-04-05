@@ -1,4 +1,5 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors combinators kernel models skov.code
 skov.gadgets skov.theme strings ui.gadgets ui.gadgets.icons
 ui.gadgets.labels ;

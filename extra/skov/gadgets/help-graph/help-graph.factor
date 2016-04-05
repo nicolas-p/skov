@@ -1,3 +1,5 @@
+! Copyright (C) 2016 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors combinators help.topics kernel locals models
 sequences skov.code skov.gadgets.graph-gadget skov.theme
 splitting ui.gadgets.borders vectors ;

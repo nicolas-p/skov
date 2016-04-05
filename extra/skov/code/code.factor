@@ -1,4 +1,5 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart effects
 fry hashtables.private kernel listener locals math.parser
 namespaces sequences splitting vectors vocabs.parser ;
