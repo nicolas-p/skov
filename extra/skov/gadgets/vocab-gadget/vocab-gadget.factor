@@ -70,7 +70,7 @@ M:: vocab-gadget model-changed ( model gadget -- )
     value words>> [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
-    value name>> add-to-interactive-vocabs ;
+    value add-to-interactive-vocabs ;
 
 : contents-height ( vocab-gadget -- x )
     children>> [ last loc>> second ] [ first loc>> second ] bi - ;

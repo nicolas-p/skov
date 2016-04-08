@@ -50,7 +50,7 @@ M: node write
     [ outputs>> [ special-output? ] reject [ write-id ":>" swap 2array ] map reverse ]
     tri 3array ;
 
-M: output write
+M: definition-output write
     inputs>> [ link>> write-id ] map ;
 
 M: text write
@@ -63,12 +63,6 @@ M: lambda write
         [ write-id dup "] :>" swap 3array ]
         [ write-id "] :>" swap 2array ] smart-if
     ] tri 3array ;
-
-M: vocab path>>
-    parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
-
-M: word-definition path>>
-    parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
 :: write-vocab ( def -- seq )
     "IN:" def path>> 2array ;

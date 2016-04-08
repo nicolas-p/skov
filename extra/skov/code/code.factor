@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart effects
 fry hashtables.private kernel listener locals math.parser
-namespaces sequences splitting vectors vocabs.parser ;
+namespaces sequences splitting ui.gadgets vectors vocabs.parser ;
 IN: skov.code
 
 TUPLE: element < identity-tuple  name parent contents ;
@@ -99,6 +99,12 @@ M: mutator factor-name
 M: text factor-name
     name>> "\"" "\"" surround ;
 
+M: vocab path>>
+    parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
+
+M: word-definition path>>
+    parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
+
 : replace-quot ( seq -- seq )
     [ [ array? ] [ first ] smart-when ] map ;
 
@@ -106,8 +112,9 @@ M: text factor-name
     [ in>> replace-quot ] [ out>> replace-quot ]
     [ out-var>> dup dup "." = not and [ suffix ] [ drop ] if ] tri ;
 
-: add-to-interactive-vocabs ( vocab-name -- )
-    '[ _ suffix ] interactive-vocabs swap change-global ;
+: add-to-interactive-vocabs ( vocab -- )
+    path>> [ interactive-vocabs get-global member? not ] 
+    [ '[ _ suffix ] interactive-vocabs swap change-global ] smart-when* ;
 
 : same-name-as-parent? ( word -- ? )
     dup parent>> [ name>> ] bi@ = ;
@@ -203,14 +210,14 @@ M: input connect
      [ words>> empty? not ]
      [ defined?>> ]
      [ any-empty-name? not ]
-   } cleave and and and and and ;
+   } cleave>array t [ and ] reduce ;
 
 : error? ( word -- ? )
     { [ complete-graph? not ]
       [ defined?>> not ]
       [ any-empty-name? ] 
       [ contents>> empty? ]
-    } cleave or or or ;
+    } cleave>array f [ or ] reduce ;
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
