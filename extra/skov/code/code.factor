@@ -142,11 +142,16 @@ M: word (add-connectors)
 
 GENERIC: connect ( output input -- )
 
-:: add-connectors ( elt -- elt )  ! Ne marche que dans un sens
+:: links ( output -- seq )
+    output parent>> parent>> contents>> [ inputs>> [ link>> output eq? ] filter ] map concat ;
+
+:: add-connectors ( elt -- elt )
     elt name>> [
-      elt inputs>> [ link>> ] map :> saved-links
+      elt inputs>> [ link>> ] map :> saved-input-links
+      elt outputs>> [ links ] map :> saved-output-links
       elt (add-connectors)
-      saved-links elt inputs>> [ connect ] 2each
+      saved-input-links elt inputs>> [ connect ] 2each
+      elt outputs>> saved-output-links [ [ dupd connect ] each nip ] 2each
     ] [ elt ] if ;
 
 : order-connectors ( connector connector -- connector connector )
