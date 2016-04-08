@@ -69,7 +69,9 @@ IN: skov.gadgets.environment-gadget
 : more-inputs ( env -- )
     [ hand-gadget get-global find-node
       [ [ control-value variadic? ]
-        [ dup control-value input add-from-class inputs>> last <connector-gadget> add-gadget drop ] smart-when*
+        [ dup control-value input add-from-class inputs>> last
+          <connector-gadget> add-gadget drop
+        ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
@@ -80,9 +82,13 @@ IN: skov.gadgets.environment-gadget
       ] when* drop
     ] make-keyboard-safe ;
 
-: show-result ( env -- )
-    [ dup control-value [ word? ] [ dup run-word result>> swap set-control-value ] [ drop ] smart-if* ]
-    make-keyboard-safe ;
+: toggle-result ( env -- )
+    [ dup control-value {
+        { [ dup word-definition? ] [ dup run-word result>> swap set-control-value ] }
+        { [ dup result? ] [ parent>> swap set-control-value ] }
+        [ drop drop ]
+      } cond 
+    ] make-keyboard-safe ;
 
 :: next-nth-word ( env n -- )
     env [ dup control-value definition? [
@@ -144,7 +150,7 @@ environment-gadget "general" f {
     { T{ key-down f { C+ } "L" } load-vocabs }
     { T{ key-up f f "h" } show-help }
     { T{ key-up f f "H" } show-help }
-    { T{ key-up f f "BACKSPACE" } show-result }
+    { T{ key-up f f "BACKSPACE" } toggle-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
 } define-command-map
