@@ -19,8 +19,10 @@ TUPLE: proto-connection < gadget  loc1 loc2 ;
 : nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
 : connections>> ( def -- seq )  children>> [ connection-gadget? ] filter ;
 M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
-M: node-gadget inputs>> ( node-gadget -- seq )  connectors>> [ control-value input? ] filter ;
-M: node-gadget outputs>> ( node-gadget -- seq )  connectors>> [ control-value output? ] filter ;
+M: node-gadget inputs>> ( node-gadget -- seq )
+    connectors>> [ control-value [ input? ] [ definition-input? ] bi or ] filter ;
+M: node-gadget outputs>> ( node-gadget -- seq )
+    connectors>> [ control-value [ output? ] [ definition-output? ] bi or ] filter ;
 
 : find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
 : find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;
