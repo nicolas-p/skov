@@ -26,15 +26,15 @@ os macosx = [
   "misc/fonts" "Skov.app/Contents/Resources/Fonts" move-file
   "Skov.app/Contents/Resources/Factor.icns" delete-file
 
-  "Skov.app/Contents/Info.plist" utf8 2dup file-lines 
-  [ ">factor<" ">skov<" replace
+  "Skov.app/Contents/Info.plist" utf8 [
+    ">factor<" ">skov<" replace
     ">Factor<" ">Skov<" replace 
     ">0.98<" gmt timestamp>ymd ">" "<" surround replace
     "Factor developers<" "Factor and Skov developers<" replace
     "Factor.icns" "Skov.icns</string>
     <key>ATSApplicationFontsPath</key>
     <string>Fonts" replace
-  ] map -rot set-file-lines
+  ] change-file-contents 
 ] when
 
 os windows = [
