@@ -79,6 +79,7 @@ M: word factor-name
       { "lazy filter" "lfilter" }
       { "while" "special-while" }
       { "until" "special-until" }
+      { "if" "special-if" }
     }
     [ change-name ] each
     dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
@@ -109,8 +110,7 @@ M: word-definition path>>
     [ [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ] map ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
-    [ in>> replace-quot ] [ out>> replace-quot ]
-    [ out-var>> dup dup "." = not and [ suffix ] [ drop ] if ] tri ;
+    [ in>> replace-quot ] [ out>> replace-quot ] bi ;
 
 : add-to-interactive-vocabs ( vocab -- )
     path>> [ interactive-vocabs get-global member? not ] 
