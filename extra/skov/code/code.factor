@@ -106,7 +106,7 @@ M: word-definition path>>
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
 : replace-quot ( seq -- seq )
-    [ [ array? ] [ first ] smart-when ] map ;
+    [ [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ] map ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
     [ in>> replace-quot ] [ out>> replace-quot ]
