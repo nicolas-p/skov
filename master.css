@@ -39,7 +39,7 @@ a:hover {
   text-decoration: underline;
 }
 a.download-link {
-  background-color: #BFE950;
+  background-color: #A2D434;
   border-radius: 10px;
   padding: 5px 10px;
   color: black;
@@ -47,7 +47,7 @@ a.download-link {
 }
 a.download-link:hover {
   text-decoration: none;
-  background-color: white;
+  background-color: #D0F07D;
 }
 .bloc {
   display:inline-block;
