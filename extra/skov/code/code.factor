@@ -68,12 +68,13 @@ M: node slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
-: replace-spaces ( str -- str )  " " "-" replace ;
+: spaces>dashes ( str -- str )  " " "-" replace ;
+: dashes>spaces ( str -- str )  "-" " " replace ;
 
 GENERIC: factor-name ( obj -- str )
 
 M: element factor-name
-    name>> replace-spaces ;
+    name>> spaces>dashes ;
 
 M: word factor-name
     name>> { 
@@ -84,19 +85,19 @@ M: word factor-name
     }
     [ change-name ] each
     dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
-    [ replace-spaces ] when ;
+    [ spaces>dashes ] when ;
 
 M: constructor factor-name
-    name>> replace-spaces "<" ">" surround ;
+    name>> spaces>dashes "<" ">" surround ;
 
 M: destructor factor-name
-    name>> replace-spaces ">" "<" surround ;
+    name>> spaces>dashes ">" "<" surround ;
 
 M: accessor factor-name
-    name>> replace-spaces ">>" append ;
+    name>> spaces>dashes ">>" append ;
 
 M: mutator factor-name
-    name>> replace-spaces ">>" swap append ;
+    name>> spaces>dashes ">>" swap append ;
 
 M: text factor-name
     name>> "\"" "\"" surround ;
@@ -108,10 +109,10 @@ M: word-definition path>>
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
 : replace-quot ( seq -- seq )
-    [ [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ] map ;
+    [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
-    [ in>> replace-quot ] [ out>> replace-quot ] bi ;
+    [ in>> ] [ out>> ] bi [ [ replace-quot dashes>spaces ] map ] bi@ ;
 
 : add-to-interactive-vocabs ( vocab -- )
     path>> [ interactive-vocabs get-global member? not ] 
