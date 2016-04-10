@@ -34,7 +34,7 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <result-button> ( -- button )
     [ associated-word dup control-value run-word select-result ] "result" <word-button> 
-    "Display result ( backspace )" >>tooltip ;
+    "Run word and display result ( backspace )" >>tooltip ;
 
 : <error-button> ( -- button )
     [ drop ] "error" <word-button> 
