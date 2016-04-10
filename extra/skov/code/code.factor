@@ -141,7 +141,7 @@ GENERIC: (add-connectors) ( node -- node )
 M: element (add-connectors)  ;
 M: definition-input (add-connectors)  f >>contents dup name>> output add-with-name ;
 M: definition-output (add-connectors)  f >>contents dup name>> input add-with-name ;
-M: text (add-connectors)  f >>contents dup name>> output add-with-name ;
+M: text (add-connectors)  f >>contents dup name>> output add-with-name add-special-connectors ;
 
 M: word (add-connectors)
     f >>contents dup in-out
