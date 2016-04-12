@@ -105,7 +105,7 @@ M: text factor-name
 M: vocab path>>
     parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
-M: word-definition path>>
+M: definition path>>
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
 : replace-quot ( seq -- seq )
