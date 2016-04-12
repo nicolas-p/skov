@@ -39,4 +39,5 @@ interactive-vocabs [ {
   "colors.hex"
   "timers"
   "sets"
+  "globs"
 } append ] change-global
