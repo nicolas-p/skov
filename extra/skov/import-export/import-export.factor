@@ -43,6 +43,9 @@ M: definition-input (export)
 M: definition-output (export)
     [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
+M: text (export)
+    name>> 1array ;
+
 M: slot (export)
     [ name>> ] [ initial-value>> ] bi 2array ;
 
@@ -88,6 +91,9 @@ M: definition-output (import)
 
 M: output (import)
     swap first2 [ >>name ] [ >>id ] bi* ;
+
+M: text (import)
+    swap first >>name ;
 
 M: slot (import)
     swap first2 [ >>name ] [ >>initial-value ] bi* ;
