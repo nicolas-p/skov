@@ -22,6 +22,7 @@ interactive-vocabs [ {
   "math.vectors"
   "math.intervals"
   "math.statistics"
+  "math.parser"
   "sequences.deep"
   "binary-search"
   "vectors"
