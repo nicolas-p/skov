@@ -1,7 +1,9 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: calendar calendar.format images.loader io.directories
-io.directories.hierarchy io.pathnames kernel memory sequences
-ui.images splitting system io.files io.encodings.utf8 skov parser ;
+io.directories.hierarchy io.pathnames kernel memory namespaces sequences
+ui.images splitting system io.files io.encodings.utf8 skov skov.import-export parser ;
+
+gmt timestamp>ymd skov-version set-global
 
 image-path parent-directory set-current-directory
 

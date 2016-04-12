@@ -1,10 +1,12 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays classes combinators combinators.smart
-eval io.directories io.encodings.utf8 io.files io.files.info
+eval io io.directories io.encodings.utf8 io.files io.files.info
 io.pathnames kernel locals math namespaces prettyprint sequences
 skov.code system ui.gadgets ;
 IN: skov.import-export
+
+SYMBOL: skov-version
 
 : work-directory ( -- path )
     image-path parent-directory "work" append-path ;
@@ -46,7 +48,8 @@ M: slot (export)
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
-    vocab factor-name ".skov" append append-path utf8 [ vocab export . ] with-file-writer
+    vocab factor-name ".skov" append append-path utf8
+    [ "! Skov version " skov-version get-global append print vocab export . ] with-file-writer
     vocab vocabs>> [ write-vocab-file ] each ;
 
 : export-vocabs ( -- )
