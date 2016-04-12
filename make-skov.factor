@@ -59,7 +59,6 @@ os windows = [
 "work/README.txt" delete-file
 "README.md" delete-file
 "git-id" delete-file
-"Hello world (console)" delete-tree
 "changes" delete-tree
 "make-skov.factor" delete-file
 
