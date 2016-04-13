@@ -37,10 +37,10 @@ M: input (export)
 M: output (export)
     [ name>> ] [ id>> ] bi 2array ;
 
-M: definition-input (export)
+M: introduce (export)
     [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
-M: definition-output (export)
+M: return (export)
     [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
 M: text (export)
@@ -80,13 +80,13 @@ M: definition (import)
 M: word (import)
     swap first3 [ >>name ] [ >>path ] [ [ import add-element ] each ] tri* ;
 
-M: definition-input (import)
+M: introduce (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
 
 M: input (import)
     swap first2 [ >>name ] [ >>link ] bi* ;
 
-M: definition-output (import)
+M: return (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
 
 M: output (import)

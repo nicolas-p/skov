@@ -22,8 +22,8 @@ IN: skov.gadgets.plus-button-pile
     ] smart-when* ;
 
 : plus-buttons-for-word ( -- seq )
-    [ "dark" [ find-env definition-input add-to-word ] <plus-button> "Add input ( i )" >>tooltip
-      "dark" [ find-env definition-output add-to-word ] <plus-button> "Add output ( o )" >>tooltip
+    [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input ( i )" >>tooltip
+      "dark" [ find-env return add-to-word ] <plus-button> "Add output ( o )" >>tooltip
       <space>
       "green" [ find-env word add-to-word ] <plus-button> "Add word ( w )" >>tooltip
       <space>

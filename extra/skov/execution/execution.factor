@@ -50,7 +50,7 @@ M: node write
     [ outputs>> [ special-output? ] reject [ write-id ":>" swap 2array ] map reverse ]
     tri 3array ;
 
-M: definition-output write
+M: return write
     inputs>> [ link>> write-id ] map ;
 
 M: text write

@@ -17,7 +17,7 @@ IN: skov.gadgets.help-graph
     dup contents>> first add-connectors contents>>
     [ special-connector? ] reject [ 
       :> inside
-      inside input? [ definition-input ] [ definition-output ] if new
+      inside input? [ introduce ] [ return ] if new
       inside name>> >>name add-connectors :> outside
       inside outside contents>> first order-connectors connect
       outside add-element

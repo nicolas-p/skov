@@ -35,8 +35,8 @@ IN: skov.gadgets.environment-gadget
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
 
-: add-input ( env -- ) [ definition-input add-to-word ] make-keyboard-safe ;
-: add-output ( env -- ) [ definition-output add-to-word ] make-keyboard-safe ;
+: add-input ( env -- ) [ introduce add-to-word ] make-keyboard-safe ;
+: add-output ( env -- ) [ return add-to-word ] make-keyboard-safe ;
 : add-text ( env -- ) [ text add-to-word ] make-keyboard-safe ;
 : add-slot ( env -- ) [ slot add-to-tuple ] make-keyboard-safe ;
 : add-constructor ( env -- ) [ constructor add-to-word ] make-keyboard-safe ;

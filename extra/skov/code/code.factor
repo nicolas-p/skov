@@ -14,8 +14,8 @@ TUPLE: word-definition < definition  defined? result ;
 TUPLE: tuple-definition < definition  defined? ;
 
 TUPLE: node < element ;
-TUPLE: definition-input < node ;
-TUPLE: definition-output < node ;
+TUPLE: introduce < node ;
+TUPLE: return < node ;
 TUPLE: word < node  path ;
 TUPLE: text < node ;
 TUPLE: slot < node  initial-value ;
@@ -32,7 +32,7 @@ TUPLE: special-input < input ;
 TUPLE: special-output < output ;
 
 UNION: special-connector  special-input special-output ;
-UNION: definition-connector  definition-input definition-output ;
+UNION: definition-connector  introduce return ;
 
 TUPLE: result < element ;
 
@@ -49,8 +49,8 @@ M: element connectors>> ( elt -- seq ) contents>> [ definition-connector? ] filt
 M: node connectors>> ( elt -- seq ) contents>> [ connector? ] filter ;
 M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
-M: word-definition inputs>> ( elt -- seq ) contents>> [ definition-input? ] filter ;
-M: word-definition outputs>> ( elt -- seq ) contents>> [ definition-output? ] filter ;
+M: word-definition inputs>> ( elt -- seq ) contents>> [ introduce? ] filter ;
+M: word-definition outputs>> ( elt -- seq ) contents>> [ return? ] filter ;
 M: node slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 
 :: add-element ( parent child -- parent )
@@ -139,8 +139,8 @@ M: definition path>>
 
 GENERIC: (add-connectors) ( node -- node )
 M: element (add-connectors)  ;
-M: definition-input (add-connectors)  f >>contents dup name>> output add-with-name ;
-M: definition-output (add-connectors)  f >>contents dup name>> input add-with-name ;
+M: introduce (add-connectors)  f >>contents dup name>> output add-with-name ;
+M: return (add-connectors)  f >>contents dup name>> input add-with-name ;
 M: text (add-connectors)  f >>contents dup name>> output add-with-name add-special-connectors ;
 
 M: word (add-connectors)
