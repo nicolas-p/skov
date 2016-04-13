@@ -156,8 +156,10 @@ GENERIC: connect ( output input -- )
 
 :: add-connectors ( elt -- elt )
     elt name>> [
-      elt inputs>> [ link>> ] map :> saved-input-links
-      elt outputs>> [ links ] map :> saved-output-links
+      elt node? [
+        elt inputs>> [ link>> ] map 
+        elt outputs>> [ links ] map
+      ] [ f f ] if :> saved-output-links :> saved-input-links
       elt (add-connectors)
       saved-input-links elt inputs>> [ connect ] 2each
       elt outputs>> saved-output-links [ [ dupd connect ] each nip ] 2each
@@ -191,8 +193,13 @@ M: output connected?
 M: input connect
     link<< ;
 
-: disconnect ( connector -- )
+GENERIC: disconnect ( connector -- )
+
+M: input disconnect
     f >>link drop ;
+
+M: output disconnect
+    links [ disconnect ] each ;
 
 : ?connect ( connector connector -- )
     order-connectors 
