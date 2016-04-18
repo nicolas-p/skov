@@ -16,8 +16,10 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 : half-width ( node-gadget -- w ) width 2 / ;
 
 : ?select ( node-gadget -- )
-    [ [ find-vocab ] [ children>> [ label? ] any? ] bi and ]
-    [ [ control-value ] [ find-env set-control-value ] bi ] smart-when* ;
+    [ children>> [ label? ] any? ]
+    [ [ [ find-vocab not ] [ find-env ] smart-when control-value ] 
+      [ find-env set-control-value ] bi 
+    ] smart-when* ;
 
 : select-result ( node-gadget -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;
@@ -58,8 +60,7 @@ M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
 
 M: node-gadget name<<
     [ control-value swap >>name add-connectors drop ] [ dup clear-gadget add-name
-      dup find-graph [ add-connections drop ] when* ] bi node-theme dup ?select
-    find-env [ ] change-control-value ;
+      dup find-graph [ add-connections drop ] when* ] bi node-theme ?select ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb
