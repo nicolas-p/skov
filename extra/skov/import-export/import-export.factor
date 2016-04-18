@@ -99,7 +99,7 @@ M: slot (import)
     swap first2 [ >>name ] [ >>initial-value ] bi* ;
 
 : sub-directories ( path -- seq )
-    dup directory-entries [ directory? ] filter [ dupd name>> append-path ] map nip ;
+    dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
 
 : skov-file ( path -- path )
     dup directory-files [ file-extension "skov" = ] filter first append-path ;

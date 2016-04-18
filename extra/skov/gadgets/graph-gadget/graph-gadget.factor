@@ -90,7 +90,7 @@ CONSTANT: sat 0.1
     nodes>> [ 0 0 ] [ [ [ loc>> ] [ pref-dim ] bi v+ ] map unzip [ supremum ] bi@ ] if-empty 2array ;
 
 : fix-locations ( graph -- graph )
-    dup [ top-left-corner ] keep nodes>> [ dupd swap '[ _ v- ] change-loc drop ] each drop ;
+    dup [ top-left-corner ] keep nodes>> [ swap '[ _ v- ] change-loc drop ] with each ;
 
 M: graph-gadget model-changed
     dup clear-gadget swap value>> [ definition? ]

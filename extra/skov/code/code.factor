@@ -162,7 +162,7 @@ GENERIC: connect ( output input -- )
       ] [ f f ] if :> saved-output-links :> saved-input-links
       elt (add-connectors)
       saved-input-links elt inputs>> [ connect ] 2each
-      elt outputs>> saved-output-links [ [ dupd connect ] each nip ] 2each
+      elt outputs>> saved-output-links [ [ connect ] with each ] 2each
     ] [ elt ] if ;
 
 : order-connectors ( connector connector -- connector connector )
@@ -183,7 +183,7 @@ M: input connected?
     link>> output? ;
 
 M: output connected?
-    dup parent>> parent>> contents>> [ inputs>> [ link>> ] map ] map concat [ dupd eq? ] any? nip ;
+    dup parent>> parent>> contents>> [ inputs>> [ link>> ] map ] map concat [ eq? ] with any? ;
 
 : connected-inputs>> ( elt -- seq )  inputs>> [ connected? ] filter ;
 : connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
