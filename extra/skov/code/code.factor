@@ -114,10 +114,6 @@ M: definition path>>
 : convert-stack-effect ( stack-effect -- seq seq )
     [ in>> ] [ out>> ] bi [ [ replace-quot dashes>spaces ] map ] bi@ ;
 
-: add-to-interactive-vocabs ( vocab -- )
-    path>> [ interactive-vocabs get-global member? not ] 
-    [ '[ _ suffix ] interactive-vocabs swap change-global ] smart-when* ;
-
 : same-name-as-parent? ( word -- ? )
     dup parent>> [ name>> ] bi@ = ;
 

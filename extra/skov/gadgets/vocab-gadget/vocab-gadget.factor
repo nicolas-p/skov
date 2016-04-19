@@ -4,7 +4,7 @@ USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors models namespaces sequences skov.code
 skov.execution skov.gadgets skov.gadgets.buttons
 skov.gadgets.node-gadget skov.theme ui.gadgets ui.gadgets.icons
-ui.gadgets.packs ui.gestures ;
+ui.gadgets.packs ui.gestures skov.gadgets.activate-button ;
 IN: skov.gadgets.vocab-gadget
 
 TUPLE: space < gadget ;
@@ -70,7 +70,7 @@ M:: vocab-gadget model-changed ( model gadget -- )
     value words>> [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
-    value add-to-interactive-vocabs ;
+    value path>> add-interactive-vocab ;
 
 : contents-height ( vocab-gadget -- x )
     children>> [ last loc>> second ] [ first loc>> second ] bi - ;
