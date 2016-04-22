@@ -21,7 +21,7 @@ IN: skov.gadgets.connector-gadget
         { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
         { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
         { [ dup tuple-definition? ] [ drop "class" blue-background dark-text-colour ] }
-        { [ dup slot? ] [ drop "slot" dark-background light-text-colour ] }
+        { [ dup slot? ] [ drop "slot" blue-background dark-text-colour ] }
         { [ dup constructor? ] [ drop "constructor" green-background dark-text-colour ] }
         { [ dup destructor? ] [ drop "destructor" green-background dark-text-colour ] }
         { [ dup accessor? ] [ drop "accessor" green-background dark-text-colour ] }
