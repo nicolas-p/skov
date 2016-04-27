@@ -9,7 +9,7 @@ skov.gadgets.plus-button-pile skov.gadgets.result-gadget
 skov.gadgets.vocab-gadget skov.theme skov.utilities ui.commands
 ui.gadgets ui.gadgets.borders ui.gadgets.editors
 ui.gadgets.packs ui.gadgets.tracks ui.gestures ui.tools.browser
-ui.tools.common vocabs.parser ;
+ui.tools.common vocabs.parser ui.gadgets.scrollers ;
 IN: skov.gadgets.environment-gadget
 
 { 700 600 } environment-gadget set-tool-dim
@@ -23,14 +23,15 @@ IN: skov.gadgets.environment-gadget
     vertical <track>
       <help-button> f track-add
       model <plus-button-pile> { 0 0 } <border> 1 track-add
+    { 10 10 } <filled-border>
     f track-add
     <shelf> 1/2 >>align { 40 0 } >>gap
       model <node-pile> add-gadget
       model <result-gadget> add-gadget
       model <graph-gadget> add-gadget
-    { 0 0 } <border> 1 track-add
-    model <vocab-gadget> f track-add
-    { 10 10 } <filled-border> with-background ;
+    { 10 10 } <border> <scroller> 1 track-add
+    model <vocab-gadget> { 10 10 } <filled-border> <scroller> f track-add
+    with-background ;
 
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline

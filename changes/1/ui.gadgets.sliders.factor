@@ -1,5 +1,5 @@
-USING: accessors combinators kernel ui.gadgets.sliders.private
-ui.gadgets.tracks ;
+USING: accessors combinators kernel math.vectors ui.gadgets
+ui.gadgets.sliders.private ui.gadgets.tracks ;
 IN: ui.gadgets.sliders
 
 : <slider> ( range orientation -- slider )
@@ -11,3 +11,8 @@ IN: ui.gadgets.sliders
             [ <elevator> >>elevator ]
             [ drop dup add-thumb-to-elevator 1 track-add ]
         } cleave ;
+
+M: slider pref-dim*
+    [ slider-enabled? [ { 16 16 } ] [ { 0 0 } ] if ]
+    [ drop { 100 100 } ]
+    [ orientation>> ] tri set-axis ;

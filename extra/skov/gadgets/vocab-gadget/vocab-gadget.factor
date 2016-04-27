@@ -72,20 +72,7 @@ M:: vocab-gadget model-changed ( model gadget -- )
     ?select-result-button drop
     value path>> add-interactive-vocab ;
 
-: contents-height ( vocab-gadget -- x )
-    children>> [ last loc>> second ] [ first loc>> second ] bi - ;
-
 M:: vocab-gadget layout* ( gadget -- )
     gadget call-next-method
-    gadget [ contents-height ] [ dim>> second ] bi - 50 + 0 max 
-    gadget [ min 0 max ] change-scroll-position drop
     gadget children>> [ pack? ] any?
-    [ gadget children>> [ [ pack? not ] [ [ { 15 0 } v+ ] change-loc drop ] smart-when* ] each ] when
-    gadget children>> [ [ 0 gadget scroll-position>> 2array v- ] change-loc drop ] each ;
-
-: do-mouse-scroll ( vocab-gadget -- )
-    [ scroll-direction get-global second 3 * + ] change-scroll-position relayout-1 ;
-
-vocab-gadget H{
-    { mouse-scroll [ do-mouse-scroll ] }
-} set-gestures
+    [ gadget children>> [ [ pack? not ] [ [ { 15 0 } v+ ] change-loc drop ] smart-when* ] each ] when ;
