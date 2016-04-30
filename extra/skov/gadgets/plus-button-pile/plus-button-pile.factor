@@ -36,7 +36,7 @@ IN: skov.gadgets.plus-button-pile
     ] output>array ;
 
 : plus-buttons-for-tuple ( -- seq )
-    "dark" [ find-env slot add-to-tuple ] <plus-button> "Add slot ( s )" >>tooltip 1array ;
+    "blue" [ find-env slot add-to-tuple ] <plus-button> "Add slot ( s )" >>tooltip 1array ;
 
 : <plus-button-pile> ( model -- gadget )
     plus-button-pile new vertical >>orientation swap >>model ;

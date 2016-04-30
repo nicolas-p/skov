@@ -29,9 +29,9 @@ M: node-gadget outputs>> ( node-gadget -- seq )
 : find-graph ( gadget -- graph )  [ graph-gadget? ] find-parent ;
 : find-node ( gadget -- node )  [ node-gadget? ] find-parent ;
 
-CONSTANT: connector-size 8
+CONSTANT: connector-size 10
 CONSTANT: node-height 28
-CONSTANT: min-node-width 40
+CONSTANT: min-node-width 45
 
 : vocab-control-value ( gadget -- value )
     control-value [ vocab? ] find-parent ;

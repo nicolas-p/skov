@@ -1,7 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors colors colors.constants colors.hex io.pathnames
-kernel sequences system ui.images ui.pens.solid ;
+kernel sequences system ui.images ui.pens.image ui.pens.solid ;
 IN: skov.theme
 
 CONSTANT: content-background-colour HEXCOLOR: 002b36
@@ -33,3 +33,6 @@ CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
 
 : 2-theme-image ( prefix suffix -- image-name )
     "--" glue theme-image ;
+
+: 2-theme-image-pen ( str str -- pen )
+    2-theme-image <image-pen> t >>fill? ;

@@ -12,10 +12,10 @@ IN: skov.gadgets.connection-gadget
 : loc-in-definition ( connector -- loc ) [ loc>> ] [ parent>> loc>> ] bi v+ ;
 
 : start-loc ( connection -- loc )
-    start>> loc-in-definition connector-size 2 / connector-size 2array v+ ;
+    start>> loc-in-definition connector-size 2 / connector-size 1 - 2array v+ ;
 
 : end-loc ( connection -- loc )
-    end>> loc-in-definition connector-size 2 / 0 2array v+ ;
+    end>> loc-in-definition connector-size 2 / 1 2array v+ ;
 
 :: control-points ( loc1 loc2 -- seq )
     loc1 second loc2 second + 2 / :> middle
@@ -29,7 +29,7 @@ IN: skov.gadgets.connection-gadget
     1 0x00FF glLineStipple
     connection-colour gl-color
     GL_LINE_SMOOTH glEnable 
-    1.5 glLineWidth
+    3 glLineWidth
     GL_MAP1_VERTEX_3 0.0 1.0 3 4 loc1 loc2 control-points glMap1f
     GL_MAP1_VERTEX_3 glEnable
     100 0.0 1.0 glMapGrid1f
