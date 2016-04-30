@@ -9,8 +9,8 @@ ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ;
 IN: skov.gadgets.node-gadget
 
-M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 / >integer ] bi + ;
-M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 / >integer ] bi + ;
+M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 /i ] bi + ;
+M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 /i ] bi + ;
 
 : width ( node-gadget -- w ) pref-dim first ;
 : half-width ( node-gadget -- w ) width 2 / ;
@@ -65,7 +65,7 @@ M: node-gadget name<<
 :: spread ( connectors width -- seq )
     connectors length :> nb
     width nb connector-size * - :> width
-    width nb 1 + / >integer :> gap
+    width nb 1 + /i :> gap
     nb [ gap ] replicate :> gaps
     gaps nb iota [ connector-size * connector-size min ] map v+ cum-sum ;
 
