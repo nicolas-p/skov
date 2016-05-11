@@ -9,11 +9,17 @@ ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ;
 IN: skov.gadgets.node-gadget
 
-M: node-gadget x>>  [ loc>> first ] [ pref-dim first 2 /i ] bi + ;
-M: node-gadget y>>  [ loc>> second ] [ pref-dim second 2 /i ] bi + ;
-
 : width ( node-gadget -- w ) pref-dim first ;
-: half-width ( node-gadget -- w ) width 2 / ;
+: half-width ( node-gadget -- w/2 ) width 2 /i ;
+
+: mid-x ( node -- x )  [ loc>> first ] [ half-width ] bi + ;
+: set-mid-x ( x node -- node )  [ half-width - ] [ [ second 2array ] change-loc ] bi ;
+
+: y ( node -- y )  loc>> second ;
+: set-y ( y node -- node )  [ first swap 2array ] change-loc ;
+
+: mid-loc ( node -- xy )  [ mid-x ] [ y ] bi 2array ;
+:: set-loc ( xy node -- node )  xy first node set-mid-x xy second node set-y drop ;
 
 : ?select ( node-gadget -- )
     [ children>> [ label? ] any? ]

@@ -1,81 +1,58 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays assocs combinators combinators.smart fry
-kernel locals math math.order math.vectors models random
-sequences sequences.deep sets skov.code skov.execution
-skov.gadgets skov.gadgets.connection-gadget
+USING: accessors arrays assocs combinators.smart fry kernel
+locals math math.order math.statistics math.vectors models
+sequences skov.code skov.execution skov.gadgets
 skov.gadgets.connector-gadget skov.gadgets.node-gadget
-skov.utilities ui.gadgets ;
+ui.gadgets ;
 IN: skov.gadgets.graph-gadget
 
-:: add-vertical-springs ( node -- node )
-    node [
-      node connected-inputs>> [ links>> first parent>> { 0 1 } 2array ] map
-      node connected-outputs>> [ links>> [ parent>> { 0 -1 } 2array ] map ] map concat
-      append append
-    ] change-springs ;
+SINGLETON: above
+SINGLETON: below
 
-: all-nodes-above ( connector -- seq )
-    links>> [ parent>> dup connected-inputs>> [ all-nodes-above ] map 2array ] map flatten ;
+: connectors ( node dir -- seq )
+    above? [ connected-inputs>> ] [ connected-outputs>> ] if ;
 
-: all-nodes-below ( connector -- seq )
-    links>> [ parent>> dup connected-outputs>> [ all-nodes-below ] map 2array ] map flatten ;
+: neighbours ( node dir -- seq )
+    connectors [ links>> first parent>> ] map ;
 
-:: each-pair ( seq quot -- )
-    seq [ but-last ] [ rest ] bi quot 2each ; inline
+:: total-widths ( node dir -- seq )
+    node dir neighbours [ [ width ] [ dir total-widths sum ] bi max 20 + ] map ;
 
-: if-more-than-one ( seq quot -- )
-    [ length 1 > ] swap smart-when* ; inline
+: unplaced? ( node -- ? )
+    loc>> { 0 0 } = ;
 
-:: add-left-right-springs ( node1 node2 -- )
-    node1 [ { node2 { -1 0 } } suffix ] change-springs drop
-    node2 [ { node1 { 1 0 } } suffix ] change-springs drop ;
+: vertical-space ( dir -- y )
+    above? [ -80 ] [ 80 ] if ;
 
-: reject-common ( set1 set2 -- set1' set2' )
-    [ diff ] [ swap diff ] 2bi ;
+: neighbour-relative-positions ( node dir -- seq )
+    total-widths [ f ] [ 
+        [ cum-sum ] [ 2 v/n v- ] bi dup mean v-n
+    ] if-empty ;
 
-:: process-connector-row ( seq quot -- )
-    seq [ [ quot bi@ reject-common [ add-left-right-springs ] cartesian-each ] each-pair ] if-more-than-one ; inline
+: (set-relative-positions) ( node dir -- )
+    [ connectors ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
+    '[ _ 2array >>locs drop ] 2each ;
 
-: add-horizontal-springs ( node -- node )
-    dup connected-inputs>> [ all-nodes-above ] process-connector-row
-    dup connected-outputs>> [ all-nodes-below ] process-connector-row ;
+: set-relative-positions ( node -- node )
+    [ above (set-relative-positions) ]
+    [ below (set-relative-positions) ] [ ] tri ;
 
-CONSTANT: k 0.05
-CONSTANT: sat 0.1
+: vmaxabs ( v v -- v )
+    [ 2dup [ abs ] bi@ > [ drop ] [ nip ] if ] 2map ;
 
-:: spring-force ( dx dx0 -- f )
-    dx0 dx - k *
-    dx0 0 > [ sat neg max ] when
-    dx0 0 < [ sat min ] when ;
-
-:: force ( node1 node2 pos -- force )
-    node1 x>> node1 half-width pos first * -
-    node2 x>> node2 half-width pos first * + - pos first 50 * spring-force
-    node1 y>> node2 y>> - pos second 80 * spring-force
-    pos first 0 = not [ drop 5 * 0 ] when
-    2array ;
-
-: update-acceleration ( node -- node )
-    dup springs>> [ dupd first2 force ] map v-sum >>acc ;
-
-:: update-velocity ( node -- node )
-    node [ node acc>> v+ 0.85 v*n ] change-vel ;
-
-:: update-position ( node -- node )
-    node [ node vel>> v+ ] change-loc ;
-
-: move-nodes ( seq -- seq )
-    [ update-acceleration ] map [ update-velocity ] map [ update-position ] map ;
-
-: stop? ( seq -- ? )
-    [ acc>> [ abs ] map supremum 0.01 <= ] all? ;
+:: set-absolute-positions ( node -- )
+    node connected-connectors>> [
+        [ links>> first parent>> unplaced? ] [
+            [ locs>> ]
+            [ links>> first locs>> vneg vmaxabs node mid-loc v+ ]
+            [ links>> first parent>> ]
+            tri set-loc set-absolute-positions
+        ] smart-when*
+    ] each ;
 
 : place-nodes ( graph -- graph )
-     dup nodes>>
-     [ add-vertical-springs ] map
-     [ add-horizontal-springs ] map
-     [ dup stop? ] [ move-nodes ] until drop ;
+     dup nodes>> [ set-relative-positions ] map [ first set-absolute-positions ] unless-empty ;
 
 : add-nodes ( graph -- graph )
     dup control-value connected-contents>> [ <node-gadget> add-gadget ] each ;

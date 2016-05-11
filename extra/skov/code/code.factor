@@ -183,6 +183,7 @@ M: output connected?
 
 : connected-inputs>> ( elt -- seq )  inputs>> [ connected? ] filter ;
 : connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
+: connected-connectors>> ( elf -- seq )  connectors>> [ connected? ] filter ;
 : connected-contents>> ( elf -- seq )  contents>> [ connected? ] filter ;
 : unconnected-contents>> ( elf -- seq )  contents>> [ connected? ] reject ;
 

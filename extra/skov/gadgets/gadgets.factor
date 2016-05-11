@@ -10,17 +10,20 @@ TUPLE: node-pile < pack ;
 TUPLE: graph-gadget < gadget ;
 TUPLE: result-gadget < pack ;
 TUPLE: vocab-gadget < pack { scroll-position initial: 0 } ;
-TUPLE: node-gadget < border springs { acc initial: { 0 1 } } 
-                                    { vel initial: { 0 0 } } ;
-TUPLE: connector-gadget < icon { links initial: { } } ;
+TUPLE: node-gadget < border ;
+TUPLE: connector-gadget < icon  { links initial: { } } locs ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
 
 : nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
 : connections>> ( def -- seq )  children>> [ connection-gadget? ] filter ;
-M: node-gadget connectors>> ( node-gadget -- seq )  children>> [ connector-gadget? ] filter ;
+
+M: node-gadget connectors>> ( node-gadget -- seq )
+    children>> [ connector-gadget? ] filter ;
+
 M: node-gadget inputs>> ( node-gadget -- seq )
     connectors>> [ control-value [ input? ] [ introduce? ] bi or ] filter ;
+
 M: node-gadget outputs>> ( node-gadget -- seq )
     connectors>> [ control-value [ output? ] [ return? ] bi or ] filter ;
 
