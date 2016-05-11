@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 USING: calendar calendar.format images.loader io.directories
-io.directories.hierarchy io.pathnames kernel memory namespaces sequences
+io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
 ui.images splitting system io.files io.encodings.utf8 skov skov.import-export parser ;
 
 gmt timestamp>ymd skov-version set-global
@@ -61,6 +61,8 @@ os windows = [
 "git-id" delete-file
 "changes" delete-tree
 "make-skov.factor" delete-file
+
+dark-mode
 
 save
 "factor.image" "skov.image" move-file
