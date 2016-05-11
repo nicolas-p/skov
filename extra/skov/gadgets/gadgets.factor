@@ -9,7 +9,7 @@ TUPLE: plus-button-pile < pack ;
 TUPLE: node-pile < pack ;
 TUPLE: graph-gadget < gadget ;
 TUPLE: result-gadget < pack ;
-TUPLE: vocab-gadget < pack { scroll-position initial: 0 } ;
+TUPLE: vocab-gadget < pack ;
 TUPLE: node-gadget < border ;
 TUPLE: connector-gadget < icon  { links initial: { } } locs ;
 TUPLE: connection-gadget < gadget  start end ;
