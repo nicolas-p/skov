@@ -41,18 +41,20 @@ SINGLETON: below
 : vmaxabs ( v v -- v )
     [ 2dup [ abs ] bi@ > [ drop ] [ nip ] if ] 2map ;
 
-:: set-absolute-positions ( node -- )
-    node connected-connectors>> [
-        [ links>> first parent>> unplaced? ] [
-            [ locs>> ]
-            [ links>> first locs>> vneg vmaxabs node mid-loc v+ ]
-            [ links>> first parent>> ]
-            tri set-loc set-absolute-positions
-        ] smart-when*
-    ] each ;
+DEFER: set-absolute-positions
+
+:: set-absolute-position ( connector -- )
+    connector parent>> :> from-node
+    connector links>> first parent>> :> node
+    connector locs>> connector links>> first locs>> vneg vmaxabs from-node mid-loc v+ :> new-loc
+    node unplaced? connector control-value input? node y new-loc second > and or
+    [ new-loc node set-loc set-absolute-positions ] when ;
+
+: set-absolute-positions ( node -- )
+    connected-connectors>> [ set-absolute-position ] each ;
 
 : place-nodes ( graph -- graph )
-     dup nodes>> [ set-relative-positions ] map [ first set-absolute-positions ] unless-empty ;
+     dup nodes>> [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
 
 : add-nodes ( graph -- graph )
     dup control-value connected-contents>> [ <node-gadget> add-gadget ] each ;
