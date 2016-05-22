@@ -21,6 +21,9 @@ IN: skov.gadgets.node-gadget
 : mid-loc ( node -- xy )  [ mid-x ] [ y ] bi 2array ;
 :: set-loc ( xy node -- node )  xy first node set-mid-x xy second node set-y drop ;
 
+: rel-loc ( node1 node2 -- xy )  swap [ mid-loc ] bi@ v- ;
+:: set-rel-loc ( node1 node2 new-rel-loc -- )  node1 mid-loc new-rel-loc v+ node2 set-loc drop ;
+
 : ?select ( node-gadget -- )
     [ children>> [ label? ] any? ]
     [ [ [ find-vocab not ] [ find-env ] smart-when control-value ] 
