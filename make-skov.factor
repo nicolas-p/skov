@@ -10,7 +10,7 @@ image-path parent-directory set-current-directory
 { 
   "vocab:skov/theme/"
   "vocab:definitions/icons/"
-  "vocab:ui/gadgets/theme/"
+  "vocab:ui/theme/images"
 } [ 
   dup directory-files
   [ first CHAR: . = ] reject
