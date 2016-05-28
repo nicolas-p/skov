@@ -1,109 +1,70 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart debugger
-eval fry kernel locals math math.parser namespaces sequences
-sequences.deep sets skov.code skov.utilities ui.gadgets
-vocabs.parser ;
+USING: accessors arrays combinators combinators.smart
+compiler.tree compiler.units debugger effects eval fry
+io.streams.string kernel listener locals math math.parser
+namespaces quotations sequences sequences.deep sets skov.code
+skov.utilities ui.gadgets vocabs.parser ;
+QUALIFIED: words
 IN: skov.execution
-
-TUPLE: lambda  contents ;
-TUPLE: lambda-input  id ;
-
-: <lambda> ( seq -- lambda ) 
-    flatten members lambda new swap >>contents ;
-
-M: lambda inputs>>  drop { } ;
-
-: lambda-inputs>> ( lambda -- seq ) 
-    contents>> [ inputs>> ] map concat [ link>> ] map [ lambda-input? ] filter ;
-
-: lambda-output>> ( lambda -- output-connector )
-    contents>> last outputs>> [ connected? ] filter first ;
-
-: write-stack-effect ( word -- seq )
-    [ inputs>> [ factor-name ] map ]
-    [ outputs>> [ factor-name ] map ] bi
-    { "--" } glue { "(" } { ")" } surround ;
-
-: unevaluated? ( connector -- ? )
-    name>> "quot" swap subseq? ;
 
 : walk ( node -- seq )
     [ inputs>> [ {
-        { [ dup unevaluated? ] [ link>> parent>> walk <lambda> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
         [ drop { } ]
     } cond ] map ] [ ] bi 2array ;
 
-: ordered-graph ( word -- seq )
-    contents>> [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members ;
+: sort-graph ( seq -- seq )
+    [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members ;
 
-: write-id ( obj -- str )
-    id>> number>string "#" prepend ;
+: input-ids ( node -- seq )  inputs>> [ special-connector? ] reject [ link>> id>> ] map ;
+: output-ids ( node -- seq )  outputs>> [ special-connector? ] reject [ id>> ] map ;
 
-GENERIC: write ( obj -- seq )
+GENERIC: transform ( node -- compiler-node )
 
-M: node write
-    [ inputs>> [ special-input? ] reject [ link>> write-id ] map ]
-    [ [ factor-name 1array ] keep 
-      [ variadic? ] [ inputs>> length 2 - [ dup last 2array ] times ] smart-when* ]
-    [ outputs>> [ special-output? ] reject [ write-id ":>" swap 2array ] map reverse ]
-    tri 3array ;
+M: introduce transform
+    output-ids <#introduce> ;
 
-M: return write
-    inputs>> [ link>> write-id ] map ;
+M: return transform
+    input-ids <#return> ;
 
-M: text write
-    [ factor-name ] [ drop ":>" ] [ outputs>> first write-id ] tri 3array ;
+M: text transform
+    [ factor-name ] [ output-ids first ] bi <#push> ;
 
-M: lambda write
-    [ lambda-inputs>> [ write-id ] map { "[|" } { "|" } surround ]
-    [ contents>> [ write ] map ]
-    [ lambda-output>> [ special-output? not ]
-        [ write-id dup "] :>" swap 3array ]
-        [ write-id "] :>" swap 2array ] smart-if
-    ] tri 3array ;
+: transform-number ( word -- push )
+    [ name>> string>number ] [ output-ids first ] bi <#push> ;
 
-:: write-vocab ( def -- seq )
-    "IN:" def path>> 2array ;
+: transform-word ( word -- call )
+    [ input-ids ] [ output-ids ] [ factor-name '[ _ search ] with-interactive-vocabs ] tri <#call> ;
 
-: assemble ( seq -- str )
-    output>array flatten harvest " " join ; inline
+M: word transform
+    [ name>> string>number ] [ transform-number ] [ transform-word ] smart-if ;
 
-:: write-import ( word -- seq )
-    [ "FROM:" word path>> "=>" word factor-name ";" ] assemble ;
+: ?add-empty-return ( seq -- seq )
+    [ [ #return? ] any? not ] [ f <#return> suffix ] smart-when ;
 
-: write-imports ( word -- seq )
-    words>> [ path>> ] filter [ write-import ] map "USE: locals" suffix ;
+M: word-definition transform
+    set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
+    
+: effect ( def -- effect )
+    [ inputs>> ] [ outputs>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
 
-M:: word-definition write ( word -- seq )
-    [ word write-imports
-      word write-vocab
-      "::"
-      word factor-name
-      word write-stack-effect
-      word ordered-graph [ write ] map
-      ";"
-    ] assemble ;
+:: quotation-for-effect ( def -- quot )
+    def 1quotation \ drop suffix
+    def inputs>> [ drop \ drop suffix ] each
+    def outputs>> [ drop 1 suffix ] each ;
 
-M:: tuple-definition write ( tup -- seq )
-    tup factor-name :> name
-    tup contents>> [ name>> ] map :> slots
-    [ "USE: locals"
-      "USE: accessors"
-      tup write-vocab
-      "TUPLE:" name slots ";"
-      "C:" name "<" ">" surround name
-      "::" name ">" "<" surround "(" name "--" slots ")" slots [ ">>" append name swap 2array ] map ";"
-    ] assemble ;
+:: define ( def -- )
+   [ def f >>defined?
+     [ def factor-name
+       def path>> words:create-word dup def alt<<
+       def quotation-for-effect def effect words:define-declared 
+     ] with-compilation-unit
+     t >>defined? drop
+   ] try ;
 
-: add-lambda-inputs ( definition -- definition )
-    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ special-input? ] reject
-    [ lambda-input new >>link ] map drop ;
-
-: define ( elt -- )
-    add-lambda-inputs set-output-ids
-    [ name>> ] [ '[ _ dup f >>defined? write ( -- ) eval t >>defined? drop ] try ] smart-when* ;
+: ?define ( elt -- )
+    [ name>> ] [ define ] smart-when* ;
 
 : run-word ( word -- )
-    [ define ] [ [ write-import ] [ factor-name ] bi " " glue eval>string ] [ save-result ] tri ;
+    [ ?define ] [ alt>> [ execute( -- ) ] with-string-writer ] [ save-result ] tri ;

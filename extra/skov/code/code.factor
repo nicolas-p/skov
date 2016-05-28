@@ -9,9 +9,9 @@ TUPLE: element < identity-tuple  name parent contents ;
 
 TUPLE: vocab < element ;
 
-TUPLE: definition < element ;
-TUPLE: word-definition < definition  defined? result ;
-TUPLE: tuple-definition < definition  defined? ;
+TUPLE: definition < element  defined? alt ;
+TUPLE: word-definition < definition  result ;
+TUPLE: tuple-definition < definition ;
 
 TUPLE: node < element ;
 TUPLE: introduce < node ;
@@ -100,7 +100,7 @@ M: mutator factor-name
     name>> spaces>dashes ">>" swap append ;
 
 M: text factor-name
-    name>> "\"" "\"" surround ;
+    name>> ;
 
 M: vocab path>>
     parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
