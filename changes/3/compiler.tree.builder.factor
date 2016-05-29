@@ -1,6 +1,6 @@
 USING: accessors combinators.short-circuit combinators.smart
 compiler.tree.builder.private kernel sequences skov.code
-skov.execution ;
+skov.execution compiler.tree ;
 QUALIFIED: words
 IN: compiler.tree.builder
 
@@ -8,9 +8,9 @@ IN: compiler.tree.builder
     [ f ] dip build-tree-with ;
 
 : build-tree-from-graph ( word/quot -- nodes )
-    def>> first transform ;
+    def>> first ;
 
 : build-tree ( word/quot -- nodes )
-    [ { [ words:word? ] [ def>> first word-definition? ] } 1&& ]
+    [ { [ words:word? ] [ def>> first sequence? ] [ def>> first [ #call? ] any? ] } 1&& ]
     [ build-tree-from-graph ]
     [ build-tree-from-code ] smart-if ;

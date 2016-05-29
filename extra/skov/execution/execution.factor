@@ -4,12 +4,34 @@ USING: accessors arrays combinators combinators.smart
 compiler.tree compiler.units debugger effects eval fry
 io.streams.string kernel listener locals math math.parser
 namespaces quotations sequences sequences.deep sets skov.code
-skov.utilities ui.gadgets vocabs.parser ;
+skov.utilities ui.gadgets vocabs vocabs.parser ;
 QUALIFIED: words
 IN: skov.execution
 
+TUPLE: lambda  contents ;
+TUPLE: lambda-input  id ;
+
+: <lambda> ( seq -- lambda ) 
+    flatten members lambda new swap >>contents ;
+
+M: lambda inputs>>
+    contents>> [ inputs>> ] map concat [ link>> ] map [ lambda-input? ] filter ;
+
+M: lambda outputs>>
+    contents>> last outputs>> [ connected? ] filter ;
+
+M: lambda-input factor-name  drop "" ;
+
+: add-lambda-inputs ( definition -- definition )
+    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ special-input? ] reject
+    [ lambda-input new >>link ] map drop ;
+
+: unevaluated? ( connector -- ? )
+    name>> "quot" swap subseq? ;
+
 : walk ( node -- seq )
     [ inputs>> [ {
+        { [ dup unevaluated? ] [ link>> parent>> walk <lambda> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
         [ drop { } ]
     } cond ] map ] [ ] bi 2array ;
@@ -20,7 +42,16 @@ IN: skov.execution
 : input-ids ( node -- seq )  inputs>> [ special-connector? ] reject [ link>> id>> ] map ;
 : output-ids ( node -- seq )  outputs>> [ special-connector? ] reject [ id>> ] map ;
 
+: effect ( def -- effect )
+    [ inputs>> ] [ outputs>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
+
 GENERIC: transform ( node -- compiler-node )
+GENERIC: transform-contents ( node -- compiler-node )
+
+:: quotation-for-effect ( def -- quot )
+    def transform-contents 1quotation \ drop suffix
+    def inputs>> [ drop \ drop suffix ] each
+    def outputs>> [ drop 1 suffix ] each ;
 
 M: introduce transform
     output-ids <#introduce> ;
@@ -43,16 +74,21 @@ M: word transform
 : ?add-empty-return ( seq -- seq )
     [ [ #return? ] any? not ] [ f <#return> suffix ] smart-when ;
 
-M: word-definition transform
-    set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
-    
-: effect ( def -- effect )
-    [ inputs>> ] [ outputs>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
+M: word-definition transform-contents
+    add-lambda-inputs set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
 
-:: quotation-for-effect ( def -- quot )
-    def 1quotation \ drop suffix
-    def inputs>> [ drop \ drop suffix ] each
-    def outputs>> [ drop 1 suffix ] each ;
+:: define-lambda-word ( lambda -- word )
+    [ "lambda" "lambdas" dup create-vocab drop words:create-word dup
+      lambda [ quotation-for-effect ] [ effect ] bi words:define-declared
+    ] with-compilation-unit ;
+
+M: lambda transform
+    [ define-lambda-word 1quotation ] [ output-ids first ] bi <#push> ;
+
+M: lambda transform-contents
+    [ contents>> [ transform ] map ] 
+    [ inputs>> [ id>> ] map <#introduce> prefix ] 
+    [ outputs>> [ id>> ] map <#return> suffix ] tri ;
 
 :: define ( def -- )
    [ def f >>defined?
