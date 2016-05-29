@@ -53,11 +53,6 @@ M: lambda-input factor-name  drop "" ;
 GENERIC: transform ( node -- compiler-node )
 GENERIC: transform-contents ( node -- compiler-node )
 
-:: quotation-for-effect ( def -- quot )
-    def transform-contents 1quotation \ drop suffix
-    def inputs>> [ drop \ drop suffix ] each
-    def outputs>> [ drop 1 suffix ] each ;
-
 M: introduce transform
     output-ids <#introduce> ;
 
@@ -83,7 +78,7 @@ M: word-definition transform-contents
     add-lambda-inputs set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
 
 : define-lambda-word ( lambda -- word )
-    [ [ quotation-for-effect ] [ effect ] bi words:define-temp ] with-compilation-unit ;
+    [ [ transform-contents >quotation ] [ effect ] bi words:define-temp ] with-compilation-unit ;
 
 M: lambda transform
     [ define-lambda-word 1quotation ] [ output-ids first ] bi <#push> ;
@@ -97,7 +92,7 @@ M: lambda transform-contents
    [ def f >>defined?
      [ def factor-name
        def path>> words:create-word dup def alt<<
-       def quotation-for-effect def effect words:define-declared 
+       def transform-contents >quotation def effect words:define-declared 
      ] with-compilation-unit
      t >>defined? drop
    ] try ;

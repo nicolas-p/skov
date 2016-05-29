@@ -8,9 +8,9 @@ IN: compiler.tree.builder
     [ f ] dip build-tree-with ;
 
 : build-tree-from-graph ( word/quot -- nodes )
-    def>> first ;
+    def>> ;
 
 : build-tree ( word/quot -- nodes )
-    [ { [ words:word? ] [ def>> first sequence? ] [ def>> first [ #call? ] any? ] } 1&& ]
+    [ { [ words:word? ] [ def>> [ #call? ] any? ] } 1&& ]
     [ build-tree-from-graph ]
     [ build-tree-from-code ] smart-if ;
