@@ -77,10 +77,8 @@ M: word transform
 M: word-definition transform-contents
     add-lambda-inputs set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
 
-:: define-lambda-word ( lambda -- word )
-    [ "lambda" "lambdas" dup create-vocab drop words:create-word dup
-      lambda [ quotation-for-effect ] [ effect ] bi words:define-declared
-    ] with-compilation-unit ;
+: define-lambda-word ( lambda -- word )
+    [ [ quotation-for-effect ] [ effect ] bi words:define-temp ] with-compilation-unit ;
 
 M: lambda transform
     [ define-lambda-word 1quotation ] [ output-ids first ] bi <#push> ;
