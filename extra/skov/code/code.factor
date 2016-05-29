@@ -1,8 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart effects
-fry hashtables.private kernel listener locals math.parser
-namespaces sequences splitting ui.gadgets vectors vocabs.parser ;
+USING: accessors arrays combinators combinators.smart
+compiler.units effects fry hashtables.private kernel listener
+locals math.parser namespaces sequences splitting ui.gadgets
+vectors vocabs.parser ;
+QUALIFIED: vocabs
+QUALIFIED: definitions
 IN: skov.code
 
 TUPLE: element < identity-tuple  name parent contents ;
@@ -242,3 +245,9 @@ vocab new "●" >>name skov-root set-global
 
 : set-output-ids ( definition -- definition )
     dup contents>> [ inputs>> ] map concat [ link>> ] map sift dup length iota [ >>id drop ] 2each ;
+
+: forget-alt ( vocab/def -- )
+    { { [ dup vocab? ] [ path>> vocabs:forget-vocab ] }
+      { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] when* ] }
+      [ drop ]
+    } cond ;

@@ -58,8 +58,8 @@ IN: skov.gadgets.environment-gadget
 : remove-node-gadget ( env -- )
     [ hand-gadget get-global find-node dup
       [ [ outputs>> [ links>> [ control-value disconnect ] each ] each ]
-        [ control-value remove-from-parent ] bi
-      ] when* find-env [ ] change-control-value drop
+        [ control-value dup forget-alt remove-from-parent ] bi
+      ] when* find-env [ parent>> ] change-control-value drop
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
