@@ -1,10 +1,9 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
-compiler.tree compiler.units debugger effects eval fry
-io.streams.string kernel listener locals math math.parser
-namespaces quotations sequences sequences.deep sets skov.code
-skov.utilities ui.gadgets vocabs vocabs.parser ;
+compiler.tree compiler.units debugger effects fry
+io.streams.string kernel listener locals math.parser quotations
+sequences sequences.deep sets skov.code vocabs.parser ;
 QUALIFIED: words
 IN: skov.execution
 
