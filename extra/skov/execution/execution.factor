@@ -14,10 +14,16 @@ TUPLE: lambda-input  id ;
     flatten members lambda new swap >>contents ;
 
 M: lambda inputs>>
-    contents>> [ inputs>> ] map concat [ link>> ] map [ lambda-input? ] filter ;
+    drop { } ;
 
 M: lambda outputs>>
     contents>> last outputs>> [ connected? ] filter ;
+
+M: lambda introduces>>
+    contents>> [ inputs>> ] map concat [ link>> ] map [ lambda-input? ] filter ;
+
+M: lambda returns>>
+    outputs>> ;
 
 M: lambda-input factor-name  drop "" ;
 
@@ -42,7 +48,7 @@ M: lambda-input factor-name  drop "" ;
 : output-ids ( node -- seq )  outputs>> [ special-connector? ] reject [ id>> ] map ;
 
 : effect ( def -- effect )
-    [ inputs>> ] [ outputs>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
+    [ introduces>> ] [ returns>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
 
 GENERIC: transform ( node -- compiler-node )
 GENERIC: transform-contents ( node -- compiler-node )
@@ -84,8 +90,8 @@ M: lambda transform
 
 M: lambda transform-contents
     [ contents>> [ transform ] map ] 
-    [ inputs>> [ id>> ] map <#introduce> prefix ] 
-    [ outputs>> [ id>> ] map <#return> suffix ] tri ;
+    [ introduces>> [ id>> ] map <#introduce> prefix ] 
+    [ returns>> [ id>> ] map <#return> suffix ] tri ;
 
 :: define ( def -- )
    [ def f >>defined?

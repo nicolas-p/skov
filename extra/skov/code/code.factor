@@ -40,6 +40,8 @@ GENERIC: outputs>> ( obj -- seq )
 GENERIC: tuples>> ( obj -- seq )
 GENERIC: slots>> ( obj -- seq )
 GENERIC: connectors>> ( obj -- seq )
+GENERIC: introduces>> ( obj -- seq )
+GENERIC: returns>> ( obj -- seq )
 M: vocab vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
 M: vocab definitions>> ( elt -- seq ) contents>> [ definition? ] filter ;
 M: vocab words>> ( elt -- seq ) contents>> [ word-definition? ] filter ;
@@ -51,6 +53,8 @@ M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
 M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
 M: word-definition inputs>> ( elt -- seq ) contents>> [ introduce? ] filter ;
 M: word-definition outputs>> ( elt -- seq ) contents>> [ return? ] filter ;
+M: word-definition introduces>> ( elt -- seq ) contents>> [ introduce? ] filter ;
+M: word-definition returns>> ( elt -- seq ) contents>> [ return? ] filter ;
 M: node slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
 
 :: add-element ( parent child -- parent )
