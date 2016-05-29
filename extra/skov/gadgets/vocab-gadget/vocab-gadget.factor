@@ -5,6 +5,7 @@ math.order math.vectors models namespaces sequences skov.code
 skov.execution skov.gadgets skov.gadgets.buttons
 skov.gadgets.node-gadget skov.theme ui.gadgets ui.gadgets.icons
 ui.gadgets.packs ui.gestures skov.gadgets.activate-button ;
+QUALIFIED: vocabs
 IN: skov.gadgets.vocab-gadget
 
 TUPLE: space < gadget ;
@@ -59,6 +60,7 @@ M: space pref-dim*  drop { 0 25 } ;
 M:: vocab-gadget model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
+    value path>> vocabs:create-vocab drop
     value parents reverse [ <node-gadget> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
