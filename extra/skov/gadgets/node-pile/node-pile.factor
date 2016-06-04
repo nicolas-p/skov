@@ -11,4 +11,4 @@ IN: skov.gadgets.node-pile
 M: node-pile model-changed
     dup clear-gadget swap value>>
     [ definition? ]
-    [ unconnected-contents>> [ <node-gadget> add-gadget ] each ] smart-when* drop ;
+    [ contents>> unconnected [ <node-gadget> add-gadget ] each ] smart-when* drop ;

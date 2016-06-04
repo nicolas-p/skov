@@ -11,7 +11,7 @@ SINGLETON: above
 SINGLETON: below
 
 : connectors ( node dir -- seq )
-    above? [ connected-inputs>> ] [ connected-outputs>> ] if ;
+    above? [ inputs>> ] [ outputs>> ] if connected ;
 
 : neighbours ( node dir -- seq )
     connectors [ links>> first parent>> ] map ;
@@ -51,13 +51,13 @@ DEFER: set-absolute-positions
     [ new-loc node set-loc set-absolute-positions ] when ;
 
 : set-absolute-positions ( node -- )
-    connected-connectors>> [ set-absolute-position ] each ;
+    connectors>> connected [ set-absolute-position ] each ;
 
 : place-nodes ( graph -- graph )
      dup nodes>> [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
 
 : add-nodes ( graph -- graph )
-    dup control-value connected-contents>> [ <node-gadget> add-gadget ] each ;
+    dup control-value contents>> connected [ <node-gadget> add-gadget ] each ;
 
 : <graph-gadget> ( model -- graph-gadget )
     graph-gadget new swap >>model ;

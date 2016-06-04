@@ -188,11 +188,8 @@ M: input connected?
 M: output connected?
     dup parent>> parent>> contents>> [ inputs>> [ link>> ] map ] map concat [ eq? ] with any? ;
 
-: connected-inputs>> ( elt -- seq )  inputs>> [ connected? ] filter ;
-: connected-outputs>> ( elt -- seq )  outputs>> [ connected? ] filter ;
-: connected-connectors>> ( elf -- seq )  connectors>> [ connected? ] filter ;
-: connected-contents>> ( elf -- seq )  contents>> [ connected? ] filter ;
-: unconnected-contents>> ( elf -- seq )  contents>> [ connected? ] reject ;
+: connected ( seq -- seq )  [ connected? ] filter ;
+: unconnected ( seq -- seq )  [ connected? ] reject ;
 
 M: input connect
     link<< ;
@@ -211,7 +208,7 @@ M: output disconnect
     [ connect ] smart-when* ;
 
 : complete-graph? ( word -- ? )
-    unconnected-contents>> empty? ;
+    contents>> unconnected empty? ;
 
 : any-empty-name? ( word -- ? )
     contents>> [ name>> empty? ] any? ;
