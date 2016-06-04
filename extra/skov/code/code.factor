@@ -243,8 +243,9 @@ CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
 
-: set-output-ids ( definition -- definition )
-    dup contents>> [ inputs>> ] map concat [ link>> ] map sift dup length iota [ >>id drop ] 2each ;
+: set-output-ids ( def -- def )
+    dup contents>> [ [ outputs>> ] map concat ] [ [ inputs>> ] map concat [ link>> ] map ] bi append members
+    sift dup length iota [ >>id drop ] 2each ;
 
 : forget-alt ( vocab/def -- )
     { { [ dup vocab? ] [ path>> vocabs:forget-vocab ] }
