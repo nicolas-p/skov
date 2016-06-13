@@ -1,42 +1,37 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
-compiler.tree compiler.units debugger effects fry
-io.streams.string kernel listener locals math.parser quotations
-sequences sequences.deep sets skov.code vocabs.parser ;
+compiler.units debugger effects io.streams.string kernel locals
+locals.rewrite.closures locals.types quotations sequences
+sequences.deep sets skov.code ;
 QUALIFIED: words
 IN: skov.execution
 
-TUPLE: lambda  contents ;
-TUPLE: lambda-input  id ;
+TUPLE: subtree  contents ;
+TUPLE: subtree-input  id ;
 
-: <lambda> ( seq -- lambda ) 
-    flatten members lambda new swap >>contents ;
+: <subtree> ( seq -- lambda ) 
+    flatten members subtree new swap >>contents ;
 
-M: lambda inputs>>
+M: subtree introduces>>
+    contents>> [ inputs>> ] map concat [ link>> ] map [ subtree-input? ] filter ;
+
+M: subtree inputs>>
     drop { } ;
 
-M: lambda outputs>>
+M: subtree outputs>>
     contents>> last outputs>> [ connected? ] filter ;
 
-M: lambda introduces>>
-    contents>> [ inputs>> ] map concat [ link>> ] map [ lambda-input? ] filter ;
-
-M: lambda returns>>
-    outputs>> ;
-
-M: lambda-input factor-name  drop "" ;
-
-: add-lambda-inputs ( definition -- definition )
+: add-subtree-inputs ( definition -- definition )
     dup contents>> [ inputs>> ] map concat [ connected? ] reject [ special-input? ] reject
-    [ lambda-input new >>link ] map drop ;
+    [ subtree-input new "local" <local> >>id >>link ] map drop ;
 
 : unevaluated? ( connector -- ? )
     name>> "quot" swap subseq? ;
 
 : walk ( node -- seq )
     [ inputs>> [ {
-        { [ dup unevaluated? ] [ link>> parent>> walk <lambda> ] }
+        { [ dup unevaluated? ] [ link>> parent>> walk <subtree> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
         [ drop { } ]
     } cond ] map ] [ ] bi 2array ;
@@ -50,52 +45,44 @@ M: lambda-input factor-name  drop "" ;
 : effect ( def -- effect )
     [ introduces>> ] [ returns>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
 
+: set-output-ids ( def -- def )
+    dup contents>> [ outputs>> ] map concat [ "local" <local> >>id ] map drop ;
+
 GENERIC: transform ( node -- compiler-node )
-GENERIC: transform-contents ( node -- compiler-node )
 
 M: introduce transform
-    output-ids <#introduce> ;
+    drop { } ;
 
 M: return transform
-    input-ids <#return> ;
+    input-ids first 1array ;
 
 M: text transform
-    [ factor-name ] [ output-ids first ] bi <#push> ;
-
-: transform-number ( word -- push )
-    [ name>> string>number ] [ output-ids first ] bi <#push> ;
-
-: transform-word ( word -- call )
-    [ input-ids ] [ output-ids ] [ factor-name '[ _ search ] with-interactive-vocabs ] tri <#call> ;
+    [ name>> ] [ output-ids <multi-def> ] bi 2array ;
 
 M: word transform
-    [ name>> string>number ] [ transform-number ] [ transform-word ] smart-if ;
+    [ input-ids ] [ target>> suffix ] [ output-ids <multi-def> suffix ] tri ;
 
-: ?add-empty-return ( seq -- seq )
-    [ [ #return? ] any? not ] [ f <#return> suffix ] smart-when ;
+M: word-definition transform
+    add-subtree-inputs set-output-ids
+    [ introduces>> [ output-ids first ] map ]
+    [ contents>> sort-graph [ transform ] map concat >quotation ] bi <lambda> ;
 
-M: word-definition transform-contents
-    add-lambda-inputs set-output-ids contents>> sort-graph [ transform ] map ?add-empty-return ;
-
-: define-lambda-word ( lambda -- word )
-    [ [ transform-contents >quotation ] [ effect ] bi words:define-temp ] with-compilation-unit ;
-
-M: lambda transform
-    [ define-lambda-word 1quotation ] [ output-ids first ] bi <#push> ;
-
-M: lambda transform-contents
-    [ contents>> [ transform ] map ] 
-    [ introduces>> [ id>> ] map <#introduce> prefix ] 
-    [ returns>> [ id>> ] map <#return> suffix ] tri ;
+M: subtree transform
+    { [ introduces>> [ id>> ] map ]
+      [ contents>> [ transform ] map concat >quotation ]
+      [ output-ids append <lambda> ]
+      [ output-ids <multi-def> ]
+    } cleave 2array ;
 
 :: define ( def -- )
-   [ def f >>defined?
-     [ def factor-name
-       def path>> words:create-word dup def alt<<
-       def transform-contents >quotation def effect words:define-declared 
-     ] with-compilation-unit
-     t >>defined? drop
-   ] try ;
+    [ def f >>defined?
+      [ def factor-name
+        def path>> words:create-word dup def alt<<
+        def transform rewrite-closures first
+        def effect words:define-declared
+      ] with-compilation-unit
+      t >>defined? drop
+    ] try ;
 
 : ?define ( elt -- )
     [ name>> ] [ define ] smart-when* ;

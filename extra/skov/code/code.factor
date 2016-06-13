@@ -19,7 +19,7 @@ TUPLE: tuple-definition < definition ;
 TUPLE: node < element ;
 TUPLE: introduce < node ;
 TUPLE: return < node ;
-TUPLE: word < node  path ;
+TUPLE: word < node  path target ;
 TUPLE: text < node ;
 TUPLE: slot < node  initial-value ;
 TUPLE: constructor < word ;
@@ -129,11 +129,11 @@ M: definition path>>
 
 :: in-out ( word -- seq seq )
     word factor-name :> name
-    [ { { [ word same-name-as-parent? ] [ word parent>> input-output-names ] }
+    [ { { [ word same-name-as-parent? ] [ word parent>> dup word target<< input-output-names ] }
         { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
-        { [ name string>number ] [ { } { "number" } ] }
+        { [ name string>number ] [ name string>number word target<< { } { "number" } ] }
         { [ name search not ] [ { } { } ] }
-        [ name search dup vocabulary>> word path<< stack-effect convert-stack-effect ]
+        [ name search dup dup word target<< vocabulary>> word path<< stack-effect convert-stack-effect ]
       } cond ] with-interactive-vocabs ;
 
 : add-special-connectors ( node -- node )
@@ -239,10 +239,6 @@ CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
-
-: set-output-ids ( def -- def )
-    dup contents>> [ [ outputs>> ] map concat ] [ [ inputs>> ] map concat [ link>> ] map ] bi append members
-    sift dup length iota [ >>id drop ] 2each ;
 
 : forget-alt ( vocab/def -- )
     { { [ dup vocab? ] [ path>> vocabs:forget-vocab ] }
