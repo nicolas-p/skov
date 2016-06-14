@@ -15,7 +15,7 @@ IN: skov.gadgets.help-graph
       [ word ]
     } cond add-with-name
     dup contents>> first add-connectors contents>>
-    [ special-connector? ] reject [ 
+    [ invisible?>> ] reject [ 
       :> inside
       inside input? [ introduce ] [ return ] if new
       inside name>> >>name add-connectors :> outside

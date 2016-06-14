@@ -23,7 +23,7 @@ M: subtree outputs>>
     contents>> last outputs>> [ connected? ] filter ;
 
 : add-subtree-inputs ( definition -- definition )
-    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ special-input? ] reject
+    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ invisible?>> ] reject
     [ subtree-input new "local" <local> >>id >>link ] map drop ;
 
 : unevaluated? ( connector -- ? )
@@ -39,8 +39,8 @@ M: subtree outputs>>
 : sort-graph ( seq -- seq )
     [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members ;
 
-: input-ids ( node -- seq )  inputs>> [ special-connector? ] reject [ link>> id>> ] map ;
-: output-ids ( node -- seq )  outputs>> [ special-connector? ] reject [ id>> ] map ;
+: input-ids ( node -- seq )  inputs>> [ invisible?>> ] reject [ link>> id>> ] map ;
+: output-ids ( node -- seq )  outputs>> [ invisible?>> ] reject [ id>> ] map ;
 
 : effect ( def -- effect )
     [ introduces>> ] [ returns>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;

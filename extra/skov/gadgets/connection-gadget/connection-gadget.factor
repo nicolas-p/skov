@@ -37,7 +37,7 @@ IN: skov.gadgets.connection-gadget
     GL_MAP1_VERTEX_3 glDisable ;
 
 M: connection-gadget draw-gadget*
-    [ start>> control-value special-connector? ]
+    [ start>> control-value invisible?>> ]
     [ GL_LINE_STIPPLE glEnable ] [ GL_LINE_STIPPLE glDisable ] smart-if
     [ start-loc ] [ end-loc ] bi draw-curve ;
 

@@ -41,7 +41,7 @@ IN: skov.gadgets.connector-gadget
     <model> connector-gadget new swap >>model connector-size dup 2array >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
-    dup [ control-value special-connector? ] 
+    dup [ control-value invisible?>> ] 
     [ drop "special" ]
     [ parent>> (node-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;

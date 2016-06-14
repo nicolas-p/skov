@@ -27,14 +27,10 @@ TUPLE: destructor < word ;
 TUPLE: accessor < word ;
 TUPLE: mutator < word ;
 
-TUPLE: connector < element ;
+TUPLE: connector < element  invisible? ;
 TUPLE: input < connector  link ;
 TUPLE: output < connector  id ;
 
-TUPLE: special-input < input ;
-TUPLE: special-output < output ;
-
-UNION: special-connector  special-input special-output ;
 UNION: definition-connector  introduce return ;
 
 TUPLE: result < element ;
@@ -136,21 +132,24 @@ M: definition path>>
         [ name search dup dup word target<< vocabulary>> word path<< stack-effect convert-stack-effect ]
       } cond ] with-interactive-vocabs ;
 
-: add-special-connectors ( node -- node )
-    [ inputs>> empty? ] [ "invisible connector" special-input add-with-name ] smart-when
-    [ outputs>> empty? ] [ "invisible connector" special-output add-with-name ] smart-when ;
+: add-invisible-connector ( node class -- node )
+    new "invisible connector" >>name t >>invisible? add-element ;
+
+: add-invisible-connectors ( node -- node )
+    [ inputs>> empty? ] [ input add-invisible-connector ] smart-when
+    [ outputs>> empty? ] [ output add-invisible-connector ] smart-when ;
 
 GENERIC: (add-connectors) ( node -- node )
 M: element (add-connectors)  ;
 M: introduce (add-connectors)  f >>contents dup name>> output add-with-name ;
 M: return (add-connectors)  f >>contents dup name>> input add-with-name ;
-M: text (add-connectors)  f >>contents dup name>> output add-with-name add-special-connectors ;
+M: text (add-connectors)  f >>contents dup name>> output add-with-name add-invisible-connectors ;
 
 M: word (add-connectors)
     f >>contents dup in-out
     [ [ input add-with-name ] each ]
     [ [ output add-with-name ] each ] bi*
-    add-special-connectors ;
+    add-invisible-connectors ;
 
 GENERIC: connect ( output input -- )
 
