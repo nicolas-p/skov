@@ -1,6 +1,6 @@
-USING: accessors arrays assocs combinators help.markup
-help.topics kernel make namespaces prettyprint regexp sequences
-splitting words words.symbol ;
+USING: accessors arrays assocs classes combinators generic
+help.markup help.topics kernel make namespaces prettyprint
+regexp sequences splitting words words.symbol ;
 IN: help
 
 : remove-<> ( str -- str )
@@ -33,3 +33,7 @@ M: word article-title
     ] { } make ;
 
 PRIVATE>
+
+M: generic article-content (word-help) ;
+
+M: class article-content (word-help) ;
