@@ -71,16 +71,27 @@ M: subtree transform
       [ subtree-output id>> suffix <lambda> ]
       [ subtree-output id>> <def> ]
     } cleave 2array ;
+    
+:: try-definition ( quot def -- )
+    [ def f >>defined? quot with-compilation-unit t >>defined? drop ] try ; inline
 
-:: define ( def -- )
-    [ def f >>defined?
-      [ def factor-name
-        def path words:create-word dup def alt<<
-        def transform rewrite-closures first
-        def effect words:define-declared
-      ] with-compilation-unit
-      t >>defined? drop
-    ] try ;
+GENERIC: define ( def -- )
+
+M:: word-definition define ( def -- )
+    [ def factor-name
+      def path words:create-word dup def alt<<
+      def transform rewrite-closures first
+      def effect words:define-declared
+    ] def try-definition ;
+
+M:: tuple-definition define ( def -- )
+    def factor-name :> name
+    def path :> path
+    def contents>> [ factor-name ] map :> slots
+    [ name path create-class :> class
+      class tuple slots define-tuple-class
+      name "<" ">" surround path words:create-word class define-boa-word
+    ] def try-definition ;
 
 : ?define ( elt -- )
     [ name>> ] [ define ] smart-when* ;
