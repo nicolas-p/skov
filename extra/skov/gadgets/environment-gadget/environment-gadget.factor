@@ -57,10 +57,11 @@ IN: skov.gadgets.environment-gadget
     ] make-keyboard-safe ;
 
 : remove-node-gadget ( env -- )
-    [ hand-gadget get-global find-node dup
+    [ hand-gadget get-global find-node
       [ [ outputs [ links>> [ control-value disconnect ] each ] each ]
-        [ control-value dup forget-alt remove-from-parent ] bi
-      ] when* find-env [ parent>> ] change-control-value drop
+        [ control-value dup dup forget-alt remove-from-parent
+          parent>> swap set-control-value ] bi
+      ] [ drop ] if*
     ] make-keyboard-safe ;
 
 : edit-node-gadget ( env -- )
