@@ -60,19 +60,19 @@ M: space pref-dim*  drop { 0 25 } ;
 M:: vocab-gadget model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
-    value path>> vocabs:create-vocab drop
+    value path vocabs:create-vocab drop
     value parents reverse [ <node-gadget> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
     <space> add-gadget
-    value vocabs>> [ <node-gadget> add-gadget ] each
+    value vocabs [ <node-gadget> add-gadget ] each
     <new-vocab-button> add-gadget
-    value tuples>> [ <node-gadget> add-gadget ] each
+    value tuple-definitions [ <node-gadget> add-gadget ] each
     <new-tuple-button> add-gadget
-    value words>> [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
+    value word-definitions [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
-    value path>> add-interactive-vocab ;
+    value path add-interactive-vocab ;
 
 M:: vocab-gadget layout* ( gadget -- )
     gadget call-next-method

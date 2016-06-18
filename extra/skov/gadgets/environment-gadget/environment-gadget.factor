@@ -10,6 +10,7 @@ skov.gadgets.vocab-gadget skov.theme skov.utilities ui.commands
 ui.gadgets ui.gadgets.borders ui.gadgets.editors
 ui.gadgets.packs ui.gadgets.tracks ui.gestures ui.tools.browser
 ui.tools.common vocabs.parser ui.gadgets.scrollers ;
+FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.environment-gadget
 
 { 700 600 } environment-gadget set-tool-dim
@@ -57,7 +58,7 @@ IN: skov.gadgets.environment-gadget
 
 : remove-node-gadget ( env -- )
     [ hand-gadget get-global find-node dup
-      [ [ outputs>> [ links>> [ control-value disconnect ] each ] each ]
+      [ [ outputs [ links>> [ control-value disconnect ] each ] each ]
         [ control-value dup forget-alt remove-from-parent ] bi
       ] when* find-env [ parent>> ] change-control-value drop
     ] make-keyboard-safe ;
@@ -70,7 +71,7 @@ IN: skov.gadgets.environment-gadget
 : more-inputs ( env -- )
     [ hand-gadget get-global find-node
       [ [ control-value variadic? ]
-        [ dup control-value input add-from-class inputs>> last
+        [ dup control-value input add-from-class inputs last
           <connector-gadget> add-gadget drop
         ] smart-when*
       ] when* drop
@@ -78,8 +79,8 @@ IN: skov.gadgets.environment-gadget
 
 : less-inputs ( env -- )
     [ hand-gadget get-global find-node
-      [ [ control-value [ variadic? ] [ inputs>> length 2 > ] bi and ]
-        [ dup control-value [ but-last ] change-contents drop inputs>> last unparent ] smart-when*
+      [ [ control-value [ variadic? ] [ inputs length 2 > ] bi and ]
+        [ dup control-value [ but-last ] change-contents drop inputs last unparent ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
@@ -93,7 +94,7 @@ IN: skov.gadgets.environment-gadget
 
 :: next-nth-word ( env n -- )
     env [ dup control-value definition? [
-      [ vocab-control-value [ tuples>> ] [ words>> ] bi append ]
+      [ vocab-control-value [ tuple-definitions ] [ word-definitions ] bi append ]
       [ control-value n next-nth ] [ dupd set-control-value ] tri
     ] when drop ] make-keyboard-safe ;
 

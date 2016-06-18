@@ -1,10 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays colors combinators combinators.smart
-kernel locals models namespaces sequences skov.code skov.gadgets
+USING: accessors arrays colors combinators
+combinators.short-circuit combinators.smart kernel locals models
+namespaces sequences skov.code skov.gadgets
 skov.gadgets.connection-gadget skov.theme skov.utilities system
 ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
-FROM: skov.gadgets => connections>> ;
+FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.connector-gadget
 
 : selected? ( node-gadget -- ? )
@@ -17,7 +18,7 @@ IN: skov.gadgets.connector-gadget
 : (node-theme) ( node-gadget -- img-name bg-colour text-colour )
     dup selected?
     [ control-value
-      { { [ dup definition-connector? ] [ drop "connector" dark-background light-text-colour ] }
+      { { [ dup connector? ] [ drop "connector" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
         { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
         { [ dup tuple-definition? ] [ drop "class" blue-background dark-text-colour ] }
@@ -41,20 +42,20 @@ IN: skov.gadgets.connector-gadget
     <model> connector-gadget new swap >>model connector-size dup 2array >>dim ;
 
 : connector-theme ( connector-gadget -- connector-gadget )
-    dup [ control-value invisible?>> ] 
+    dup [ control-value { [ node? not ] [ invisible?>> ] } 1&& ] 
     [ drop "special" ]
     [ parent>> (node-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
 :: link ( connector-gadget -- connector-gadget )
     connector-gadget find-graph children>>
-    [ outputs>> [ control-value connector-gadget control-value link>> eq? ] filter ] map
+    [ outputs [ control-value connector-gadget control-value link>> eq? ] filter ] map
     concat first ;
 
 : add-connections ( graph -- graph )
-    dup connections>> [ unparent ] each
-    dup nodes>>
-    [ inputs>>
+    dup connections [ unparent ] each
+    dup nodes
+    [ inputs
       [ control-value connected? ] filter
       [ dup link 2dup connect <connection-gadget> ] map
     ] map concat [ add-gadget ] each ;

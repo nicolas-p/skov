@@ -14,9 +14,8 @@ IN: skov.gadgets.help-graph
       { [ dup " (destructor)" swap subseq? ] [ " (destructor)" "" replace destructor ] }
       [ word ]
     } cond add-with-name
-    dup contents>> first add-connectors contents>>
-    [ invisible?>> ] reject [ 
-      :> inside
+    dup contents>> first add-connectors contents>> visible
+    [ :> inside
       inside input? [ introduce ] [ return ] if new
       inside name>> >>name add-connectors :> outside
       inside outside contents>> first order-connectors connect

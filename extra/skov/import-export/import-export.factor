@@ -4,6 +4,7 @@ USING: accessors arrays classes combinators combinators.smart
 eval io io.directories io.encodings.utf8 io.files io.files.info
 io.pathnames kernel locals math namespaces prettyprint sequences
 skov.code system ui.gadgets ;
+FROM: skov.code => inputs outputs ;
 IN: skov.import-export
 
 SYMBOL: skov-version
@@ -29,7 +30,7 @@ M: definition (export)
     set-output-ids [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
 M: word (export)
-    [ name>> ] [ path>> ] [ contents>> [ export ] map >array ] tri 3array ;
+    [ name>> ] [ path ] [ contents>> [ export ] map >array ] tri 3array ;
 
 M: input (export)
     [ name>> ] [ link>> dup [ id>> ] when ] bi 2array ;
@@ -59,11 +60,11 @@ M: slot (export)
     skov-root get-global write-vocab-file ;
 
 :: find-output ( id def -- output )
-    def contents>> [ outputs>> ] map concat [ id>> id = ] filter [ f ] [ first ] if-empty ;
+    def contents>> [ outputs ] map concat [ id>> id = ] filter [ f ] [ first ] if-empty ;
 
 :: ids>links ( def -- def )
     def contents>>
-    [ inputs>> [ [ [ number? ] [ def find-output ] smart-when ] change-link ] map ] map
+    [ inputs [ [ [ number? ] [ def find-output ] smart-when ] change-link ] map ] map
     drop def ;
 
 GENERIC: (import) ( seq element -- element )

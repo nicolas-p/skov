@@ -2,6 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors kernel locals sequences skov.code ui.gadgets
 ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
+FROM: skov.code => inputs outputs ;
 IN: skov.gadgets
 
 TUPLE: environment-gadget < tool ;
@@ -15,17 +16,17 @@ TUPLE: connector-gadget < icon  { links initial: { } } locs ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
 
-: nodes>> ( def -- seq )  children>> [ node-gadget? ] filter ;
-: connections>> ( def -- seq )  children>> [ connection-gadget? ] filter ;
+: nodes ( gadget -- seq )  children>> [ node-gadget? ] filter ;
+: connections ( gadget -- seq )  children>> [ connection-gadget? ] filter ;
 
-M: node-gadget connectors>> ( node-gadget -- seq )
+M: node-gadget connectors ( gadget -- seq )
     children>> [ connector-gadget? ] filter ;
 
-M: node-gadget inputs>> ( node-gadget -- seq )
-    connectors>> [ control-value [ input? ] [ introduce? ] bi or ] filter ;
+M: node-gadget inputs ( gadget -- seq )
+    connectors [ control-value [ input? ] [ introduce? ] bi or ] filter ;
 
-M: node-gadget outputs>> ( node-gadget -- seq )
-    connectors>> [ control-value [ output? ] [ return? ] bi or ] filter ;
+M: node-gadget outputs ( gadget -- seq )
+    connectors [ control-value [ output? ] [ return? ] bi or ] filter ;
 
 : find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
 : find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;

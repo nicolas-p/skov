@@ -3,50 +3,48 @@
 USING: accessors arrays combinators combinators.smart
 compiler.units debugger effects io.streams.string kernel locals
 locals.rewrite.closures locals.types quotations sequences
-sequences.deep sets skov.code ;
+sequences.deep sets skov.code classes.parser classes.tuple ;
+FROM: skov.code => inputs outputs ;
 QUALIFIED: words
 IN: skov.execution
 
 TUPLE: subtree  contents ;
-TUPLE: subtree-input  id ;
+TUPLE: subtree-introduce  id ;
 
 : <subtree> ( seq -- lambda ) 
     flatten members subtree new swap >>contents ;
 
-M: subtree introduces>>
-    contents>> [ inputs>> ] map concat [ link>> ] map [ subtree-input? ] filter ;
+: subtree-introduces ( subtree -- seq )
+    contents>> [ inputs ] map concat [ link>> ] map [ subtree-introduce? ] filter ;
 
-M: subtree inputs>>
-    drop { } ;
+: subtree-output ( subtree -- seq )
+    contents>> last outputs connected first ;
 
-M: subtree outputs>>
-    contents>> last outputs>> [ connected? ] filter ;
-
-: add-subtree-inputs ( definition -- definition )
-    dup contents>> [ inputs>> ] map concat [ connected? ] reject [ invisible?>> ] reject
-    [ subtree-input new "local" <local> >>id >>link ] map drop ;
+: add-subtree-introduces ( definition -- definition )
+    dup contents>> [ inputs ] map concat unconnected visible
+    [ subtree-introduce new "local" <local> >>id >>link ] map drop ;
 
 : unevaluated? ( connector -- ? )
     name>> "quot" swap subseq? ;
 
 : walk ( node -- seq )
-    [ inputs>> [ {
+    [ inputs [ {
         { [ dup unevaluated? ] [ link>> parent>> walk <subtree> ] }
         { [ dup connected? ] [ link>> parent>> walk ] }
         [ drop { } ]
     } cond ] map ] [ ] bi 2array ;
 
 : sort-graph ( seq -- seq )
-    [ outputs>> [ connected? not ] all? ] filter [ walk ] map flatten members ;
+    [ outputs [ connected? not ] all? ] filter [ walk ] map flatten members ;
 
-: input-ids ( node -- seq )  inputs>> [ invisible?>> ] reject [ link>> id>> ] map ;
-: output-ids ( node -- seq )  outputs>> [ invisible?>> ] reject [ id>> ] map ;
+: input-ids ( node -- seq )  inputs visible [ link>> id>> ] map ;
+: output-ids ( node -- seq )  outputs visible [ id>> ] map ;
 
 : effect ( def -- effect )
-    [ introduces>> ] [ returns>> ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
+    [ introduces ] [ returns ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
 
 : set-output-ids ( def -- def )
-    dup contents>> [ outputs>> ] map concat [ "local" <local> >>id ] map drop ;
+    dup contents>> [ outputs ] map concat [ "local" <local> >>id ] map drop ;
 
 GENERIC: transform ( node -- compiler-node )
 
@@ -63,21 +61,21 @@ M: word transform
     [ input-ids ] [ target>> suffix ] [ output-ids <multi-def> suffix ] tri ;
 
 M: word-definition transform
-    add-subtree-inputs set-output-ids
-    [ introduces>> [ output-ids first ] map ]
+    add-subtree-introduces set-output-ids
+    [ introduces [ output-ids first ] map ]
     [ contents>> sort-graph [ transform ] map concat >quotation ] bi <lambda> ;
 
 M: subtree transform
-    { [ introduces>> [ id>> ] map ]
+    { [ subtree-introduces [ id>> ] map ]
       [ contents>> [ transform ] map concat >quotation ]
-      [ output-ids append <lambda> ]
-      [ output-ids <multi-def> ]
+      [ subtree-output id>> suffix <lambda> ]
+      [ subtree-output id>> <def> ]
     } cleave 2array ;
 
 :: define ( def -- )
     [ def f >>defined?
       [ def factor-name
-        def path>> words:create-word dup def alt<<
+        def path words:create-word dup def alt<<
         def transform rewrite-closures first
         def effect words:define-declared
       ] with-compilation-unit

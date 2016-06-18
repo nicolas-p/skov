@@ -7,6 +7,7 @@ skov.gadgets.connection-gadget skov.gadgets.connector-gadget
 skov.theme skov.utilities ui.gadgets ui.gadgets.editors
 ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ;
+FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.node-gadget
 
 : width ( node-gadget -- w ) pref-dim first ;
@@ -40,7 +41,7 @@ IN: skov.gadgets.node-gadget
     horizontal >>orientation ;
 
 : add-connector-gadgets ( node-gadget -- node-gadget )
-    dup control-value connectors>> [ <connector-gadget> add-gadget ] each ;
+    dup control-value connectors [ <connector-gadget> add-gadget ] each ;
 
 :: add-name-field ( node-gadget -- node-gadget )
     node-gadget dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
@@ -79,17 +80,17 @@ M: node-gadget name<<
     gaps nb iota [ connector-size * connector-size min ] map v+ cum-sum ;
 
 M: node-gadget connected?
-    connectors>> [ connected? ] any? ;
+    connectors [ connected? ] any? ;
 
 M: node-gadget layout*
     { [ call-next-method ]
-      [ [ inputs>> dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
-      [ [ outputs>> dup ] [ width ] bi spread [ node-height 2array ] map [ swap loc<< ] 2each ]
+      [ [ inputs dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
+      [ [ outputs dup ] [ width ] bi spread [ node-height 2array ] map [ swap loc<< ] 2each ]
     } cleave ;
 
 M:: node-gadget pref-dim* ( node -- dim )
     node gadget-child pref-dim first node-height +
-    node inputs>> length node outputs>> length max node-height connector-size - * max
+    node inputs length node outputs length max node-height connector-size - * max
     min-node-width max node-height connector-size + 2array ;
 
 M: node-gadget focusable-child*
@@ -100,7 +101,7 @@ M: node-gadget graft*
 
 : node-status-text ( node-gadget -- str )
     "( r : remove | e : edit | h : help )" swap control-value
-    [ word? ] [ [ path>> ] [ "IN: " swap path>> append swap "     " glue ] smart-when* ] smart-when* ;
+    path [ "IN: " swap append swap "     " glue ] when* ;
 
 node-gadget H{
     { T{ button-up f f 1 }  [ ?select ] }

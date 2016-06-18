@@ -5,16 +5,17 @@ locals math math.order math.statistics math.vectors models
 sequences skov.code skov.execution skov.gadgets
 skov.gadgets.connector-gadget skov.gadgets.node-gadget
 ui.gadgets ;
+FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.graph-gadget
 
 SINGLETON: above
 SINGLETON: below
 
-: connectors ( node dir -- seq )
-    above? [ inputs>> ] [ outputs>> ] if connected ;
+: connectors* ( node dir -- seq )
+    above? [ inputs ] [ outputs ] if connected ;
 
 : neighbours ( node dir -- seq )
-    connectors [ links>> first parent>> ] map ;
+    connectors* [ links>> first parent>> ] map ;
 
 :: total-widths ( node dir -- seq )
     node dir neighbours [ [ width ] [ dir total-widths sum ] bi max 20 + ] map ;
@@ -31,7 +32,7 @@ SINGLETON: below
     ] if-empty ;
 
 : (set-relative-positions) ( node dir -- )
-    [ connectors ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
+    [ connectors* ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
     '[ _ 2array >>locs drop ] 2each ;
 
 : set-relative-positions ( node -- node )
@@ -51,10 +52,10 @@ DEFER: set-absolute-positions
     [ new-loc node set-loc set-absolute-positions ] when ;
 
 : set-absolute-positions ( node -- )
-    connectors>> connected [ set-absolute-position ] each ;
+    connectors connected [ set-absolute-position ] each ;
 
 : place-nodes ( graph -- graph )
-     dup nodes>> [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
+     dup nodes [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
 
 : add-nodes ( graph -- graph )
     dup control-value contents>> connected [ <node-gadget> add-gadget ] each ;
@@ -63,13 +64,13 @@ DEFER: set-absolute-positions
     graph-gadget new swap >>model ;
 
 : top-left-corner ( graph -- xy )
-    nodes>> [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;
+    nodes [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;
 
 : bottom-right-corner ( graph -- xy )
-    nodes>> [ 0 0 ] [ [ [ loc>> ] [ pref-dim ] bi v+ ] map unzip [ supremum ] bi@ ] if-empty 2array ;
+    nodes [ 0 0 ] [ [ [ loc>> ] [ pref-dim ] bi v+ ] map unzip [ supremum ] bi@ ] if-empty 2array ;
 
 : fix-locations ( graph -- graph )
-    dup [ top-left-corner ] keep nodes>> [ swap '[ _ v- ] change-loc drop ] with each ;
+    dup [ top-left-corner ] keep nodes [ swap '[ _ v- ] change-loc drop ] with each ;
 
 M: graph-gadget model-changed
     dup clear-gadget swap value>> [ definition? ]

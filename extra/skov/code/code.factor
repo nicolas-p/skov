@@ -6,6 +6,7 @@ locals math.parser namespaces sequences splitting ui.gadgets
 vectors vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
+QUALIFIED: words
 IN: skov.code
 
 TUPLE: element < identity-tuple  name parent contents ;
@@ -19,7 +20,7 @@ TUPLE: tuple-definition < definition ;
 TUPLE: node < element ;
 TUPLE: introduce < node ;
 TUPLE: return < node ;
-TUPLE: word < node  path target ;
+TUPLE: word < node  target ;
 TUPLE: text < node ;
 TUPLE: slot < node  initial-value ;
 TUPLE: constructor < word ;
@@ -27,34 +28,28 @@ TUPLE: destructor < word ;
 TUPLE: accessor < word ;
 TUPLE: mutator < word ;
 
-TUPLE: connector < element  invisible? ;
-TUPLE: input < connector  link ;
-TUPLE: output < connector  id ;
+TUPLE: input < element  link invisible? ;
+TUPLE: output < element  id invisible? ;
 
-UNION: definition-connector  introduce return ;
+UNION: connector  introduce return input output ;
 
 TUPLE: result < element ;
 
-GENERIC: outputs>> ( obj -- seq )
-GENERIC: tuples>> ( obj -- seq )
-GENERIC: slots>> ( obj -- seq )
-GENERIC: connectors>> ( obj -- seq )
-GENERIC: introduces>> ( obj -- seq )
-GENERIC: returns>> ( obj -- seq )
-M: vocab vocabs>> ( elt -- seq ) contents>> [ vocab? ] filter ;
-M: vocab definitions>> ( elt -- seq ) contents>> [ definition? ] filter ;
-M: vocab words>> ( elt -- seq ) contents>> [ word-definition? ] filter ;
-M: vocab tuples>> ( elt -- seq ) contents>> [ tuple-definition? ] filter ;
-M: word-definition words>> ( elt -- seq ) contents>> [ word? ] filter ;
-M: element connectors>> ( elt -- seq ) contents>> [ definition-connector? ] filter ;
-M: node connectors>> ( elt -- seq ) contents>> [ connector? ] filter ;
-M: element inputs>> ( elt -- seq ) contents>> [ input? ] filter ;
-M: element outputs>> ( elt -- seq ) contents>> [ output? ] filter ;
-M: word-definition inputs>> ( elt -- seq ) contents>> [ introduce? ] filter ;
-M: word-definition outputs>> ( elt -- seq ) contents>> [ return? ] filter ;
-M: word-definition introduces>> ( elt -- seq ) contents>> [ introduce? ] filter ;
-M: word-definition returns>> ( elt -- seq ) contents>> [ return? ] filter ;
-M: node slots>> ( elt -- seq ) contents>> [ slot? ] filter ;
+: vocabs ( elt -- seq )  contents>> [ vocab? ] filter ;
+: definitions ( elt -- seq )  contents>> [ definition? ] filter ;
+: word-definitions ( elt -- seq )  contents>> [ word-definition? ] filter ;
+: tuple-definitions ( elt -- seq )  contents>> [ tuple-definition? ] filter ;
+: words ( elt -- seq )  contents>> [ word? ] filter ;
+: introduces ( elt -- seq )  contents>> [ introduce? ] filter ;
+: returns ( elt -- seq )  contents>> [ return? ] filter ;
+: slots ( elt -- seq )  contents>> [ slot? ] filter ;
+
+GENERIC: connectors ( elt -- seq )
+GENERIC: inputs ( elt -- seq )
+GENERIC: outputs ( elt -- seq )
+M: element connectors ( elt -- seq )  contents>> [ connector? ] filter ;
+M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
+M: element outputs ( elt -- seq )  contents>> [ output? ] filter ;
 
 :: add-element ( parent child -- parent )
      child parent >>parent parent [ ?push ] change-contents ;
@@ -105,11 +100,19 @@ M: mutator factor-name
 M: text factor-name
     name>> ;
 
-M: vocab path>>
+GENERIC: path ( obj -- str )
+
+M: vocab path
     parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
-M: definition path>>
+M: definition path
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
+
+M: word path
+    target>> [ words:word? ] [ vocabulary>> ] [ drop f ] smart-if ;
+
+M: node path
+    drop f ;
 
 : replace-quot ( seq -- seq )
     [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ;
@@ -121,7 +124,7 @@ M: definition path>>
     dup parent>> [ name>> ] bi@ = ;
 
 : input-output-names ( word -- seq seq )
-    [ inputs>> ] [ outputs>> ] bi [ [ name>> ] map ] bi@ ;
+    [ inputs ] [ outputs ] bi [ [ name>> ] map ] bi@ ;
 
 :: in-out ( word -- seq seq )
     word factor-name :> name
@@ -129,15 +132,15 @@ M: definition path>>
         { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
         { [ name string>number ] [ name string>number word target<< { } { "number" } ] }
         { [ name search not ] [ { } { } ] }
-        [ name search dup dup word target<< vocabulary>> word path<< stack-effect convert-stack-effect ]
+        [ name search dup word target<< stack-effect convert-stack-effect ]
       } cond ] with-interactive-vocabs ;
 
 : add-invisible-connector ( node class -- node )
     new "invisible connector" >>name t >>invisible? add-element ;
 
 : add-invisible-connectors ( node -- node )
-    [ inputs>> empty? ] [ input add-invisible-connector ] smart-when
-    [ outputs>> empty? ] [ output add-invisible-connector ] smart-when ;
+    [ inputs empty? ] [ input add-invisible-connector ] smart-when
+    [ outputs empty? ] [ output add-invisible-connector ] smart-when ;
 
 GENERIC: (add-connectors) ( node -- node )
 M: element (add-connectors)  ;
@@ -154,17 +157,17 @@ M: word (add-connectors)
 GENERIC: connect ( output input -- )
 
 :: links ( output -- seq )
-    output parent>> parent>> contents>> [ inputs>> [ link>> output eq? ] filter ] map concat ;
+    output parent>> parent>> contents>> [ inputs [ link>> output eq? ] filter ] map concat ;
 
 :: add-connectors ( elt -- elt )
     elt name>> [
       elt node? [
-        elt inputs>> [ link>> ] map 
-        elt outputs>> [ links ] map
+        elt inputs [ link>> ] map 
+        elt outputs [ links ] map
       ] [ f f ] if :> saved-output-links :> saved-input-links
       elt (add-connectors)
-      saved-input-links elt inputs>> [ connect ] 2each
-      elt outputs>> saved-output-links [ [ connect ] with each ] 2each
+      saved-input-links elt inputs [ connect ] 2each
+      elt outputs saved-output-links [ [ connect ] with each ] 2each
     ] [ elt ] if ;
 
 : order-connectors ( connector connector -- connector connector )
@@ -179,16 +182,17 @@ GENERIC: connect ( output input -- )
 GENERIC: connected? ( connector -- ? )
 
 M: node connected?
-    connectors>> [ connected? ] any? ;
+    connectors [ connected? ] any? ;
 
 M: input connected?
     link>> output? ;
 
 M: output connected?
-    dup parent>> parent>> contents>> [ inputs>> [ link>> ] map ] map concat [ eq? ] with any? ;
+    dup parent>> parent>> contents>> [ inputs [ link>> ] map ] map concat [ eq? ] with any? ;
 
 : connected ( seq -- seq )  [ connected? ] filter ;
 : unconnected ( seq -- seq )  [ connected? ] reject ;
+: visible ( seq -- seq )  [ invisible?>> ] reject ;
 
 M: input connect
     link<< ;
@@ -206,22 +210,22 @@ M: output disconnect
     [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
     [ connect ] smart-when* ;
 
-: complete-graph? ( word -- ? )
+: complete-graph? ( def -- ? )
     contents>> unconnected empty? ;
 
-: any-empty-name? ( word -- ? )
+: any-empty-name? ( def -- ? )
     contents>> [ name>> empty? ] any? ;
 
-: executable? ( word -- ? )
+: executable? ( def -- ? )
    { [ complete-graph? ]
-     [ inputs>> empty? ]
-     [ outputs>> empty? ]
-     [ words>> empty? not ]
+     [ introduces empty? ]
+     [ returns empty? ]
+     [ words empty? not ]
      [ defined?>> ]
      [ any-empty-name? not ]
    } cleave>array t [ and ] reduce ;
 
-: error? ( word -- ? )
+: error? ( def -- ? )
     { [ complete-graph? not ]
       [ defined?>> not ]
       [ any-empty-name? ] 
@@ -240,7 +244,7 @@ SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
 
 : forget-alt ( vocab/def -- )
-    { { [ dup vocab? ] [ path>> vocabs:forget-vocab ] }
+    { { [ dup vocab? ] [ path vocabs:forget-vocab ] }
       { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] when* ] }
       [ drop ]
     } cond ;
