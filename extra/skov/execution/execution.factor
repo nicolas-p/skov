@@ -1,9 +1,10 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart
-compiler.units debugger effects io.streams.string kernel locals
-locals.rewrite.closures locals.types quotations sequences
-sequences.deep sets skov.code classes.parser classes.tuple ;
+USING: accessors arrays classes.parser classes.tuple combinators
+combinators.smart compiler.units debugger effects
+io.streams.string kernel listener locals locals.rewrite.closures
+locals.types quotations sequences sequences.deep sets skov.code
+vocabs.parser ;
 FROM: skov.code => inputs outputs ;
 QUALIFIED: words
 IN: skov.execution
@@ -87,10 +88,14 @@ M:: word-definition define ( def -- )
 M:: tuple-definition define ( def -- )
     def factor-name :> name
     def path :> path
-    def contents>> [ factor-name ] map :> slots
+    def contents>> [ factor-name ] map >array :> slots
     [ name path create-class :> class
       class tuple slots define-tuple-class
       name "<" ">" surround path words:create-word class define-boa-word
+      name ">" "<" surround path words:create-word
+      slots [ ">>" append [ search ] with-interactive-vocabs 1quotation ] map
+      \ cleave 2array >quotation
+      name 1array slots <effect> words:define-declared 
     ] def try-definition ;
 
 : ?define ( elt -- )
