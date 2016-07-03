@@ -4,9 +4,9 @@ USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences skov.code skov.execution skov.gadgets
 skov.gadgets.connection-gadget skov.gadgets.connector-gadget
-skov.theme skov.utilities ui.gadgets ui.gadgets.editors
-ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
-ui.pens.tile ;
+skov.theme skov.utilities splitting ui.gadgets
+ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
+ui.gestures ui.pens.solid ui.pens.tile ;
 FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.node-gadget
 
