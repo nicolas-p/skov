@@ -2,9 +2,10 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors models namespaces sequences skov.code
-skov.execution skov.gadgets skov.gadgets.buttons
-skov.gadgets.node-gadget skov.theme ui.gadgets ui.gadgets.icons
-ui.gadgets.packs ui.gestures skov.gadgets.activate-button ;
+skov.execution skov.gadgets skov.gadgets.activate-button
+skov.gadgets.buttons skov.gadgets.node-gadget skov.theme
+ui.gadgets ui.gadgets.buttons ui.gadgets.icons ui.gadgets.packs
+ui.gestures ;
 QUALIFIED: vocabs
 IN: skov.gadgets.vocab-gadget
 
@@ -46,7 +47,7 @@ M: space pref-dim*  drop { 0 25 } ;
 
 :: ?select-result-button ( vocab-gadget -- vocab-gadget )
     vocab-gadget dup find-env control-value :> env-model
-    dup children>> [ pack? ] filter 
+    dup children>> [ pack? ] filter [ gadget-child button? ] filter
     [ children>> first2 control-value result>> env-model eq? >>selected? drop ] each ;
 
 : ?add-result-button ( node-gadget -- gadget )
@@ -57,19 +58,23 @@ M: space pref-dim*  drop { 0 25 } ;
     dup node-gadget? [ dup control-value error? 
     [ <shelf> 1/2 >>align <error-button> add-gadget swap add-gadget ] when ] when ;
 
+: ?add-space ( node-gadget -- gadget )
+    dup node-gadget?
+    [ <shelf> 1/2 >>align { 30 0 } >>gap <shelf> add-gadget swap add-gadget ] when ;
+
 M:: vocab-gadget model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
     value path vocabs:create-vocab drop
-    value parents reverse [ <node-gadget> add-gadget ] each
+    value parents reverse [ <node-gadget> ?add-space add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
     <space> add-gadget
-    value vocabs [ <node-gadget> add-gadget ] each
+    value vocabs [ <node-gadget> ?add-space add-gadget ] each
     <new-vocab-button> add-gadget
-    value tuple-definitions [ <node-gadget> add-gadget ] each
+    value tuple-definitions [ <node-gadget> ?add-space add-gadget ] each
     <new-tuple-button> add-gadget
-    value word-definitions [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
+    value word-definitions [ <node-gadget> ?add-result-button ?add-error-button ?add-space add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
     value path add-interactive-vocab ;
