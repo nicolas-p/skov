@@ -101,7 +101,7 @@ M: node-gadget graft*
 
 : node-status-text ( node-gadget -- str )
     "( r : remove | e : edit | h : help )" swap control-value
-    path [ "IN: " swap append swap "     " glue ] when* ;
+    path "." " > " replace [ "Defined in " swap append swap "     " glue ] when* ;
 
 node-gadget H{
     { T{ button-up f f 1 }  [ ?select ] }
