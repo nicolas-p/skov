@@ -11,8 +11,8 @@ TUPLE: node-pile < pack ;
 TUPLE: graph-gadget < gadget ;
 TUPLE: result-gadget < pack ;
 TUPLE: vocab-gadget < pack ;
-TUPLE: node-gadget < border ;
-TUPLE: connector-gadget < icon  { links initial: { } } locs ;
+TUPLE: node-gadget < border  rel-locs ;
+TUPLE: connector-gadget < icon  links ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
 

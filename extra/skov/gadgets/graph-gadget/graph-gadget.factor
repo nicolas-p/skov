@@ -8,14 +8,14 @@ ui.gadgets ;
 FROM: skov.code => inputs outputs ;
 IN: skov.gadgets.graph-gadget
 
+TUPLE: rel-loc  neighbour xy ;
+C: <rel-loc> rel-loc
+
 SINGLETON: above
 SINGLETON: below
 
-: connectors* ( node dir -- seq )
-    above? [ inputs ] [ outputs ] if connected ;
-
 : neighbours ( node dir -- seq )
-    connectors* [ links>> first parent>> ] map ;
+    above? [ inputs ] [ outputs ] if connected [ links>> [ parent>> ] map ] map concat ;
 
 :: total-widths ( node dir -- seq )
     node dir neighbours [ [ width ] [ dir total-widths sum ] bi max 20 + ] map ;
@@ -31,28 +31,32 @@ SINGLETON: below
         [ cum-sum ] [ 2 v/n v- ] bi dup mean v-n
     ] if-empty ;
 
-: (set-relative-positions) ( node dir -- )
-    [ connectors* ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
-    '[ _ 2array >>locs drop ] 2each ;
+:: add-to-rel-locs ( rel-loc seq -- seq )
+    seq [ neighbour>> rel-loc neighbour>> eq? ] filter
+    [ seq rel-loc suffix ]
+    [ first [ rel-loc xy>> v+ 2 v/n ] change-xy drop seq ] if-empty ;
+
+: (set-relative-positions) ( node dir -- node )
+    dupd [ neighbours ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
+    '[ _ 2array <rel-loc> swap [ add-to-rel-locs ] change-rel-locs ] 2each ;
 
 : set-relative-positions ( node -- node )
-    [ above (set-relative-positions) ]
-    [ below (set-relative-positions) ] [ ] tri ;
+    above (set-relative-positions)
+    below (set-relative-positions) ;
 
 : vmaxabs ( v v -- v )
     [ 2dup [ abs ] bi@ > [ drop ] [ nip ] if ] 2map ;
 
 DEFER: set-absolute-positions
 
-:: set-absolute-position ( connector -- )
-    connector parent>> :> from-node
-    connector links>> first parent>> :> node
-    connector locs>> connector links>> first locs>> vneg vmaxabs from-node mid-loc v+ :> new-loc
-    node unplaced? connector control-value input? node y new-loc second > and or
-    [ new-loc node set-loc set-absolute-positions ] when ;
+:: set-absolute-position ( node rel-loc -- )
+    rel-loc neighbour>> rel-locs>> [ neighbour>> node eq? ] filter first :> other-rel-loc
+    rel-loc xy>> other-rel-loc xy>> vneg vmaxabs node mid-loc v+ :> new-loc
+    rel-loc neighbour>> unplaced? new-loc second neg? node y new-loc second > and or
+    [ new-loc rel-loc neighbour>> set-loc set-absolute-positions ] when ;
 
 : set-absolute-positions ( node -- )
-    connectors connected [ set-absolute-position ] each ;
+    dup rel-locs>> [ set-absolute-position ] with each ;
 
 : place-nodes ( graph -- graph )
      dup nodes [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
