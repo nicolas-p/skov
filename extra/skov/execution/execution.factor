@@ -3,8 +3,8 @@
 USING: accessors arrays classes.parser classes.tuple combinators
 combinators.smart compiler.units debugger effects
 io.streams.string kernel listener locals locals.rewrite.closures
-locals.types quotations sequences sequences.deep sets skov.code
-vocabs.parser ;
+locals.types math quotations sequences sequences.deep sets
+skov.code vocabs.parser ;
 FROM: skov.code => inputs outputs ;
 QUALIFIED: words
 IN: skov.execution
@@ -47,6 +47,10 @@ TUPLE: subtree-introduce  id ;
 : set-output-ids ( def -- def )
     dup contents>> [ outputs ] map concat [ "local" <local> >>id ] map drop ;
 
+:: process-variadic ( seq word -- seq )
+    seq word [ variadic? ] [ inputs length 1 - ] [ 1 ] smart-if*
+    [ word target>> ] replicate append ;
+
 GENERIC: transform ( node -- compiler-node )
 
 M: introduce transform
@@ -59,7 +63,7 @@ M: text transform
     [ name>> ] [ output-ids <multi-def> ] bi 2array ;
 
 M: word transform
-    [ input-ids ] [ target>> suffix ] [ output-ids <multi-def> suffix ] tri ;
+    [ input-ids ] [ process-variadic ] [ output-ids <multi-def> suffix ] tri ;
 
 M: word-definition transform
     add-subtree-introduces set-output-ids
