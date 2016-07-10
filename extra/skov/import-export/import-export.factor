@@ -18,13 +18,16 @@ SYMBOL: skov-version
 : vocab-directory-path ( elt -- str )
     parents reverse rest [ factor-name ] map path-separator join work-directory swap append-path ;
 
+: set-output-ids ( def -- def )
+    dup contents>> [ outputs ] map concat dup length iota [ >>id drop ] 2each ;
+
 GENERIC: (export) ( element -- seq )
 
 : export ( element -- seq )
     [ (export) ] [ class-of ] bi prefix ;
 
 M: vocab (export)
-    [ name>> ] [ definitions>> [ export ] map >array ] bi 2array ;
+    [ name>> ] [ definitions [ export ] map >array ] bi 2array ;
 
 M: definition (export)
     set-output-ids [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
@@ -54,7 +57,7 @@ M: slot (export)
     vocab vocab-directory-path make-directory?
     vocab factor-name ".skov" append append-path utf8
     [ "! Skov version " skov-version get-global append print vocab export . ] with-file-writer
-    vocab vocabs>> [ write-vocab-file ] each ;
+    vocab vocabs [ write-vocab-file ] each ;
 
 : export-vocabs ( -- )
     skov-root get-global write-vocab-file ;
