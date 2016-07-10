@@ -1,14 +1,15 @@
 ! Copyright (C) 2015 Nicolas Pénet.
+! See http://factorcode.org/license.txt for BSD license.
 USING: calendar calendar.format images.loader io.directories
 io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
-ui.images splitting system io.files io.encodings.utf8 skov skov.import-export parser ;
+ui.images splitting system io.files io.encodings.utf8 ui.environment code.import-export parser ;
 
 gmt timestamp>ymd skov-version set-global
 
 image-path parent-directory set-current-directory
 
 { 
-  "vocab:skov/theme/"
+  "vocab:ui/environment/theme/"
   "vocab:definitions/icons/"
   "vocab:ui/theme/images"
 } [ 

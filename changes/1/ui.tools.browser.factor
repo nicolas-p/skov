@@ -1,5 +1,5 @@
 USING: accessors debugger fry kernel
-skov.gadgets.activate-button ui.gadgets ui.gadgets.borders
+ui.gadgets.buttons.activate ui.gadgets ui.gadgets.borders
 ui.gadgets.panes ui.gadgets.tracks ;
 IN: ui.tools.browser
 

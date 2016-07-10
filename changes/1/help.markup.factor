@@ -1,4 +1,4 @@
-USING: help.markup.private io namespaces skov.gadgets.help-graph
+USING: help.markup.private io namespaces ui.environment.help-graph
 ui.gadgets.panes ;
 IN: help.markup
 

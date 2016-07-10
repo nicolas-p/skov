@@ -1,4 +1,4 @@
-USING: skov ;
+USING: ui.environment.environment-gadget ;
 IN: ui.tools
 
-MAIN: skov-window
+MAIN: environment-window
