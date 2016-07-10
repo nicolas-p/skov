@@ -4,7 +4,7 @@ USING: accessors arrays classes.parser classes.tuple combinators
 combinators.smart compiler.units debugger effects
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
-skov.code vocabs.parser ;
+skov.code splitting vocabs.parser ;
 FROM: skov.code => inputs outputs ;
 QUALIFIED: words
 IN: skov.execution
@@ -76,7 +76,11 @@ M: subtree transform
       [ subtree-output id>> suffix <lambda> ]
       [ subtree-output id>> <def> ]
     } cleave 2array ;
-    
+
+:: set-recursion ( word lambda -- lambda )
+    lambda [ recursion 1array word 1array replace 
+    dup [ lambda? ] filter [ word swap set-recursion ] map drop ] change-body ;
+
 :: try-definition ( quot def -- )
     [ def f >>defined? quot with-compilation-unit t >>defined? drop ] try ; inline
 
@@ -84,8 +88,8 @@ GENERIC: define ( def -- )
 
 M:: word-definition define ( def -- )
     [ def factor-name
-      def path words:create-word dup def alt<<
-      def transform rewrite-closures first
+      def path words:create-word dup dup def alt<<
+      def transform set-recursion rewrite-closures first
       def effect words:define-declared
     ] def try-definition ;
 

@@ -124,11 +124,13 @@ M: node path
     dup parent>> [ name>> ] bi@ = ;
 
 : input-output-names ( word -- seq seq )
-    [ inputs ] [ outputs ] bi [ [ name>> ] map ] bi@ ;
+    [ introduces ] [ returns ] bi [ [ name>> ] map ] bi@ ;
+
+SINGLETON: recursion
 
 :: in-out ( word -- seq seq )
     word factor-name :> name
-    [ { { [ word same-name-as-parent? ] [ word parent>> dup word target<< input-output-names ] }
+    [ { { [ word same-name-as-parent? ] [ word recursion >>target parent>> input-output-names ] }
         { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
         { [ name string>number ] [ name string>number word target<< { } { "number" } ] }
         { [ name search not ] [ { } { } ] }
