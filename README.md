@@ -1,12 +1,12 @@
 # Skov
 
-Skov is a visual programming environment based on [Factor](https://github.com/slavapestov/factor/) and inspired by Lisp.
+Skov is a visual programming environment based on [Factor](https://github.com/factor/factor/) and inspired by Lisp.
 
 A functional program can be thought of as a tree (actually a graph) in which functions are connected together on several levels. Commonly used programming languages have to make more or less compromises to represent this tree as a one-dimensional stream of text. Skov uses a visual, two-dimensional representation to display the tree direcly. This makes the program easier to read and to reason about and reduces the risk of making mistakes. Skov lets you see a functional program as it really is.
 
 Skov means *forest* in Danish because Skov contains a lot of trees.
 
-More information on [the website](http://skov.software).
+More information on [the website](http://skov.software/en/).
 
 ## Building Skov from Factor
 
