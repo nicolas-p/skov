@@ -26,10 +26,8 @@ IN: ui.environment.node-gadget
 :: set-rel-loc ( node1 node2 new-rel-loc -- )  node1 mid-loc new-rel-loc v+ node2 set-loc drop ;
 
 : ?select ( node-gadget -- )
-    [ children>> [ label? ] any? ]
-    [ [ [ find-vocab not ] [ find-env ] smart-when control-value ] 
-      [ find-env set-control-value ] bi 
-    ] smart-when* ;
+    [ [ children>> [ label? ] any? ] [ find-vocab ] bi and ]
+    [ [ control-value ] [ find-env set-control-value ] bi ] smart-when* ;
 
 : select-result ( node-gadget -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;

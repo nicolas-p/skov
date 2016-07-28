@@ -1,15 +1,17 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart kernel
-listener locals math memory models namespaces sequences math.order
-code code.execution ui.environment code.import-export ui.gadgets.buttons.round
+USING: accessors arrays code code.execution code.import-export
+combinators combinators.smart kernel listener locals math
+math.order memory models namespaces sequences ui ui.commands
+ui.environment ui.environment.completion-gadget
 ui.environment.connection-gadget ui.environment.connector-gadget
 ui.environment.graph-gadget ui.environment.node-pile
 ui.environment.plus-button-pile ui.environment.result-gadget
-ui.environment.vocab-gadget ui.environment.theme  ui.commands
-ui.gadgets ui.gadgets.borders ui.gadgets.editors
-ui.gadgets.packs ui.gadgets.tracks ui.gestures ui.tools.browser
-ui.tools.common vocabs.parser ui.gadgets.scrollers ui.gadgets.status-bar ui ;
+ui.environment.theme ui.environment.vocab-gadget ui.gadgets
+ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
+ui.gadgets.packs ui.gadgets.scrollers ui.gadgets.status-bar
+ui.gadgets.tracks ui.gadgets.worlds ui.gestures ui.tools.browser
+ui.tools.common vocabs.parser ;
 FROM: code => inputs outputs ;
 IN: ui.environment.environment-gadget
 
@@ -22,15 +24,18 @@ IN: ui.environment.environment-gadget
     skov-root get-global <model> :> model
     horizontal environment-gadget new-track model >>model
     vertical <track>
-      <help-button> f track-add
-      model <plus-button-pile> { 0 0 } <border> 1 track-add
+        <help-button> f track-add
+        model <plus-button-pile> { 0 0 } <border> 1 track-add
     { 10 10 } <filled-border>
     f track-add
-    <shelf> 1/2 >>align { 40 0 } >>gap
-      model <node-pile> add-gadget
-      model <result-gadget> add-gadget
-      model <graph-gadget> add-gadget
-    { 10 10 } <border> <scroller> 1 track-add
+    vertical <track>
+        <shelf> 1/2 >>align { 40 0 } >>gap
+            model <node-pile> add-gadget
+            model <result-gadget> add-gadget
+            model <graph-gadget> add-gadget 
+            { 10 10 } <border> <scroller> 1 track-add
+        "" <model> <completion-gadget> f track-add
+    1 track-add
     model <vocab-gadget> { 10 10 } <filled-border> <scroller> f track-add
     with-background ;
 
@@ -92,6 +97,10 @@ IN: ui.environment.environment-gadget
         [ drop drop ]
       } cond 
     ] make-keyboard-safe ;
+
+: completion ( env -- )
+    [ find-world world-focus control-value first ]
+    [ children>> second children>> second set-control-value ] bi ;
 
 :: next-nth ( seq elt n -- elt' )
     seq [ elt eq? ] find drop n +
@@ -164,4 +173,5 @@ environment-gadget "general" f {
     { T{ key-up f f "BACKSPACE" } toggle-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
+    { T{ key-up f f "TAB" } completion }
 } define-command-map
