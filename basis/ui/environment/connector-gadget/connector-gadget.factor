@@ -87,10 +87,16 @@ M: connector-gadget connected?
 : connector-status-text ( connector-gadget -- str )
     [ control-value name>> ] [ connected? ] bi [ "     ( x : disconnect )" append ] when ;
 
+: make-bigger ( connector-gadget -- connector-gadget )
+    "big" "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
+
+: make-smaller ( connector-gadget -- connector-gadget )
+    connector-theme ;
+
 connector-gadget H{
     { T{ button-down f f 1 }  [ [ find-vocab not ] [ display-proto-connection ] smart-when* ] }
     { T{ drag }               [ [ find-vocab not ] [ update-proto-connection ] smart-when* ] }
     { T{ button-up f f 1 }    [ [ find-vocab not ] [ create-connection ] smart-when* ] }
-    { mouse-enter [ [ connector-status-text ] keep show-status ] }
-    { mouse-leave [ hide-status ] }
+    { mouse-enter [ [ make-bigger connector-status-text ] keep show-status ] }
+    { mouse-leave [ make-smaller hide-status ] }
 } set-gestures
