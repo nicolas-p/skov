@@ -15,6 +15,7 @@ TUPLE: node-gadget < border  rel-locs ;
 TUPLE: connector-gadget < icon  links ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
+TUPLE: completion-gadget < pack  selected ;
 
 : nodes ( gadget -- seq )  children>> [ node-gadget? ] filter ;
 : connections ( gadget -- seq )  children>> [ connection-gadget? ] filter ;
@@ -32,6 +33,7 @@ M: node-gadget outputs ( gadget -- seq )
 : find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;
 : find-graph ( gadget -- graph )  [ graph-gadget? ] find-parent ;
 : find-node ( gadget -- node )  [ node-gadget? ] find-parent ;
+: find-completion ( gadget -- node )  [ completion-gadget? ] find-parent ;
 
 CONSTANT: connector-size 10
 CONSTANT: node-height 28

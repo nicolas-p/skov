@@ -34,7 +34,7 @@ IN: ui.environment.environment-gadget
             model <result-gadget> add-gadget
             model <graph-gadget> add-gadget 
             { 10 10 } <border> <scroller> 1 track-add
-        "" <model> <completion-gadget> f track-add
+        f <model> <completion-gadget> f track-add
     1 track-add
     model <vocab-gadget> { 10 10 } <filled-border> <scroller> f track-add
     with-background ;
@@ -98,9 +98,12 @@ IN: ui.environment.environment-gadget
       } cond 
     ] make-keyboard-safe ;
 
+: get-completion ( env --  completion )
+    children>> second children>> second ;
+
 : completion ( env -- )
-    [ find-world world-focus control-value first ]
-    [ children>> second children>> second set-control-value ] bi ;
+    [ find-world world-focus control-value first matching-words ]
+    [ get-completion set-control-value ] bi ;
 
 :: next-nth ( seq elt n -- elt' )
     seq [ elt eq? ] find drop n +
@@ -113,8 +116,16 @@ IN: ui.environment.environment-gadget
       [ control-value n next-nth ] [ dupd set-control-value ] tri
     ] when drop ] make-keyboard-safe ;
 
-: previous-word ( env -- )  -1 next-nth-word ;
-: next-word ( env -- )  +1 next-nth-word ;
+:: next-nth-completion ( env n -- )
+    env get-completion dup [ control-value ] [ selected>> ] bi
+    n next-nth >>selected redraw-completion drop ;
+
+:: next-nth-word/completion ( env n -- )
+    env dup get-completion control-value 
+    [ n next-nth-completion ] [ n next-nth-word ] if ;
+
+: previous-word ( env -- )  -1 next-nth-word/completion ;
+: next-word ( env -- )  +1 next-nth-word/completion ;
 
 : save-skov-image ( env -- )
     [ drop save export-vocabs ] make-keyboard-safe ;

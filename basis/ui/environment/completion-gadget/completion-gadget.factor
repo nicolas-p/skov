@@ -7,10 +7,8 @@ ui.pens.solid vocabs ;
 FROM: code => word vocab ;
 IN: ui.environment.completion-gadget
 
-TUPLE: completion-gadget < pack ;
-
 : <completion-gadget> ( model -- completion-gadget )
-    completion-gadget new swap >>model COLOR: FactorDarkSlateBlue <solid> >>interior ;
+    completion-gadget new swap >>model ;
 
 :: matching-words* ( str -- seq )
     interactive-vocabs get [ vocab-words ] map concat [ name>> str head? ] filter ;
@@ -19,11 +17,18 @@ TUPLE: completion-gadget < pack ;
     [ f ] [ matching-words* ] if-empty ;
 
 :: word-display ( wrd -- gadget )
-    <shelf> 
+    <shelf> 1/2 >>align
     wrd vocabulary>> "." split [ vocab new <node-gadget> swap >>name add-gadget ] each
-    word new vocab new >>parent <node-gadget> wrd name>> >>name add-gadget  ;
+    word new wrd >>target vocab new >>parent <node-gadget> wrd name>> >>name add-gadget ;
 
-M:: completion-gadget model-changed ( model gadget -- )
-    gadget dup clear-gadget
-    model value>> matching-words
-    [ word-display add-gadget ] each drop ;
+:: add-selection-arrow ( completion-gadget -- completion-gadget )
+    completion-gadget dup children>> 
+    [ dup children>> last control-value target>> completion-gadget selected>> eq? 
+      [ HEXCOLOR: 586e75 <solid> >>interior ] when drop 
+    ] each ;
+
+: redraw-completion ( completion-gadget -- completion-gadget )
+    dup clear-gadget dup control-value [ word-display add-gadget ] each add-selection-arrow ;
+
+M: completion-gadget model-changed ( model completion-gadget -- )
+    nip dup control-value [ first >>selected ] unless-empty redraw-completion drop ;
