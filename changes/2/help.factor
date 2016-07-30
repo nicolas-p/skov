@@ -1,23 +1,12 @@
-USING: accessors arrays assocs classes combinators generic
-help.markup help.topics kernel make namespaces prettyprint
-regexp sequences splitting words words.symbol ;
+USING: accessors arrays assocs classes code.factor-abstraction
+combinators generic help.markup help.topics kernel make
+namespaces prettyprint words words.symbol ;
 IN: help
 
-: remove-<> ( str -- str )
-    ">" "" replace
-    "<" "" replace ;
-
-: skov-name ( str -- str )
-    R/ .{2,}-.{2,}/ [ "-" " " replace ] re-replace-with
-    R/ .+>>/ [ remove-<> " (accessor)" append ] re-replace-with
-    R/ >>.+/ [ remove-<> " (mutator)" append ] re-replace-with
-    R/ <.+>/ [ remove-<> " (constructor)" append ] re-replace-with
-    R/ >.+</ [ remove-<> " (destructor)" append ] re-replace-with ;
-
-M: word article-name name>> skov-name ;
+M: word article-name name>> explicit-clean-name ;
 
 M: word article-title
-    dup [ parsing-word? ] [ symbol? ] bi or [ name>> ] [ unparse ] if skov-name ;
+    dup [ parsing-word? ] [ symbol? ] bi or [ name>> ] [ unparse ] if explicit-clean-name ;
 
 <PRIVATE
 

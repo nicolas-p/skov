@@ -1,20 +1,14 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors combinators help.topics kernel locals models
-sequences code ui.environment.graph-gadget ui.environment.theme
-splitting ui.gadgets.borders vectors ;
+USING: accessors code code.factor-abstraction kernel
+locals models sequences ui.environment.graph-gadget
+ui.environment.theme ui.gadgets.borders ;
 IN: ui.environment.help-graph
 
 :: <help-graph> ( factor-word -- gadget )
     definition new
-    factor-word article-name 
-    { { [ dup " (accessor)" swap subseq? ] [ " (accessor)" "" replace accessor ] }
-      { [ dup " (mutator)" swap subseq? ] [ " (mutator)" "" replace mutator ] }
-      { [ dup " (constructor)" swap subseq? ] [ " (constructor)" "" replace constructor ] }
-      { [ dup " (destructor)" swap subseq? ] [ " (destructor)" "" replace destructor ] }
-      [ word ]
-    } cond add-with-name
-    dup contents>> first add-connectors contents>> visible
+    factor-word word-from-factor add-element
+    dup contents>> first contents>> visible
     [ :> inside
       inside input? [ introduce ] [ return ] if new
       inside name>> >>name add-connectors :> outside

@@ -19,7 +19,7 @@ IN: ui.environment.completion-gadget
 :: word-display ( wrd -- gadget )
     <shelf> 1/2 >>align
     wrd vocabulary>> "." split [ vocab new <node-gadget> swap >>name add-gadget ] each
-    word new wrd >>target vocab new >>parent <node-gadget> wrd name>> >>name add-gadget ;
+    wrd word-from-factor <node-gadget> wrd name>> >>name add-gadget ;
 
 :: add-selection-arrow ( completion-gadget -- completion-gadget )
     completion-gadget dup children>> 
