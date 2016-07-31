@@ -2,8 +2,8 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
 compiler.units effects fry hashtables.private kernel listener
-locals math.parser namespaces sequences splitting ui.gadgets
-vectors vocabs.parser ;
+locals math math.parser namespaces sequences splitting
+ui.gadgets vectors vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
@@ -129,13 +129,22 @@ M: node path
 SINGLETON: recursion
 
 :: in-out ( word -- seq seq )
+    word target>>
+    { { [ dup recursion? ] [ drop word parent>> input-output-names ] }
+      { [ dup number? ] [ drop { } { "number" } ] }
+      { [ dup not ] [ drop { } { } ] }
+      [ stack-effect convert-stack-effect ]
+    } cond ;
+
+:: matching-words-exact ( str -- seq )
+    interactive-vocabs get [ vocab-words ] map concat [ name>> str = ] filter ;
+
+:: find-target ( word -- seq )
     word factor-name :> name
-    [ { { [ word same-name-as-parent? ] [ word recursion >>target parent>> input-output-names ] }
-        { [ name CHAR: { swap member? ] [ { } { "sequence" } ] }
-        { [ name string>number ] [ name string>number word target<< { } { "number" } ] }
-        { [ name search not ] [ { } { } ] }
-        [ name search dup word target<< stack-effect convert-stack-effect ]
-      } cond ] with-interactive-vocabs ;
+    { { [ word same-name-as-parent? ] [ recursion 1array ] }
+      { [ name string>number ] [ name string>number 1array ] }
+      [ name matching-words-exact ]
+    } cond ;
 
 : add-invisible-connector ( node class -- node )
     new "invisible connector" >>name t >>invisible? add-element ;

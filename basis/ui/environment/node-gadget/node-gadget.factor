@@ -66,9 +66,23 @@ IN: ui.environment.node-gadget
 : <node-gadget> ( value -- node )
     <model> node-gadget new swap >>model add-name ;
 
-M: node-gadget name<<
-    [ control-value swap >>name add-connectors drop ] [ dup clear-gadget add-name
-      dup find-graph [ add-connections drop ] when* ] bi node-theme ?select ;
+: make-label-permanent ( node -- )
+    dup clear-gadget add-name dup find-graph [ add-connections drop ] when*
+    node-theme ?select ;
+
+M:: node-gadget name<< ( name gadget -- )
+    gadget control-value word?
+    [ gadget find-env get-completion selected>>
+      [ gadget control-value swap dup name>> [ >>target ] [ >>name ] bi*
+        add-connectors drop gadget make-label-permanent
+        gadget find-env get-completion reset-completion ]
+      [ gadget control-value name >>name find-target [ length 1 > ]
+        [ gadget find-env get-completion set-control-value ]
+        [ gadget control-value name >>name swap first >>target
+          add-connectors drop gadget make-label-permanent
+        ] smart-if
+      ] if*
+    ] [ gadget control-value name >>name add-connectors drop gadget make-label-permanent ] if ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb

@@ -1,9 +1,9 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors code colors.constants kernel listener locals
-models namespaces sequences splitting ui.environment
-ui.environment.node-gadget ui.gadgets ui.gadgets.packs
-ui.pens.solid vocabs ;
+USING: accessors code code.factor-abstraction colors.constants
+colors.hex kernel listener locals models namespaces sequences
+splitting ui.environment ui.environment.node-gadget ui.gadgets
+ui.gadgets.packs ui.pens.solid vocabs ;
 FROM: code => word vocab ;
 IN: ui.environment.completion-gadget
 
@@ -18,8 +18,8 @@ IN: ui.environment.completion-gadget
 
 :: word-display ( wrd -- gadget )
     <shelf> 1/2 >>align
-    wrd vocabulary>> "." split [ vocab new <node-gadget> swap >>name add-gadget ] each
-    wrd word-from-factor <node-gadget> wrd name>> >>name add-gadget ;
+    wrd vocabulary>> "." split [ vocab new swap >>name <node-gadget> add-gadget ] each
+    wrd word-from-factor <node-gadget> add-gadget ;
 
 :: add-selection-arrow ( completion-gadget -- completion-gadget )
     completion-gadget dup children>> 
@@ -32,3 +32,6 @@ IN: ui.environment.completion-gadget
 
 M: completion-gadget model-changed ( model completion-gadget -- )
     nip dup control-value [ first >>selected ] unless-empty redraw-completion drop ;
+
+: reset-completion ( completion-gadget -- )
+    f >>selected f swap set-control-value ;
