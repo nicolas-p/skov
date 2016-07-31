@@ -7,6 +7,7 @@ ui.environment ui.environment.completion-gadget
 ui.environment.connection-gadget ui.environment.connector-gadget
 ui.environment.graph-gadget ui.environment.node-pile
 ui.environment.plus-button-pile ui.environment.result-gadget
+ui.environment.node-gadget
 ui.environment.theme ui.environment.vocab-gadget ui.gadgets
 ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.packs ui.gadgets.scrollers ui.gadgets.status-bar
@@ -97,9 +98,6 @@ IN: ui.environment.environment-gadget
         [ drop drop ]
       } cond 
     ] make-keyboard-safe ;
-
-: get-completion ( env --  completion )
-    children>> second children>> second ;
 
 : completion ( env -- )
     [ find-world world-focus control-value first matching-words ]

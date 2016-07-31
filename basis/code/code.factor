@@ -137,7 +137,7 @@ SINGLETON: recursion
     } cond ;
 
 :: matching-words-exact ( str -- seq )
-    interactive-vocabs get [ vocab-words ] map concat [ name>> str = ] filter ;
+    interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str = ] filter ;
 
 :: find-target ( word -- seq )
     word factor-name :> name

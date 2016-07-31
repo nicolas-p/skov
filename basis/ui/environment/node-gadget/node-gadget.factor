@@ -70,20 +70,29 @@ IN: ui.environment.node-gadget
     dup clear-gadget add-name dup find-graph [ add-connections drop ] when*
     node-theme ?select ;
 
+: set-name-and-target ( target name gadget -- )
+    [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
+    [ make-label-permanent ] bi ;
+    
+: set-node-field-string ( str gadget -- )
+    children>> first editor>> set-editor-string ;
+
+: reset-completion ( completion-gadget -- )
+    f >>selected f swap set-control-value ;
+
+: get-completion ( env --  completion )
+    children>> second children>> second ;
+
 M:: node-gadget name<< ( name gadget -- )
     gadget control-value word?
-    [ gadget find-env get-completion selected>>
-      [ gadget control-value swap dup name>> [ >>target ] [ >>name ] bi*
-        add-connectors drop gadget make-label-permanent
-        gadget find-env get-completion reset-completion ]
+    [ gadget find-env get-completion :> completion
+      completion selected>>
+      [ dup name>> gadget set-name-and-target completion reset-completion ]
       [ gadget control-value name >>name find-target [ length 1 > ]
-        [ gadget find-env get-completion set-control-value
-          name gadget children>> first editor>> set-editor-string ]
-        [ gadget control-value name >>name swap first >>target
-          add-connectors drop gadget make-label-permanent
-        ] smart-if
+        [ completion set-control-value name gadget set-node-field-string ]
+        [ first name gadget set-name-and-target ] smart-if
       ] if*
-    ] [ gadget control-value name >>name add-connectors drop gadget make-label-permanent ] if ;
+    ] [ f name gadget set-name-and-target ] if ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb

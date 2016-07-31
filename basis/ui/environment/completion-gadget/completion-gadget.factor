@@ -32,6 +32,3 @@ IN: ui.environment.completion-gadget
 
 M: completion-gadget model-changed ( model completion-gadget -- )
     nip dup control-value [ first >>selected ] unless-empty redraw-completion drop ;
-
-: reset-completion ( completion-gadget -- )
-    f >>selected f swap set-control-value ;
