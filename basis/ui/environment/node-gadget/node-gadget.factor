@@ -77,7 +77,8 @@ M:: node-gadget name<< ( name gadget -- )
         add-connectors drop gadget make-label-permanent
         gadget find-env get-completion reset-completion ]
       [ gadget control-value name >>name find-target [ length 1 > ]
-        [ gadget find-env get-completion set-control-value ]
+        [ gadget find-env get-completion set-control-value
+          name gadget children>> first editor>> set-editor-string ]
         [ gadget control-value name >>name swap first >>target
           add-connectors drop gadget make-label-permanent
         ] smart-if
