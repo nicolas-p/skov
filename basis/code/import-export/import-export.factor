@@ -67,7 +67,7 @@ M: slot (export)
 
 :: ids>links ( def -- def )
     def contents>>
-    [ inputs [ [ [ number? ] [ def find-output ] smart-when ] change-link ] map ] map
+    [ inputs [ [ def find-output ] change-link ] map ] map
     drop def ;
 
 GENERIC: (import) ( seq element -- element )
