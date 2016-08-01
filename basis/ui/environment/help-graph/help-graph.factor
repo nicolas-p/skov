@@ -6,7 +6,7 @@ ui.environment.theme ui.gadgets.borders ;
 IN: ui.environment.help-graph
 
 :: <help-graph> ( factor-word -- gadget )
-    definition new
+    word-definition new
     factor-word word-from-factor add-element
     dup contents>> first contents>> visible
     [ :> inside
