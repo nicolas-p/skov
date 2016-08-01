@@ -2,7 +2,8 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code code.import-export combinators
 combinators.smart continuations effects kernel locals math
-math.parser quotations regexp sequences splitting strings ;
+math.parser quotations regexp sequences splitting stack-checker
+strings ;
 FROM: code => inputs outputs return ;
 QUALIFIED: words
 IN: code.factor-abstraction
@@ -32,7 +33,7 @@ IN: code.factor-abstraction
 CONSTANT: stack-shufflers [ drop 2drop 3drop nip 2nip dup 2dup 3dup 
     over 2over pick swap dupd swapd rot -rot ]
 
-:: process-node* ( stack node-list node -- stack node-list )
+:: process-node ( stack node-list node -- stack node-list )
     node [ words:word? ] [ stack-effect [ in>> ] [ out>> ] bi [ length ] bi@ ] [ 0 1 ] smart-if*
     :> nout :> nin
     nout [ words:gensym ] replicate :> out
@@ -46,10 +47,16 @@ CONSTANT: stack-shufflers [ drop 2drop 3drop nip 2nip dup 2dup 3dup
     [ outputs out [ >>id drop ] 2each ] bi
     add-element ;
 
-:: process-node ( stack node-list node -- stack node-list )
+:: process-shuffler ( stack node-list node -- stack node-list )
     node stack-shufflers member?
     [ stack node 1quotation with-datastack node-list ]
-    [ stack node-list node process-node* ] if ;
+    [ stack node-list node process-node ] if ;
+
+:: process-quotation ( stack node-list node -- stack node-list )
+    node quotation?
+    [ stack node infer in>> length [ words:gensym ] replicate append
+      node-list node [ process-quotation ] each ]
+    [ stack node-list node process-shuffler ] if ;
 
 :: word-definition-from-factor ( factor-word -- word-definition )
     factor-word stack-effect :> effect
@@ -57,6 +64,6 @@ CONSTANT: stack-shufflers [ drop 2drop 3drop nip 2nip dup 2dup 3dup
     stack
     word-definition new
     stack effect in>> [ introduce new swap >>name add-connectors dup outputs first rot >>id drop add-element ] 2each
-    factor-word def>> [ process-node ] each
+    factor-word def>> [ process-quotation ] each
     swap effect out>> [ return new swap >>name add-connectors dup inputs first rot >>link drop add-element ] 2each
     ids>links ;
