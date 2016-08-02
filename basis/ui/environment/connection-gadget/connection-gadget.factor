@@ -39,7 +39,8 @@ IN: ui.environment.connection-gadget
 M: connection-gadget draw-gadget*
     [ start>> control-value invisible?>> ]
     [ GL_LINE_STIPPLE glEnable ] [ GL_LINE_STIPPLE glDisable ] smart-if
-    [ start-loc ] [ end-loc ] bi draw-curve ;
+    [ start-loc ] [ end-loc ] bi draw-curve
+    GL_LINE_STIPPLE glDisable ;
 
 :: <proto-connection> ( loc1 -- dummy-connection )
     proto-connection new loc1 >>loc1 loc1 >>loc2 ;
