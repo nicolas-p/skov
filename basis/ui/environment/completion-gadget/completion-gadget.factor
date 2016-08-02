@@ -12,6 +12,7 @@ IN: ui.environment.completion-gadget
     completion-gadget new swap >>model ;
 
 :: matching-words* ( str -- seq )
+    str spaces>dashes :> str
     interactive-vocabs get [ vocab-words ] map concat [ name>> str head? ] filter ;
 
 : matching-words ( str -- seq )

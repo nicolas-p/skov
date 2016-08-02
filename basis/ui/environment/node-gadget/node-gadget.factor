@@ -87,7 +87,7 @@ M:: node-gadget name<< ( name gadget -- )
     gadget control-value word?
     [ gadget find-env get-completion :> completion
       completion selected>>
-      [ dup name>> gadget set-name-and-target completion reset-completion ]
+      [ dup name>> dashes>spaces gadget set-name-and-target completion reset-completion ]
       [ gadget control-value name >>name find-target { 
           { [ dup length 1 > ] [ completion set-control-value name gadget set-node-field-string ] }
           { [ dup length 1 = ] [ first name gadget set-name-and-target ] }
