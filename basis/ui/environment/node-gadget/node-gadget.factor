@@ -26,8 +26,8 @@ IN: ui.environment.node-gadget
 :: set-rel-loc ( node1 node2 new-rel-loc -- )  node1 mid-loc new-rel-loc v+ node2 set-loc drop ;
 
 : ?select ( node-gadget -- )
-    [ [ children>> [ label? ] any? ] [ find-vocab ] bi and ]
-    [ [ control-value ] [ find-env set-control-value ] bi ] smart-when* ;
+    [ [ find-vocab ] [ find-env ] smart-unless control-value ]
+    [ find-env set-control-value ] bi ;
 
 : select-result ( node-gadget -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;
@@ -41,8 +41,34 @@ IN: ui.environment.node-gadget
 : add-connector-gadgets ( node-gadget -- node-gadget )
     dup control-value connectors [ <connector-gadget> add-gadget ] each ;
 
+: set-name-and-target ( target name gadget -- )
+    [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
+    [ ?select ] bi ;
+
+: set-node-field-string ( str gadget -- )
+    children>> first editor>> set-editor-string ;
+
+: reset-completion ( completion-gadget -- )
+    f >>selected f swap set-control-value ;
+
+: get-completion ( env --  completion )
+    children>> second children>> second ;
+
+:: enter-name ( name gadget -- )
+    gadget control-value word?
+    [ gadget find-env get-completion :> completion
+      completion selected>>
+      [ dup name>> dashes>spaces gadget set-name-and-target completion reset-completion ]
+      [ gadget control-value name >>name find-target { 
+          { [ dup length 1 > ] [ completion set-control-value name gadget set-node-field-string ] }
+          { [ dup length 1 = ] [ first name gadget set-name-and-target ] }
+          { [ dup empty? ] [ drop gadget dup control-value remove-from-parent unparent ] }
+        } cond
+      ] if*
+    ] [ f name gadget set-name-and-target ] if ;
+
 :: add-name-field ( node-gadget -- node-gadget )
-    node-gadget dup '[ _ [ drop empty? not ] [ name<< ] smart-when* ] <action-field>
+    node-gadget dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
     node-gadget (node-theme) :> text-colour :> bg-colour drop
     bg-colour <solid> >>boundary
     bg-colour <solid> >>interior
@@ -65,36 +91,6 @@ IN: ui.environment.node-gadget
 
 : <node-gadget> ( value -- node )
     <model> node-gadget new swap >>model add-name ;
-
-: make-label-permanent ( node -- )
-    dup clear-gadget add-name dup find-graph [ add-connections drop ] when*
-    node-theme ?select ;
-
-: set-name-and-target ( target name gadget -- )
-    [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
-    [ make-label-permanent ] bi ;
-    
-: set-node-field-string ( str gadget -- )
-    children>> first editor>> set-editor-string ;
-
-: reset-completion ( completion-gadget -- )
-    f >>selected f swap set-control-value ;
-
-: get-completion ( env --  completion )
-    children>> second children>> second ;
-
-M:: node-gadget name<< ( name gadget -- )
-    gadget control-value word?
-    [ gadget find-env get-completion :> completion
-      completion selected>>
-      [ dup name>> dashes>spaces gadget set-name-and-target completion reset-completion ]
-      [ gadget control-value name >>name find-target { 
-          { [ dup length 1 > ] [ completion set-control-value name gadget set-node-field-string ] }
-          { [ dup length 1 = ] [ first name gadget set-name-and-target ] }
-          { [ dup empty? ] [ drop gadget dup control-value remove-from-parent unparent ] }
-        } cond
-      ] if*
-    ] [ f name gadget set-name-and-target ] if ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb

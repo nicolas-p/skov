@@ -72,7 +72,7 @@ IN: ui.environment.environment-gadget
 
 : edit-node-gadget ( env -- )
     [ hand-gadget get-global find-node
-      [ f >>name request-focus ] when* drop
+      [ dup f f rot set-name-and-target request-focus ] when* drop
     ] make-keyboard-safe ;
 
 : more-inputs ( env -- )
