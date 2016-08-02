@@ -1,10 +1,10 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays classes.parser classes.tuple combinators
-combinators.smart compiler.units debugger effects
+USING: accessors arrays classes.parser classes.tuple code
+combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
-code splitting vocabs.parser ;
+splitting ui.gadgets.panes vocabs.parser ;
 FROM: code => inputs outputs ;
 QUALIFIED: words
 IN: code.execution
@@ -110,4 +110,6 @@ M:: tuple-definition define ( def -- )
     [ name>> ] [ define ] smart-when* ;
 
 : run-word ( word -- )
-    [ ?define ] [ alt>> [ execute( -- ) ] with-string-writer ] [ save-result ] tri ;
+    [ ?define ]
+    [ alt>> f pane new-pane dup swapd <pane-stream> [ execute( -- ) ] with-output-stream ]
+    [ save-result ] tri ;
