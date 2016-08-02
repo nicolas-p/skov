@@ -3,8 +3,8 @@
 USING: accessors code code.factor-abstraction colors.constants
 colors.hex kernel listener locals math.parser models namespaces
 sequences splitting ui.environment ui.environment.node-gadget
-ui.gadgets ui.gadgets.labels ui.gadgets.packs ui.pens.solid
-vocabs ;
+ui.environment.theme ui.gadgets ui.gadgets.labels
+ui.gadgets.packs ui.pens.solid vocabs ;
 FROM: code => word vocab ;
 IN: ui.environment.completion-gadget
 
@@ -31,7 +31,7 @@ IN: ui.environment.completion-gadget
 
 : ?add-completion-label ( completion-gadget -- completion-gadget )
     dup control-value
-    [ length number>string "Choose one of these " " words:" surround <label> add-gadget ]
+    [ length number>string "Choose one of these " " words:" surround <label> set-light-font add-gadget ]
     unless-empty ;
 
 : redraw-completion ( completion-gadget -- completion-gadget )
