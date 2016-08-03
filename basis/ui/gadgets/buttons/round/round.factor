@@ -1,8 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors kernel locals sequences ui.environment.theme
- ui.gadgets ui.gadgets.buttons ui.pens
-ui.pens.image ;
+ui.gadgets ui.gadgets.buttons ui.pens ui.pens.image ;
 IN: ui.gadgets.buttons.round
 
 TUPLE: round-button < button ;

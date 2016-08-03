@@ -1,4 +1,3 @@
-USING: ui.gadgets.panes ;
-IN: ui.gadget.panes
+IN: ui.gadgets.panes
 
 : display-gadget ( gadget -- )  gadget. ;
