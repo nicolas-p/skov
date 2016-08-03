@@ -53,6 +53,8 @@ os windows = [
 [ file-extension "factor" = ] filter
 [ "changes" swap append-path run-file ] each
 
+"vocab:help/stylesheet/stylesheet.factor" run-file
+
 "basis" delete-tree
 "core" delete-tree
 "extra" delete-tree
