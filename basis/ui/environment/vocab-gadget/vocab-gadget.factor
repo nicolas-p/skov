@@ -21,15 +21,15 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <new-vocab-button> ( -- button )
     "orange" [ parent>> vocab add-to-vocab ] <plus-button> 
-    "New vocabulary ( v )" >>tooltip ;
+    "New vocabulary     ( V )" >>tooltip ;
 
 : <new-word-button> ( -- button )
     "green" [ parent>> word-definition add-to-vocab ] <plus-button>
-    "New word ( n )" >>tooltip ;
+    "New word     ( N )" >>tooltip ;
 
 : <new-tuple-button> ( -- button )
     "blue" [ parent>> tuple-definition add-to-vocab ] <plus-button>
-    "New tuple class ( u )" >>tooltip ;
+    "New tuple class     ( U )" >>tooltip ;
 
 : associated-word ( button -- word )
     parent>> children>> last ;

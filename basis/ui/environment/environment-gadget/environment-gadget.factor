@@ -19,7 +19,7 @@ IN: ui.environment.environment-gadget
 { 700 600 } environment-gadget set-tool-dim
 
 : <help-button> ( -- button )
-    [ drop show-browser ] "help" <word-button> "Help ( h )" >>tooltip ;
+    [ drop show-browser ] "help" <word-button> "Help     ( H )" >>tooltip ;
 
 :: <environment-gadget> ( -- gadget )
     skov-root get-global <model> :> model

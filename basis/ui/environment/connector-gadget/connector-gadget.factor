@@ -85,7 +85,7 @@ M: connector-gadget connected?
     links>> [ connector-gadget? ] any? ;
 
 : connector-status-text ( connector-gadget -- str )
-    [ control-value name>> ] [ connected? ] bi [ "     ( x : disconnect )" append ] when ;
+    [ control-value name>> ] [ connected? ] bi [ "     ( X  disconnect )" append ] when ;
 
 : make-bigger ( connector-gadget -- connector-gadget )
     "big" "connector" 2-theme-image <image-pen> t >>fill? >>interior ;

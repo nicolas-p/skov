@@ -22,21 +22,21 @@ IN: ui.environment.plus-button-pile
     ] smart-when* ;
 
 : plus-buttons-for-word ( -- seq )
-    [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input ( i )" >>tooltip
-      "dark" [ find-env return add-to-word ] <plus-button> "Add output ( o )" >>tooltip
+    [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input     ( I )" >>tooltip
+      "dark" [ find-env return add-to-word ] <plus-button> "Add output     ( O )" >>tooltip
       <space>
-      "green" [ find-env word add-to-word ] <plus-button> "Add word ( w )" >>tooltip
+      "green" [ find-env word add-to-word ] <plus-button> "Add word     ( W )" >>tooltip
       <space>
-      "green" [ find-env constructor add-to-word ] <plus-button> "Add constructor ( c )" >>tooltip
-      "green" [ find-env accessor add-to-word ] <plus-button> "Add accessor ( a )" >>tooltip
-      "green" [ find-env mutator add-to-word ] <plus-button> "Add mutator ( m )" >>tooltip
-      "green" [ find-env destructor add-to-word ] <plus-button> "Add destructor ( d )" >>tooltip
+      "green" [ find-env constructor add-to-word ] <plus-button> "Add constructor     ( C )" >>tooltip
+      "green" [ find-env accessor add-to-word ] <plus-button> "Add accessor     ( A )" >>tooltip
+      "green" [ find-env mutator add-to-word ] <plus-button> "Add mutator     ( M )" >>tooltip
+      "green" [ find-env destructor add-to-word ] <plus-button> "Add destructor     ( D )" >>tooltip
       <space>
-      "grey" [ find-env text add-to-word ] <plus-button> "Add text ( t )" >>tooltip
+      "grey" [ find-env text add-to-word ] <plus-button> "Add text     ( T )" >>tooltip
     ] output>array ;
 
 : plus-buttons-for-tuple ( -- seq )
-    "blue" [ find-env slot add-to-tuple ] <plus-button> "Add slot ( s )" >>tooltip 1array ;
+    "blue" [ find-env slot add-to-tuple ] <plus-button> "Add slot     ( S )" >>tooltip 1array ;
 
 : <plus-button-pile> ( model -- gadget )
     plus-button-pile new vertical >>orientation swap >>model ;

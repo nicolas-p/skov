@@ -120,7 +120,7 @@ M: node-gadget graft*
    node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
 : node-status-text ( node-gadget -- str )
-    "( r : remove | e : edit | h : help )" swap control-value
+    "( R  remove )     ( E  edit )     ( H  help )" swap control-value
     path "." " > " replace [ "Defined in " swap append swap "     " glue ] when* ;
 
 node-gadget H{
