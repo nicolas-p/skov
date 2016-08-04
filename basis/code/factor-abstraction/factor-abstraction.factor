@@ -10,10 +10,10 @@ IN: code.factor-abstraction
 
 :: word-from-factor ( factor-word -- word )
     factor-word name>>
-    { { [ dup " (accessor)" tail? ] [ " (accessor)" "" replace accessor ] }
-      { [ dup " (mutator)" tail? ] [ " (mutator)" "" replace mutator ] }
-      { [ dup " (constructor)" tail? ] [ " (constructor)" "" replace constructor ] }
-      { [ dup " (destructor)" tail? ] [ " (destructor)" "" replace destructor ] }
+    { { [ " (accessor)" ?tail ] [ accessor ] }
+      { [ " (mutator)" ?tail ] [ mutator ] }
+      { [ " (constructor)" ?tail ] [ constructor ] }
+      { [ " (destructor)" ?tail ] [ destructor ] }
       [ word ]
     } cond new swap >>name
     factor-word >>target
