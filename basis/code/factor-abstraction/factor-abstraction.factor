@@ -8,19 +8,8 @@ FROM: code => inputs outputs return ;
 QUALIFIED: words
 IN: code.factor-abstraction
 
-: remove-<> ( str -- str )
-    ">" "" replace
-    "<" "" replace ;
-
-: explicit-clean-name ( str -- str )
-    R/ .{2,}-.{2,}/ [ "-" " " replace ] re-replace-with
-    R/ .+>>/ [ remove-<> " (accessor)" append ] re-replace-with
-    R/ >>.+/ [ remove-<> " (mutator)" append ] re-replace-with
-    R/ <.+>/ [ remove-<> " (constructor)" append ] re-replace-with
-    R/ >.+</ [ remove-<> " (destructor)" append ] re-replace-with ;
-
 :: word-from-factor ( factor-word -- word )
-    factor-word name>> explicit-clean-name
+    factor-word name>>
     { { [ dup " (accessor)" tail? ] [ " (accessor)" "" replace accessor ] }
       { [ dup " (mutator)" tail? ] [ " (mutator)" "" replace mutator ] }
       { [ dup " (constructor)" tail? ] [ " (constructor)" "" replace constructor ] }

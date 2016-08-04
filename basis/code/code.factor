@@ -66,39 +66,22 @@ M: element outputs ( elt -- seq )  contents>> [ output? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
-: spaces>dashes ( str -- str )  " " "-" replace ;
-: dashes>spaces ( str -- str )  "-" " " replace ;
-
 GENERIC: factor-name ( obj -- str )
 
 M: element factor-name
-    name>> spaces>dashes ;
-
-M: word factor-name
-    name>> { 
-      { "lazy filter" "lfilter" }
-      { "while" "special-while" }
-      { "until" "special-until" }
-      { "if" "special-if" }
-    }
-    [ change-name ] each
-    dup [ CHAR: { swap member? not ] [ CHAR: " swap member? not ] bi and
-    [ spaces>dashes ] when ;
+    name>> ;
 
 M: constructor factor-name
-    name>> spaces>dashes "<" ">" surround ;
+    name>> " (constructor)" append ;
 
 M: destructor factor-name
-    name>> spaces>dashes ">" "<" surround ;
+    name>> " (destructor)" append ;
 
 M: accessor factor-name
-    name>> spaces>dashes ">>" append ;
+    name>> " (accessor)" append ;
 
 M: mutator factor-name
-    name>> spaces>dashes ">>" swap append ;
-
-M: text factor-name
-    name>> ;
+    name>> " (mutator)" append ;
 
 GENERIC: path ( obj -- str )
 
@@ -118,7 +101,7 @@ M: node path
     [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
-    [ in>> ] [ out>> ] bi [ [ replace-quot dashes>spaces ] map ] bi@ ;
+    [ in>> ] [ out>> ] bi [ [ replace-quot ] map ] bi@ ;
 
 : same-name-as-parent? ( word -- ? )
     dup parent>> [ name>> ] bi@ = ;
@@ -133,7 +116,7 @@ SINGLETON: recursion
     { { [ dup recursion? ] [ drop word parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "number" } ] }
       { [ dup not ] [ drop { } { } ] }
-      [ stack-effect convert-stack-effect ]
+      [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
 
 :: matching-words-exact ( str -- seq )

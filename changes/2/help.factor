@@ -1,12 +1,10 @@
-USING: accessors arrays assocs classes code.factor-abstraction
+USING: accessors arrays assocs classes
 combinators generic help.markup help.topics kernel make
 namespaces prettyprint words words.symbol ;
 IN: help
 
-M: word article-name name>> explicit-clean-name ;
-
 M: word article-title
-    dup [ parsing-word? ] [ symbol? ] bi or [ name>> ] [ unparse ] if explicit-clean-name ;
+    dup [ parsing-word? ] [ symbol? ] bi or [ name>> ] [ unparse ] if ;
 
 <PRIVATE
 
