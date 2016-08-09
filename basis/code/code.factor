@@ -71,6 +71,13 @@ GENERIC: factor-name ( obj -- str )
 M: element factor-name
     name>> ;
 
+M: word factor-name
+    name>> {
+        { "while" "special-while" }
+        { "until" "special-until" }
+        { "if" "special-if" }
+    } [ change-name ] each ;
+
 M: constructor factor-name
     name>> " (constructor)" append ;
 
