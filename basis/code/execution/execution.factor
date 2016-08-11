@@ -99,9 +99,9 @@ M:: tuple-definition define ( def -- )
     def contents>> [ factor-name ] map >array :> slots
     [ name path create-class :> class
       class tuple slots define-tuple-class
-      name "<" ">" surround path words:create-word class define-boa-word
-      name ">" "<" surround path words:create-word
-      slots [ ">>" append [ search ] with-interactive-vocabs 1quotation ] map
+      name " (constructor)" append path words:create-word class define-boa-word
+      name " (destructor)" append path words:create-word
+      slots [ " (accessor)" append [ search ] with-interactive-vocabs 1quotation ] map
       \ cleave 2array >quotation
       name 1array slots <effect> words:define-declared 
     ] def try-definition ;
