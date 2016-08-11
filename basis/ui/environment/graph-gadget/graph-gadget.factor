@@ -24,7 +24,7 @@ SINGLETON: below
     loc>> { 0 0 } = ;
 
 : vertical-space ( dir -- y )
-    above? [ -80 ] [ 80 ] if ;
+    above? [ -75 ] [ 75 ] if ;
 
 : neighbour-relative-positions ( node dir -- seq )
     total-widths [ f ] [ 
