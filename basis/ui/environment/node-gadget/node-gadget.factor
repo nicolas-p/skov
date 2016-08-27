@@ -13,17 +13,10 @@ IN: ui.environment.node-gadget
 : width ( node-gadget -- w ) pref-dim first ;
 : half-width ( node-gadget -- w/2 ) width 2 /i ;
 
-: mid-x ( node -- x )  [ loc>> first ] [ half-width ] bi + ;
-: set-mid-x ( x node -- node )  [ half-width - ] [ [ second 2array ] change-loc ] bi ;
-
-: y ( node -- y )  loc>> second ;
-: set-y ( y node -- node )  [ first swap 2array ] change-loc ;
-
-: mid-loc ( node -- xy )  [ mid-x ] [ y ] bi 2array ;
-:: set-loc ( xy node -- node )  xy first node set-mid-x xy second node set-y drop ;
-
-: rel-loc ( node1 node2 -- xy )  swap [ mid-loc ] bi@ v- ;
-:: set-rel-loc ( node1 node2 new-rel-loc -- )  node1 mid-loc new-rel-loc v+ node2 set-loc drop ;
+: left-edge ( node -- x )  loc>> first ;
+: center ( node -- x )  [ left-edge ] [ half-width ] bi + ;
+: right-edge ( node -- x )  [ left-edge ] [ width ] bi + ;
+: top-edge ( node -- y )  loc>> second ;
 
 : ?select ( node-gadget -- )
     [ [ find-vocab ] [ find-env ] smart-unless control-value ]

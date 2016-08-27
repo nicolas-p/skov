@@ -8,10 +8,10 @@ IN: ui.environment
 TUPLE: environment-gadget < tool ;
 TUPLE: plus-button-pile < pack ;
 TUPLE: node-pile < pack ;
-TUPLE: graph-gadget < gadget ;
+TUPLE: graph-gadget < gadget  relations ;
 TUPLE: result-gadget < pack ;
 TUPLE: vocab-gadget < pack ;
-TUPLE: node-gadget < border  rel-locs ;
+TUPLE: node-gadget < border  horizontal-movement vertical-movement immobile? ;
 TUPLE: connector-gadget < icon  links ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;

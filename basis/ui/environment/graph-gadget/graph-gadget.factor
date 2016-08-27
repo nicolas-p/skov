@@ -1,65 +1,101 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays assocs combinators.smart fry kernel
-locals math math.order math.statistics math.vectors models
-sequences code code.execution ui.environment
-ui.environment.connector-gadget ui.environment.node-gadget
-ui.gadgets ;
+USING: accessors arrays assocs code code.execution
+combinators.smart fry kernel locals math math.order
+math.statistics math.vectors models sequences sequences.deep
+sets ui.environment ui.environment.connector-gadget
+ui.environment.node-gadget ui.gadgets ;
 FROM: code => inputs outputs ;
 IN: ui.environment.graph-gadget
 
-TUPLE: rel-loc  neighbour xy ;
-C: <rel-loc> rel-loc
+TUPLE: relation node1 node2 ;
+TUPLE: vertical-relation < relation ;
+TUPLE: horizontal-relation < relation ;
+TUPLE: centering-relation < horizontal-relation ;
+C: <vertical-relation> vertical-relation
+C: <horizontal-relation> horizontal-relation
+C: <centering-relation> centering-relation
+
+:: vertical-relations ( node -- seq )
+    node inputs connected [ links>> first parent>> node <vertical-relation> ] map ;
+
+:: all-nodes-above/below ( connector -- seq )
+    connector links>> [
+        parent>> dup connector control-value input? [ inputs ] [ outputs ] if
+        connected [ all-nodes-above/below ] map 2array
+    ] map flatten ;
+
+:: map-pair ( seq quot -- seq )
+    seq [ but-last ] [ rest ] bi quot 2map ; inline
+
+: if-more-than-one ( seq quot -- )
+    [ length 1 > ] swap [ f ] smart-if* ; inline
+
+: reject-common ( set1 set2 -- set1' set2' )
+    [ diff ] [ swap diff ] 2bi ;
+
+: process-connector-row ( seq -- seq )
+    [ all-nodes-above/below ] map
+    [ [ reject-common [ <horizontal-relation> ] cartesian-map ] map-pair concat ] if-more-than-one ;
+
+:: horizontal-relations ( node -- seq )
+    node inputs connected process-connector-row sift
+    node outputs connected process-connector-row sift append flatten ; ! why flatten?
 
 SINGLETON: above
 SINGLETON: below
 
-: neighbours ( node dir -- seq )
+: neighbors ( node dir -- seq )
     above? [ inputs ] [ outputs ] if connected [ links>> [ parent>> ] map ] map concat ;
 
-:: total-widths ( node dir -- seq )
-    node dir neighbours [ [ width ] [ dir total-widths sum ] bi max 20 + ] map ;
+:: centering-relations ( node -- seq )
+    node node above neighbors <centering-relation>
+    node node below neighbors <centering-relation> 2array ;
 
-: unplaced? ( node -- ? )
-    loc>> { 0 0 } = ;
+: relations ( node -- seq )
+    [ horizontal-relations ] [ vertical-relations ] [ centering-relations ] tri append append ;
 
-: vertical-space ( dir -- y )
-    above? [ -75 ] [ 75 ] if ;
+: find-relations ( graph -- graph )
+    dup nodes [ relations ] map concat >>relations ;
 
-: neighbour-relative-positions ( node dir -- seq )
-    total-widths [ f ] [ 
-        [ cum-sum ] [ 2 v/n v- ] bi dup mean v-n
-    ] if-empty ;
+GENERIC: find-movement ( relation -- )
 
-:: add-to-rel-locs ( rel-loc seq -- seq )
-    seq [ neighbour>> rel-loc neighbour>> eq? ] filter
-    [ seq rel-loc suffix ]
-    [ first [ rel-loc xy>> v+ 2 v/n ] change-xy drop seq ] if-empty ;
+M:: vertical-relation find-movement ( rel -- )
+    rel node2>> top-edge
+    rel node1>> top-edge -
+    75 - 0 min 2 /i :> value
+    rel node1>> [ value suffix ] change-vertical-movement drop
+    rel node2>> [ value neg suffix ] change-vertical-movement drop ;
 
-: (set-relative-positions) ( node dir -- node )
-    dupd [ neighbours ] [ neighbour-relative-positions ] [ nip vertical-space ] 2tri
-    '[ _ 2array <rel-loc> swap [ add-to-rel-locs ] change-rel-locs ] 2each ;
+M:: horizontal-relation find-movement ( rel -- )
+    rel node2>> left-edge
+    rel node1>> right-edge - 
+    20 - 0 min 2 /i :> value
+    rel node1>> [ value suffix ] change-horizontal-movement drop
+    rel node2>> [ value neg suffix ] change-horizontal-movement drop ;
 
-: set-relative-positions ( node -- node )
-    above (set-relative-positions)
-    below (set-relative-positions) ;
+M:: centering-relation find-movement ( rel -- )
+    rel node2>> [ center ] map mean
+    rel node1>> center - 
+    2 /i :> value
+    rel node1>> [ value suffix ] change-horizontal-movement drop
+    rel node2>> [ [ value neg suffix ] change-horizontal-movement drop ] each ;
 
-: vmaxabs ( v v -- v )
-    [ 2dup [ abs ] bi@ > [ drop ] [ nip ] if ] 2map ;
+:: move-node ( node -- node )
+    node horizontal-movement>> mean
+    node vertical-movement>> mean 2array
+    dup { 0 0 } = node immobile?<<
+    node swap '[ _ v+ ] change-loc
+    f >>horizontal-movement f >>vertical-movement ;
 
-DEFER: set-absolute-positions
+: move-nodes ( graph -- graph )
+    dup dup relations>> [ find-movement ] each nodes [ move-node ] map drop ;
 
-:: set-absolute-position ( node rel-loc -- )
-    rel-loc neighbour>> rel-locs>> [ neighbour>> node eq? ] filter first :> other-rel-loc
-    rel-loc xy>> other-rel-loc xy>> vneg vmaxabs node mid-loc v+ :> new-loc
-    rel-loc neighbour>> unplaced? new-loc second neg? node y new-loc second > and or
-    [ new-loc rel-loc neighbour>> set-loc set-absolute-positions ] when ;
-
-: set-absolute-positions ( node -- )
-    dup rel-locs>> [ set-absolute-position ] with each ;
+: no-movement? ( graph -- graph )
+    nodes [ immobile?>> ] all? ;
 
 : place-nodes ( graph -- graph )
-     dup nodes [ set-relative-positions ] map [ first { 1 1 } >>loc set-absolute-positions ] unless-empty ;
+    find-relations [ dup no-movement? ] [ move-nodes ] until ;
 
 : add-nodes ( graph -- graph )
     dup control-value contents>> connected [ <node-gadget> add-gadget ] each ;
