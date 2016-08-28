@@ -53,7 +53,7 @@ SINGLETON: below
     node node below neighbors <centering-relation> 2array ;
 
 : relations ( node -- seq )
-    [ horizontal-relations ] [ vertical-relations ] bi append ; ! [ centering-relations ] tri append append ;
+    [ horizontal-relations ] [ vertical-relations ] [ centering-relations ] tri append append ;
 
 : find-relations ( graph -- graph )
     dup nodes [ relations ] map concat >>relations ;
@@ -82,13 +82,14 @@ M:: horizontal-relation find-movement ( rel -- )
 M:: centering-relation find-movement ( rel -- )
     rel node2>> [ center ] map mean
     rel node1>> center - 
-    2 /i :> value
-    rel node1>> [ value suffix ] change-horizontal-movement drop
-    rel node2>> [ [ value neg suffix ] change-horizontal-movement drop ] each ;
+    :> value
+    value 0 <=
+    [ rel node2>> [ [ value neg suffix ] change-weak-horizontal-force drop ] each ]
+    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
 
 :: move-node ( node -- node )
-    node strong-horizontal-force>> [ empty? not ] [  ] [ node weak-horizontal-force>> ] smart-if* mean
-    node strong-vertical-force>> [ empty? not ] [  ] [ node weak-vertical-force>> ] smart-if* mean 2array
+    node strong-horizontal-force>> [ empty? not ] [  ] [ node weak-horizontal-force>> ] smart-if* [ 0 ] [ supremum ] if-empty
+    node strong-vertical-force>> [ empty? not ] [  ] [ node weak-vertical-force>> ] smart-if* [ 0 ] [ supremum ] if-empty 2array
     dup { 0 0 } = node immobile?<<
     node swap '[ _ v+ ] change-loc
     f >>strong-horizontal-force f >>weak-horizontal-force
