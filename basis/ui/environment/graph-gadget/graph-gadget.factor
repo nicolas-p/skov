@@ -53,7 +53,7 @@ SINGLETON: below
     node node below neighbors <centering-relation> 2array ;
 
 : relations ( node -- seq )
-    [ horizontal-relations ] [ vertical-relations ] [ centering-relations ] tri append append ;
+    [ horizontal-relations ] [ vertical-relations ] bi append ; ! [ centering-relations ] tri append append ;
 
 : find-relations ( graph -- graph )
     dup nodes [ relations ] map concat >>relations ;
@@ -63,16 +63,21 @@ GENERIC: find-movement ( relation -- )
 M:: vertical-relation find-movement ( rel -- )
     rel node2>> top-edge
     rel node1>> top-edge -
-    75 - 0 min 2 /i :> value
-    rel node1>> [ value suffix ] change-vertical-movement drop
-    rel node2>> [ value neg suffix ] change-vertical-movement drop ;
+    75 - :> value
+    value 0 <=
+    [ rel node2>> [ value neg suffix ] change-strong-vertical-force drop
+      rel node1>> [ 0 suffix ] change-strong-vertical-force drop ]
+    [ rel node1>> [ value suffix ] change-weak-vertical-force drop ] if ;
 
 M:: horizontal-relation find-movement ( rel -- )
     rel node2>> left-edge
     rel node1>> right-edge - 
-    20 - 0 min 2 /i :> value
-    rel node1>> [ value suffix ] change-horizontal-movement drop
-    rel node2>> [ value neg suffix ] change-horizontal-movement drop ;
+    20 - 
+    rel node2>> top-edge rel node1>> top-edge - abs 15 > [ 0 * ] when :> value
+    value 0 <=
+    [ rel node2>> [ value neg suffix ] change-strong-horizontal-force drop
+      rel node1>> [ 0 suffix ] change-strong-horizontal-force drop ]
+    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
 
 M:: centering-relation find-movement ( rel -- )
     rel node2>> [ center ] map mean
@@ -82,11 +87,12 @@ M:: centering-relation find-movement ( rel -- )
     rel node2>> [ [ value neg suffix ] change-horizontal-movement drop ] each ;
 
 :: move-node ( node -- node )
-    node horizontal-movement>> mean
-    node vertical-movement>> mean 2array
+    node strong-horizontal-force>> [ empty? not ] [  ] [ node weak-horizontal-force>> ] smart-if* mean
+    node strong-vertical-force>> [ empty? not ] [  ] [ node weak-vertical-force>> ] smart-if* mean 2array
     dup { 0 0 } = node immobile?<<
     node swap '[ _ v+ ] change-loc
-    f >>horizontal-movement f >>vertical-movement ;
+    f >>strong-horizontal-force f >>weak-horizontal-force
+    f >>strong-vertical-force f >>weak-vertical-force ;
 
 : move-nodes ( graph -- graph )
     dup dup relations>> [ find-movement ] each nodes [ move-node ] map drop ;
