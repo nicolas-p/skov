@@ -58,21 +58,26 @@ SINGLETON: below
 : find-relations ( graph -- graph )
     dup nodes [ relations ] map concat >>relations ;
 
+: horizontal-distance ( node node -- distance )
+    [ left-edge ] [ right-edge ] bi* - 20 - ;
+
+: horizontal-center-distance ( node node -- distance )
+    [ center ] bi@ - ;
+
+: vertical-distance ( node node -- distance )
+    [ top-edge ] bi@ - 75 - ;
+
 GENERIC: find-movement ( relation -- )
 
 M:: vertical-relation find-movement ( rel -- )
-    rel node2>> top-edge
-    rel node1>> top-edge -
-    75 - :> value
+    rel node2>> rel node1>> vertical-distance :> value
     value 0 <=
     [ rel node2>> [ value neg suffix ] change-strong-vertical-force drop
       rel node1>> [ 0 suffix ] change-strong-vertical-force drop ]
     [ rel node1>> [ value suffix ] change-weak-vertical-force drop ] if ;
 
 M:: horizontal-relation find-movement ( rel -- )
-    rel node2>> left-edge
-    rel node1>> right-edge - 
-    20 - 
+    rel node2>> rel node1>> horizontal-distance
     rel node2>> top-edge rel node1>> top-edge - abs 15 > [ 0 * ] when :> value
     value 0 <=
     [ rel node2>> [ value neg suffix ] change-strong-horizontal-force drop
