@@ -88,14 +88,12 @@ M:: centering-relation find-movement ( rel -- )
     rel node2>> [ center ] map mean
     rel node1>> center - 
     :> value
-    value 0 <=
-    [ rel node2>> [ [ value neg suffix ] change-weak-horizontal-force drop ] each ]
-    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
+    rel node2>> [ [ value neg suffix ] change-strong-horizontal-force drop ] each ;
 
 :: move-node ( node -- node )
-    node strong-horizontal-force>> [ empty? not ] [  ] [ node weak-horizontal-force>> ] smart-if* [ 0 ] [ supremum ] if-empty
-    node strong-vertical-force>> [ empty? not ] [  ] [ node weak-vertical-force>> ] smart-if* [ 0 ] [ supremum ] if-empty 2array
-    dup { 0 0 } = node immobile?<<
+    node strong-horizontal-force>> [ empty? not ] [ mean ] [ node weak-horizontal-force>> mean ] smart-if*
+    node strong-vertical-force>> [ empty? not ] [ mean ] [ node weak-vertical-force>> mean ] smart-if* 2array
+    dup [ abs 1 <= ] all? node immobile?<<
     node swap '[ _ v+ ] change-loc
     f >>strong-horizontal-force f >>weak-horizontal-force
     f >>strong-vertical-force f >>weak-vertical-force ;
