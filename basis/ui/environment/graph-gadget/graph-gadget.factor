@@ -61,8 +61,8 @@ SINGLETON: below
 : horizontal-distance ( node node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
 
-: horizontal-center-distance ( node node -- distance )
-    [ center ] bi@ - ;
+: horizontal-center-distance ( nodes node -- distance )
+    [ [ center ] map mean ] [ center ] bi* - ;
 
 : vertical-distance ( node node -- distance )
     [ top-edge ] bi@ - 75 - ;
@@ -85,9 +85,7 @@ M:: horizontal-relation find-movement ( rel -- )
     [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
 
 M:: centering-relation find-movement ( rel -- )
-    rel node2>> [ center ] map mean
-    rel node1>> center - 
-    :> value
+    rel node2>> rel node1>> horizontal-center-distance :> value
     rel node2>> [ [ value neg suffix ] change-strong-horizontal-force drop ] each ;
 
 :: move-node ( node -- node )
