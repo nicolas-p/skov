@@ -78,15 +78,18 @@ GENERIC: find-movement ( relation -- )
 M:: vertical-relation find-movement ( rel -- )
     rel node2>> rel node1>> vertical-distance :> value
     value 0 <=
-    [ rel node1>> [ value suffix ] change-strong-vertical-force drop ]
-    [ rel node1>> [ value suffix ] change-weak-vertical-force drop ] if ;
+    [ rel node1>> [ value suffix ] change-strong-vertical-force drop
+      rel node2>> [ value neg suffix ] change-strong-vertical-force drop ]
+    [ rel node1>> [ value suffix ] change-weak-vertical-force drop
+      rel node2>> [ value neg suffix ] change-weak-vertical-force drop ] if ;
 
 M:: horizontal-relation find-movement ( rel -- )
-    rel node2>> rel node1>> horizontal-distance
-    rel node2>> top-edge rel node1>> top-edge - abs 15 > [ 0 * ] when :> value
+    rel node2>> rel node1>> horizontal-distance :> value
     value 0 <=
-    [ rel node1>> [ value suffix ] change-strong-horizontal-force drop ]
-    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
+    [ rel node1>> [ value suffix ] change-strong-horizontal-force drop
+      rel node2>> [ value neg suffix ] change-strong-horizontal-force drop ]
+    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop
+      rel node2>> [ value neg suffix ] change-weak-horizontal-force drop ] if ;
 
 M:: centering-relation find-movement ( rel -- )
     rel movement>> [ ] [ rel node2>> rel node1>> horizontal-center-distance ] if*
@@ -96,16 +99,22 @@ M:: centering-relation find-movement ( rel -- )
 
 :: move-node ( node -- node )
     node f >>strong-horizontal-force f >>weak-horizontal-force
-    f >>strong-vertical-force f >>weak-vertical-force f >>center-force
-    relations>> [ find-movement ] each
+    f >>strong-vertical-force f >>weak-vertical-force
+    relations>> [ centering-relation? ] reject [ find-movement ] each
     node strong-horizontal-force>> [ empty? not ] [ mean ] [ node weak-horizontal-force>> mean ] smart-if*
-    node center-force>> mean +
     node strong-vertical-force>> [ empty? not ] [ mean ] [ node weak-vertical-force>> mean ] smart-if* 2array
     dup [ abs 1 <= ] all? node immobile?<<
     node swap '[ _ v+ ] change-loc ;
 
+:: move-node-centering ( node -- node )
+    node f >>center-force
+    relations>> [ centering-relation? ] filter [ find-movement ] each
+    node center-force>> mean 0 2array
+    dup [ abs 1 <= ] all? node immobile?<<
+    node swap '[ _ v+ ] change-loc ;
+
 : move-nodes ( graph -- graph )
-    dup nodes [ move-node ] map
+    dup nodes [ move-node ] map [ move-node-centering ] map
     [ relations>> [ centering-relation? ] filter [ f >>movement drop ] each ] each ;
 
 : no-movement? ( graph -- graph )
