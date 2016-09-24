@@ -11,7 +11,7 @@ IN: ui.environment.graph-gadget
 TUPLE: relation node1 node2 ;
 TUPLE: vertical-relation < relation ;
 TUPLE: horizontal-relation < relation ;
-TUPLE: centering-relation < horizontal-relation ;
+TUPLE: centering-relation < horizontal-relation  movement ;
 C: <vertical-relation> vertical-relation
 C: <horizontal-relation> horizontal-relation
 C: <centering-relation> centering-relation
@@ -49,20 +49,26 @@ SINGLETON: below
     above? [ inputs ] [ outputs ] if connected [ links>> [ parent>> ] map ] map concat ;
 
 :: centering-relations ( node -- seq )
-    node node above neighbors <centering-relation>
-    node node below neighbors <centering-relation> 2array ;
+    node node above neighbors f <centering-relation>
+    node node below neighbors f <centering-relation> 2array ;
 
 : relations ( node -- seq )
     [ horizontal-relations ] [ vertical-relations ] [ centering-relations ] tri append append ;
 
+:: assign-relation ( rel -- )
+    rel centering-relation?
+    [ rel node2>> [ [ rel suffix ] change-relations drop ] each ]
+    [ rel node1>> [ rel suffix ] change-relations drop
+      rel node2>> [ rel suffix ] change-relations drop ] if ;
+
 : find-relations ( graph -- graph )
-    dup nodes [ relations ] map concat >>relations ;
+    dup nodes [ relations [ assign-relation ] each ] each ;
 
 : horizontal-distance ( node node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
 
 : horizontal-center-distance ( nodes node -- distance )
-    [ [ center ] map mean ] [ center ] bi* - ;
+    [ [ center ] map [ infimum ] [ supremum ] bi + 2 / ] [ center ] bi* - ;
 
 : vertical-distance ( node node -- distance )
     [ top-edge ] bi@ - 75 - ;
@@ -72,32 +78,35 @@ GENERIC: find-movement ( relation -- )
 M:: vertical-relation find-movement ( rel -- )
     rel node2>> rel node1>> vertical-distance :> value
     value 0 <=
-    [ rel node2>> [ value neg suffix ] change-strong-vertical-force drop
-      rel node1>> [ 0 suffix ] change-strong-vertical-force drop ]
+    [ rel node1>> [ value suffix ] change-strong-vertical-force drop ]
     [ rel node1>> [ value suffix ] change-weak-vertical-force drop ] if ;
 
 M:: horizontal-relation find-movement ( rel -- )
     rel node2>> rel node1>> horizontal-distance
     rel node2>> top-edge rel node1>> top-edge - abs 15 > [ 0 * ] when :> value
     value 0 <=
-    [ rel node2>> [ value neg suffix ] change-strong-horizontal-force drop
-      rel node1>> [ 0 suffix ] change-strong-horizontal-force drop ]
+    [ rel node1>> [ value suffix ] change-strong-horizontal-force drop ]
     [ rel node1>> [ value suffix ] change-weak-horizontal-force drop ] if ;
 
 M:: centering-relation find-movement ( rel -- )
-    rel node2>> rel node1>> horizontal-center-distance :> value
-    rel node2>> [ [ value neg suffix ] change-strong-horizontal-force drop ] each ;
+    rel movement>> [ ] [ rel node2>> rel node1>> horizontal-center-distance ] if*
+    :> value
+    value rel movement<<
+    rel node2>> [ [ value neg suffix ] change-center-force drop ] each ;
 
 :: move-node ( node -- node )
+    node f >>strong-horizontal-force f >>weak-horizontal-force
+    f >>strong-vertical-force f >>weak-vertical-force f >>center-force
+    relations>> [ find-movement ] each
     node strong-horizontal-force>> [ empty? not ] [ mean ] [ node weak-horizontal-force>> mean ] smart-if*
+    node center-force>> mean +
     node strong-vertical-force>> [ empty? not ] [ mean ] [ node weak-vertical-force>> mean ] smart-if* 2array
     dup [ abs 1 <= ] all? node immobile?<<
-    node swap '[ _ v+ ] change-loc
-    f >>strong-horizontal-force f >>weak-horizontal-force
-    f >>strong-vertical-force f >>weak-vertical-force ;
+    node swap '[ _ v+ ] change-loc ;
 
 : move-nodes ( graph -- graph )
-    dup dup relations>> [ find-movement ] each nodes [ move-node ] map drop ;
+    dup nodes [ move-node ] map
+    [ relations>> [ centering-relation? ] filter [ f >>movement drop ] each ] each ;
 
 : no-movement? ( graph -- graph )
     nodes [ immobile?>> ] all? ;
