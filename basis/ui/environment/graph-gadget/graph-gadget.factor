@@ -8,16 +8,15 @@ ui.environment.node-gadget ui.gadgets ;
 FROM: code => inputs outputs ;
 IN: ui.environment.graph-gadget
 
-TUPLE: relation node1 node2 ;
-TUPLE: vertical-relation < relation ;
-TUPLE: horizontal-relation < relation ;
-TUPLE: centering-relation < horizontal-relation  movement ;
-C: <vertical-relation> vertical-relation
-C: <horizontal-relation> horizontal-relation
-C: <centering-relation> centering-relation
+: register-above ( node node' -- node )  [ suffix ] curry change-above ;
+: register-below ( node node' -- node )  [ suffix ] curry change-below ;
+: register-left ( node node' -- node )  [ suffix ] curry change-left ;
+: register-right ( node node' -- node )  [ suffix ] curry change-right ;
+: register-centered ( node node' -- node )  [ suffix ] curry change-centered ;
 
-:: vertical-relations ( node -- seq )
-    node inputs connected [ links>> first parent>> node <vertical-relation> ] map ;
+: find-vertical-relations ( node -- seq )
+    dup inputs connected [ links>> first parent>> register-above ] each
+    dup outputs connected [ links>> first parent>> register-below ] each ;
 
 :: all-nodes-above/below ( connector -- seq )
     connector links>> [
@@ -25,104 +24,70 @@ C: <centering-relation> centering-relation
         connected [ all-nodes-above/below ] map 2array
     ] map flatten ;
 
-:: map-pair ( seq quot -- seq )
-    seq [ but-last ] [ rest ] bi quot 2map ; inline
+:: each-pair ( seq quot -- seq )
+    seq [ but-last ] [ rest ] bi quot 2each ; inline
 
-: if-more-than-one ( seq quot -- )
-    [ length 1 > ] swap [ f ] smart-if* ; inline
+: when-more-than-one ( seq quot -- )
+    [ length 1 > ] swap smart-when* ; inline
 
 : reject-common ( set1 set2 -- set1' set2' )
     [ diff ] [ swap diff ] 2bi ;
 
-: process-connector-row ( seq -- seq )
+: assign-left-right ( left-node right-node -- )
+    [ register-right drop ] [ swap register-left drop ] 2bi ;
+
+: process-connector-row ( seq -- )
     [ all-nodes-above/below ] map
-    [ [ reject-common [ <horizontal-relation> ] cartesian-map ] map-pair concat ] if-more-than-one ;
+    [ [ reject-common [ assign-left-right ] cartesian-each ] each-pair ] when-more-than-one ;
 
-:: horizontal-relations ( node -- seq )
-    node inputs connected process-connector-row sift
-    node outputs connected process-connector-row sift append flatten ; ! why flatten?
+:: find-horizontal-relations ( node -- node )
+    node inputs connected process-connector-row
+    node outputs connected process-connector-row
+    node ;
 
-SINGLETON: above
-SINGLETON: below
+: neighbors ( node -- seq )
+    [ inputs ] [ outputs ] bi append connected [ links>> [ parent>> ] map ] map concat ;
+    ! connectors ?
 
-: neighbors ( node dir -- seq )
-    above? [ inputs ] [ outputs ] if connected [ links>> [ parent>> ] map ] map concat ;
-
-:: centering-relations ( node -- seq )
-    node node above neighbors f <centering-relation>
-    node node below neighbors f <centering-relation> 2array ;
-
-: relations ( node -- seq )
-    [ horizontal-relations ] [ vertical-relations ] [ centering-relations ] tri append append ;
-
-:: assign-relation ( rel -- )
-    rel centering-relation?
-    [ rel node2>> [ [ rel suffix ] change-relations drop ] each ]
-    [ rel node1>> [ rel suffix ] change-relations drop
-      rel node2>> [ rel suffix ] change-relations drop ] if ;
+: find-centering-relations ( node -- node )
+    dup neighbors [ register-centered ] each ;
 
 : find-relations ( graph -- graph )
-    dup nodes [ relations [ assign-relation ] each ] each ;
+    dup nodes [ find-vertical-relations find-horizontal-relations find-centering-relations ] map drop ;
 
 : horizontal-distance ( node node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
 
-: horizontal-center-distance ( nodes node -- distance )
-    [ [ center ] map [ infimum ] [ supremum ] bi + 2 / ] [ center ] bi* - ;
+: horizontal-center-distance ( node node -- distance )
+    [ center ] bi@ - ;
 
 : vertical-distance ( node node -- distance )
     [ top-edge ] bi@ - 75 - ;
 
-GENERIC: find-movement ( relation -- )
+: infimum* ( seq -- x )  [ 1000 ] [ infimum ] if-empty ;
+: supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
 
-M:: vertical-relation find-movement ( rel -- )
-    rel node2>> rel node1>> vertical-distance :> value
-    value 0 <=
-    [ rel node1>> [ value suffix ] change-strong-vertical-force drop
-      rel node2>> [ value neg suffix ] change-strong-vertical-force drop ]
-    [ rel node1>> [ value suffix ] change-weak-vertical-force drop
-      rel node2>> [ value neg suffix ] change-weak-vertical-force drop ] if ;
+:: movement ( node -- xy )
+    node node above>> [ vertical-distance neg ] with map dup supremum* :> above-bound
+    node node below>> [ swap vertical-distance ] with map dup infimum* :> below-bound
+    append mean
+    node node left>> [ horizontal-distance neg ] with map dup supremum* :> left-bound
+    node node right>> [ swap horizontal-distance ] with map dup infimum* :> right-bound
+    node node centered>> [ horizontal-center-distance neg ] with map
+    append append mean
+    right-bound min left-bound max swap below-bound min above-bound max
+    2array ;
 
-M:: horizontal-relation find-movement ( rel -- )
-    rel node2>> rel node1>> horizontal-distance :> value
-    value 0 <=
-    [ rel node1>> [ value suffix ] change-strong-horizontal-force drop
-      rel node2>> [ value neg suffix ] change-strong-horizontal-force drop ]
-    [ rel node1>> [ value suffix ] change-weak-horizontal-force drop
-      rel node2>> [ value neg suffix ] change-weak-horizontal-force drop ] if ;
-
-M:: centering-relation find-movement ( rel -- )
-    rel movement>> [ ] [ rel node2>> rel node1>> horizontal-center-distance ] if*
-    :> value
-    value rel movement<<
-    rel node2>> [ [ value neg suffix ] change-center-force drop ] each ;
-
-:: move-node ( node -- node )
-    node f >>strong-horizontal-force f >>weak-horizontal-force
-    f >>strong-vertical-force f >>weak-vertical-force
-    relations>> [ centering-relation? ] reject [ find-movement ] each
-    node strong-horizontal-force>> [ empty? not ] [ mean ] [ node weak-horizontal-force>> mean ] smart-if*
-    node strong-vertical-force>> [ empty? not ] [ mean ] [ node weak-vertical-force>> mean ] smart-if* 2array
-    node swap '[ _ v+ ] change-loc ;
-
-:: move-node-centering ( node -- node )
-    node f >>center-force
-    relations>> [ centering-relation? ] filter [ find-movement ] each
-    node center-force>> mean 0 2array
-    node swap '[ _ v+ ] change-loc ;
-
-: remember-position ( node -- node )
-    dup [ loc>> ] [ previous-loc<< ] bi ;
-
-: immobile? ( node -- ? )
-    [ loc>> ] [ previous-loc>> ] bi v- [ abs 1 <= ] all? ;
+:: move-node ( node -- )
+    node node movement
+    dup [ abs 1 <= ] all? node immobile?<<
+    '[ _ v+ ] change-loc drop ;
 
 : move-nodes ( graph -- graph )
-    dup nodes [ remember-position move-node ] map [ move-node-centering ] map
-    [ relations>> [ centering-relation? ] filter [ f >>movement drop ] each ] each ;
+    dup nodes [ move-node ] each ;
 
 : no-movement? ( graph -- graph )
-    nodes [ immobile? ] all? ;
+    nodes [ immobile?>> ] all? ;
 
 : place-nodes ( graph -- graph )
     find-relations [ dup no-movement? ] [ move-nodes ] until ;
