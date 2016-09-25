@@ -12,7 +12,6 @@ IN: ui.environment.graph-gadget
 : register-below ( node node' -- node )  [ suffix ] curry change-below ;
 : register-left ( node node' -- node )  [ suffix ] curry change-left ;
 : register-right ( node node' -- node )  [ suffix ] curry change-right ;
-: register-centered ( node node' -- node )  [ suffix ] curry change-centered ;
 
 : find-vertical-relations ( node -- seq )
     dup inputs connected [ links>> first parent>> register-above ] each
@@ -45,15 +44,8 @@ IN: ui.environment.graph-gadget
     node outputs connected process-connector-row
     node ;
 
-: neighbors ( node -- seq )
-    [ inputs ] [ outputs ] bi append connected [ links>> [ parent>> ] map ] map concat ;
-    ! connectors ?
-
-: find-centering-relations ( node -- node )
-    dup neighbors [ register-centered ] each ;
-
 : find-relations ( graph -- graph )
-    dup nodes [ find-vertical-relations find-horizontal-relations find-centering-relations ] map drop ;
+    dup nodes [ find-vertical-relations find-horizontal-relations ] map drop ;
 
 : horizontal-distance ( node node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
@@ -70,7 +62,7 @@ IN: ui.environment.graph-gadget
 :: raw-horizontal-movement ( node -- xmin xmax x )
     node node left>> [ horizontal-distance neg ] with map dup supremum* swap
     node node right>> [ swap horizontal-distance ] with map dup infimum* -rot
-    node node centered>> [ horizontal-center-distance neg ] with map
+    node node above>> node below>> append [ horizontal-center-distance neg ] with map
     append append mean ;
 
 :: raw-vertical-movement ( node -- ymin ymax y )
