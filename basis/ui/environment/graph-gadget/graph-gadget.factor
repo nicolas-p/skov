@@ -4,7 +4,7 @@ USING: accessors arrays assocs code code.execution
 combinators.smart fry kernel locals math math.order
 math.statistics math.vectors models sequences sequences.deep
 sets ui.environment ui.environment.connector-gadget
-ui.environment.node-gadget ui.gadgets ;
+ui.environment.node-gadget ui.gadgets sorting combinators ;
 FROM: code => inputs outputs ;
 IN: ui.environment.graph-gadget
 
@@ -67,19 +67,44 @@ IN: ui.environment.graph-gadget
 : infimum* ( seq -- x )  [ 1000 ] [ infimum ] if-empty ;
 : supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
 
-:: movement ( node -- xy )
-    node node above>> [ vertical-distance neg ] with map dup supremum* :> above-bound
-    node node below>> [ swap vertical-distance ] with map dup infimum* :> below-bound
-    append mean
-    node node left>> [ horizontal-distance neg ] with map dup supremum* :> left-bound
-    node node right>> [ swap horizontal-distance ] with map dup infimum* :> right-bound
+:: raw-horizontal-movement ( node -- xmin xmax x )
+    node node left>> [ horizontal-distance neg ] with map dup supremum* swap
+    node node right>> [ swap horizontal-distance ] with map dup infimum* -rot
     node node centered>> [ horizontal-center-distance neg ] with map
-    append append mean
-    right-bound min left-bound max swap below-bound min above-bound max
-    2array ;
+    append append mean ;
+
+:: raw-vertical-movement ( node -- ymin ymax y )
+    node node above>> [ vertical-distance neg ] with map dup supremum* swap
+    node node below>> [ swap vertical-distance ] with map dup infimum* -rot
+    append mean ;
+
+:: horizontal-movement ( node -- x )
+    node raw-horizontal-movement :> ( xmin xmax x )
+    { 
+        { [ x xmax > ] [
+            node right>> node node right>> [ swap horizontal-distance ] with map 
+            zip sort-values first first :> other-node
+            other-node raw-horizontal-movement :> ( xmin' xmax' x' )
+            x xmax - x' xmin' 0 min - + 2 /i :> difference
+            xmax difference +
+            other-node difference '[ _ 0 2array v+ ] change-loc drop
+        ] } 
+        { [ x xmin < ] [
+            node left>> node node left>> [ horizontal-distance neg ] with map 
+            zip sort-values reverse first first :> other-node
+            other-node raw-horizontal-movement :> ( xmin' xmax' x' )
+            x xmin - x' xmax' 0 max - + 2 /i :> difference
+            xmin difference +
+            other-node difference '[ _ 0 2array v+ ] change-loc drop
+        ] } 
+        [ x ]
+    } cond ;
+
+:: vertical-movement ( node -- y )
+    node raw-vertical-movement swap min swap max ;
 
 :: move-node ( node -- )
-    node node movement
+    node node horizontal-movement node vertical-movement 2array
     dup [ abs 1 <= ] all? node immobile?<<
     '[ _ v+ ] change-loc drop ;
 
