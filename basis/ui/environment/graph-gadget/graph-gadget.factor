@@ -103,22 +103,26 @@ M:: centering-relation find-movement ( rel -- )
     relations>> [ centering-relation? ] reject [ find-movement ] each
     node strong-horizontal-force>> [ empty? not ] [ mean ] [ node weak-horizontal-force>> mean ] smart-if*
     node strong-vertical-force>> [ empty? not ] [ mean ] [ node weak-vertical-force>> mean ] smart-if* 2array
-    dup [ abs 1 <= ] all? node immobile?<<
     node swap '[ _ v+ ] change-loc ;
 
 :: move-node-centering ( node -- node )
     node f >>center-force
     relations>> [ centering-relation? ] filter [ find-movement ] each
     node center-force>> mean 0 2array
-    dup [ abs 1 <= ] all? node immobile?<<
     node swap '[ _ v+ ] change-loc ;
 
+: remember-position ( node -- node )
+    dup [ loc>> ] [ previous-loc<< ] bi ;
+
+: immobile? ( node -- ? )
+    [ loc>> ] [ previous-loc>> ] bi v- [ abs 1 <= ] all? ;
+
 : move-nodes ( graph -- graph )
-    dup nodes [ move-node ] map [ move-node-centering ] map
+    dup nodes [ remember-position move-node ] map [ move-node-centering ] map
     [ relations>> [ centering-relation? ] filter [ f >>movement drop ] each ] each ;
 
 : no-movement? ( graph -- graph )
-    nodes [ immobile?>> ] all? ;
+    nodes [ immobile? ] all? ;
 
 : place-nodes ( graph -- graph )
     find-relations [ dup no-movement? ] [ move-nodes ] until ;

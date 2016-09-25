@@ -11,7 +11,8 @@ TUPLE: node-pile < pack ;
 TUPLE: graph-gadget < gadget  relations ;
 TUPLE: result-gadget < pack ;
 TUPLE: vocab-gadget < pack ;
-TUPLE: node-gadget < border  weak-horizontal-force strong-horizontal-force center-force weak-vertical-force strong-vertical-force relations immobile? ;
+TUPLE: node-gadget < border  weak-horizontal-force strong-horizontal-force center-force 
+    weak-vertical-force strong-vertical-force relations previous-loc ;
 TUPLE: connector-gadget < icon  links ;
 TUPLE: connection-gadget < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
