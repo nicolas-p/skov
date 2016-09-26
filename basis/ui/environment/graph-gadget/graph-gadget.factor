@@ -101,13 +101,13 @@ IN: ui.environment.graph-gadget
     '[ _ v+ ] change-loc drop ;
 
 : move-nodes ( graph -- graph )
-    dup nodes [ move-node ] each ;
+    dup nodes [ move-node ] each [ 1 + ] change-counter ;
 
 : no-movement? ( graph -- graph )
-    nodes [ immobile?>> ] all? ;
+    [ nodes [ immobile?>> ] all? ] [ counter>> 100 > ] bi or ;
 
 : place-nodes ( graph -- graph )
-    find-relations [ dup no-movement? ] [ move-nodes ] until ;
+    0 >>counter find-relations [ dup no-movement? ] [ move-nodes ] until ;
 
 : add-nodes ( graph -- graph )
     dup control-value contents>> connected [ <node-gadget> add-gadget ] each ;
