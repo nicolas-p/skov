@@ -92,8 +92,8 @@ IN: ui.environment.graph-gadget
         [ x ]
     } cond ;
 
-:: vertical-movement ( node -- y )
-    node raw-vertical-movement swap min swap max ;
+: vertical-movement ( node -- y )
+    raw-vertical-movement min max ;
 
 :: move-node ( node -- )
     node node horizontal-movement node vertical-movement 2array
