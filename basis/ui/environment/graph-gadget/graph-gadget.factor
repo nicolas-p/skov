@@ -1,10 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays assocs code code.execution
-combinators.smart fry kernel locals math math.order
-math.statistics math.vectors models sequences sequences.deep
-sets ui.environment ui.environment.connector-gadget
-ui.environment.node-gadget ui.gadgets sorting combinators ;
+USING: accessors arrays assocs code code.execution combinators
+combinators.smart fry kernel locals math math.functions
+math.order math.statistics math.vectors models sequences
+sequences.deep sets sorting ui.environment
+ui.environment.connector-gadget ui.environment.node-gadget
+ui.gadgets ;
 FROM: code => inputs outputs ;
 IN: ui.environment.graph-gadget
 
@@ -14,8 +15,8 @@ IN: ui.environment.graph-gadget
 : register-right ( node node' -- node )  [ suffix ] curry change-right ;
 
 : find-vertical-relations ( node -- seq )
-    dup inputs connected [ links>> first parent>> register-above ] each
-    dup outputs connected [ links>> first parent>> register-below ] each ;
+    dup inputs connected [ links>> [ parent>> register-above ] each ] each
+    dup outputs connected [ links>> [ parent>> register-below ] each ] each ;
 
 :: all-nodes-above/below ( connector -- seq )
     connector links>> [
@@ -45,66 +46,73 @@ IN: ui.environment.graph-gadget
     node ;
 
 : find-relations ( graph -- graph )
-    dup nodes [ find-vertical-relations find-horizontal-relations ] map drop ;
+    dup nodes [ find-vertical-relations find-horizontal-relations
+        [ members ] change-left [ members ] change-right ] map drop ;
 
-: horizontal-distance ( node node -- distance )
+: horizontal-distance ( right-node left-node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
 
 : horizontal-center-distance ( node node -- distance )
     [ center ] bi@ - ;
 
-: vertical-distance ( node node -- distance )
+: vertical-distance ( below-node above-node -- distance )
     [ top-edge ] bi@ - 75 - ;
 
 : infimum* ( seq -- x )  [ 1000 ] [ infimum ] if-empty ;
 : supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
 
-:: raw-horizontal-movement ( node -- xmin xmax x )
-    node node left>> [ horizontal-distance neg ] with map dup supremum* swap
-    node node right>> [ swap horizontal-distance ] with map dup infimum* -rot
-    node node above>> node below>> append [ horizontal-center-distance neg ] with map
-    append append mean ;
+: left-movements ( node -- seq )  dup left>> [ horizontal-distance neg ] with map ;
+: right-movements ( node -- seq )  dup right>> [ swap horizontal-distance ] with map ;
+: above-movements ( node -- seq )  dup above>> [ vertical-distance neg ] with map ;
+: below-movements ( node -- seq )  dup below>> [ swap vertical-distance ] with map ;
 
-:: raw-vertical-movement ( node -- ymin ymax y )
-    node node above>> [ vertical-distance neg ] with map dup supremum* swap
-    node node below>> [ swap vertical-distance ] with map dup infimum* -rot
-    append mean ;
+: centering-movements ( node -- seq )
+    dup [ above>> ] [ below>> ] bi append [ horizontal-center-distance neg ] with map ;
 
-:: horizontal-movement ( node -- x )
-    node raw-horizontal-movement :> ( xmin xmax x )
-    { 
-        { [ x xmax > ] [
-            node right>> node node right>> [ swap horizontal-distance ] with map 
-            zip sort-values first first :> other-node
-            other-node raw-horizontal-movement :> ( xmin' xmax' x' )
-            x xmax - x' xmin' 0 min - + 2 /i :> difference
-            xmax difference +
-            other-node difference '[ _ 0 2array v+ ] change-loc drop
-        ] } 
-        { [ x xmin < ] [
-            node left>> node node left>> [ horizontal-distance neg ] with map 
-            zip sort-values reverse first first :> other-node
-            other-node raw-horizontal-movement :> ( xmin' xmax' x' )
-            x xmin - x' xmax' 0 max - + 2 /i :> difference
-            xmin difference +
-            other-node difference '[ _ 0 2array v+ ] change-loc drop
-        ] } 
-        [ x ]
-    } cond ;
+: raw-horizontal-movements ( node -- seq )
+    [ left-movements ] [ right-movements ] bi 2array ;
 
-: vertical-movement ( node -- y )
-    raw-vertical-movement min max ;
+: raw-vertical-movements ( node -- seq )
+    [ above-movements ] [ below-movements ] bi 2array ;
+
+: limits ( seq -- xmin xmax )
+    [ first supremum* ] [ second infimum* ] bi ;
+
+: horizontal-movement ( node -- x )
+    raw-horizontal-movements [ limits ] [ concat mean ] bi min max ;
+
+: vertical-movement ( node -- x )
+    raw-vertical-movements [ limits ] [ concat mean ] bi min max ;
+
+DEFER: centering-movement
+
+:: ask-right-neighbor ( node distance movements -- movement' )
+    movements mean distance - 0 > [ node movements distance v-n centering-movement distance v+n ] [ f ] if ;
+
+:: ask-left-neighbor ( node distance movements -- movement' )
+    movements mean distance + 0 < [ node movements distance v+n centering-movement distance v-n ] [ f ] if ;
+
+:: centering-movement ( node seq -- seq )
+    node centering-movements dup seq append dup :> movements mean dup :> movement sgn :> new-direction
+    seq [ seq mean sgn ] [ new-direction ] if :> original-direction {
+        { [ original-direction 1 = new-direction 1 = and ]
+          [ node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat ] }
+        { [ original-direction -1 = new-direction -1 = and ]
+          [ node left>> [ dup node swap horizontal-distance movements ask-left-neighbor ] map concat ] }
+        [ f ]
+    } cond append ;
 
 :: move-node ( node -- )
-    node node horizontal-movement node vertical-movement 2array
-    dup [ abs 1 <= ] all? node immobile?<<
-    '[ _ v+ ] change-loc drop ;
+    node loc>>
+    node node horizontal-movement node vertical-movement 2array [ v+ ] curry change-loc
+    node f centering-movement mean 0 2array [ v+ ] curry change-loc 
+    loc>> v- [ abs 1 <= ] all? node immobile?<< ;
 
 : move-nodes ( graph -- graph )
     dup nodes [ move-node ] each [ 1 + ] change-counter ;
 
 : no-movement? ( graph -- graph )
-    [ nodes [ immobile?>> ] all? ] [ counter>> 100 > ] bi or ;
+    [ nodes [ immobile?>> ] all? ] [ counter>> 20 > ] bi or ;
 
 : place-nodes ( graph -- graph )
     0 >>counter find-relations [ dup no-movement? ] [ move-nodes ] until ;
