@@ -46,8 +46,8 @@ IN: ui.environment.graph-gadget
     node ;
 
 : find-relations ( graph -- graph )
-    dup nodes [ find-vertical-relations find-horizontal-relations
-        [ members ] change-left [ members ] change-right ] map drop ;
+    dup nodes [ find-vertical-relations find-horizontal-relations ] map 
+    [ [ members ] change-left [ members ] change-right ] map drop ;
 
 : horizontal-distance ( right-node left-node -- distance )
     [ left-edge ] [ right-edge ] bi* - 20 - ;
