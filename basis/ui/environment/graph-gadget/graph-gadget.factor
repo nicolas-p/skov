@@ -101,12 +101,12 @@ DEFER: centering-movement
         { [ original-direction -1 = new-direction -1 = and ]
           [ node left>> [ dup node swap horizontal-distance movements ask-left-neighbor ] map concat ] }
         [ f ]
-    } cond append ;
+    } cond append dup seq append mean 0 2array node swap [ v+ ] curry change-loc drop ;
 
 :: move-node ( node -- )
     node loc>>
     node node horizontal-movement node vertical-movement 2array [ v+ ] curry change-loc
-    node f centering-movement mean 0 2array [ v+ ] curry change-loc 
+    node f centering-movement drop
     loc>> v- [ abs 1 <= ] all? node immobile?<< ;
 
 : move-nodes ( graph -- graph )
