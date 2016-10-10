@@ -88,25 +88,21 @@ IN: ui.environment.graph-gadget
 DEFER: centering-movement
 
 :: ask-right-neighbor ( node distance movements -- movement' )
-    movements mean distance - 0 > [ node movements distance v-n centering-movement distance v+n ] [ f ] if ;
+    movements mean distance - 0 > [ node 1 movements distance v-n centering-movement distance v+n ] [ f ] if ;
 
 :: ask-left-neighbor ( node distance movements -- movement' )
-    movements mean distance + 0 < [ node movements distance v+n centering-movement distance v-n ] [ f ] if ;
+    movements mean distance + 0 < [ node -1 movements distance v+n centering-movement distance v-n ] [ f ] if ;
 
-:: centering-movement ( node seq -- seq )
-    node centering-movements dup seq append dup :> movements mean dup :> movement sgn :> new-direction
-    seq [ seq mean sgn ] [ new-direction ] if :> original-direction {
-        { [ original-direction 1 = new-direction 1 = and ]
-          [ node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat ] }
-        { [ original-direction -1 = new-direction -1 = and ]
-          [ node left>> [ dup node swap horizontal-distance movements ask-left-neighbor ] map concat ] }
-        [ f ]
-    } cond append dup seq append mean 0 2array node swap [ v+ ] curry change-loc drop ;
+:: centering-movement ( node dir seq -- seq )
+    node centering-movements dup seq append :> movements
+    dir 0 >= [ node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat append ] when
+    dir 0 <= [ node left>> [ dup node swap horizontal-distance movements ask-left-neighbor ] map concat append ] when
+    dup seq append mean 0 2array node swap [ v+ ] curry change-loc drop ;
 
 :: move-node ( node -- )
     node loc>>
     node node horizontal-movement node vertical-movement 2array [ v+ ] curry change-loc
-    node f centering-movement drop
+    node 0 f centering-movement drop
     loc>> v- [ abs 1 <= ] all? node immobile?<< ;
 
 : move-nodes ( graph -- graph )
