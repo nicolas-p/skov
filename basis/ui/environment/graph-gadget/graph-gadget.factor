@@ -59,8 +59,8 @@ IN: ui.environment.graph-gadget
 : vertical-distance ( below-node above-node -- distance )
     [ top-edge ] bi@ - 75 - ;
 
-: infimum* ( seq -- x )  [ 1000 ] [ infimum ] if-empty ;
-: supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
+: same-row? ( node node -- ? )
+    [ top-edge ] bi@ - abs 30 < ;
 
 : left-movements ( node -- seq )  dup left>> [ horizontal-distance neg ] with map ;
 : right-movements ( node -- seq )  dup right>> [ swap horizontal-distance ] with map ;
@@ -71,39 +71,47 @@ IN: ui.environment.graph-gadget
     dup [ above>> ] [ below>> ] bi append [ horizontal-center-distance neg ] with map ;
 
 : raw-horizontal-movements ( node -- seq )
-    [ left-movements ] [ right-movements ] bi 2array ;
+    [ left-movements ] [ right-movements ] [ centering-movements ] tri append append ;
 
 : raw-vertical-movements ( node -- seq )
-    [ above-movements ] [ below-movements ] bi 2array ;
+    [ above-movements ] [ below-movements ] bi append ;
 
-: limits ( seq -- xmin xmax )
-    [ first supremum* ] [ second infimum* ] bi ;
+: supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
 
-: horizontal-movement ( node -- x )
-    raw-horizontal-movements [ limits ] [ concat mean ] bi min max ;
+DEFER: vertical-movement
 
-: vertical-movement ( node -- x )
-    raw-vertical-movements [ limits ] [ concat mean ] bi min max ;
+:: ask-below-neighbor ( node distance movements -- movement' )
+    movements mean distance - 0 > [ node movements distance v-n vertical-movement distance v+n ] [ f ] if ;
 
-DEFER: centering-movement
+:: vertical-movement ( node seq -- seq )
+    node raw-vertical-movements  :> these-movements
+    these-movements seq append :> movements
+    node below>> [ dup node vertical-distance movements ask-below-neighbor ] map concat :> from-below
+    from-below movements append :> all-movements
+    all-movements mean node above-movements supremum* max
+    0 swap 2array node swap [ v+ ] curry change-loc drop
+    these-movements from-below append ;
+
+DEFER: horizontal-movement
 
 :: ask-right-neighbor ( node distance movements -- movement' )
-    movements mean distance - 0 > [ node 1 movements distance v-n centering-movement distance v+n ] [ f ] if ;
+    movements mean distance - 0 > [ node movements distance v-n horizontal-movement distance v+n ] [ f ] if ;
 
-:: ask-left-neighbor ( node distance movements -- movement' )
-    movements mean distance + 0 < [ node -1 movements distance v+n centering-movement distance v-n ] [ f ] if ;
+: closest ( seq -- seq )
+    [ loc>> first ] sort-with [ f ] [ first 1array ] if-empty ;
 
-:: centering-movement ( node dir seq -- seq )
-    node centering-movements dup seq append :> movements
-    dir 0 >= [ node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat append ] when
-    dir 0 <= [ node left>> [ dup node swap horizontal-distance movements ask-left-neighbor ] map concat append ] when
-    dup seq append mean 0 2array node swap [ v+ ] curry change-loc drop ;
+:: horizontal-movement ( node seq -- seq )
+    node raw-horizontal-movements :> these-movements
+    these-movements seq append :> movements
+    node right>> closest [ dup node horizontal-distance movements ask-right-neighbor ] map concat :> from-right
+    from-right movements append :> all-movements
+    all-movements mean  node left-movements supremum* max
+    0 2array node swap [ v+ ] curry change-loc drop
+    these-movements from-right append ;
 
 :: move-node ( node -- )
-    node loc>>
-    node node horizontal-movement node vertical-movement 2array [ v+ ] curry change-loc
-    node 0 f centering-movement drop
-    loc>> v- [ abs 1 <= ] all? node immobile?<< ;
+    node f horizontal-movement drop
+    node f vertical-movement drop ;
 
 : move-nodes ( graph -- graph )
     dup nodes [ move-node ] each [ 1 + ] change-counter ;
