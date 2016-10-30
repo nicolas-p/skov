@@ -18,10 +18,13 @@ IN: ui.environment.graph-gadget
     dup inputs connected [ links>> [ parent>> register-above ] each ] each
     dup outputs connected [ links>> [ parent>> register-below ] each ] each ;
 
-:: all-nodes-above/below ( connector -- seq )
+SINGLETON: left
+SINGLETON: right
+
+:: all-nodes-above/below ( connector side -- seq )
     connector links>> [
         parent>> dup connector control-value input? [ inputs ] [ outputs ] if
-        connected [ all-nodes-above/below ] map 2array
+        connected [ side left = [ first ] [ last ] if side all-nodes-above/below 2array ] unless-empty
     ] map flatten ;
 
 :: each-pair ( seq quot -- seq )
@@ -37,8 +40,9 @@ IN: ui.environment.graph-gadget
     [ register-right drop ] [ swap register-left drop ] 2bi ;
 
 : process-connector-row ( seq -- )
-    [ all-nodes-above/below ] map
-    [ [ reject-common [ assign-left-right ] cartesian-each ] each-pair ] when-more-than-one ;
+    [ [ [ right all-nodes-above/below ]
+        [ left all-nodes-above/below ] bi* 
+        [ assign-left-right ] 2each ] each-pair ] when-more-than-one ;
 
 :: find-horizontal-relations ( node -- node )
     node inputs connected process-connector-row
@@ -84,7 +88,7 @@ DEFER: vertical-movement
     movements mean distance - 0 > [ node movements distance v-n vertical-movement distance v+n ] [ f ] if ;
 
 :: vertical-movement ( node seq -- seq )
-    node raw-vertical-movements  :> these-movements
+    node raw-vertical-movements :> these-movements
     these-movements seq append :> movements
     node below>> [ dup node vertical-distance movements ask-below-neighbor ] map concat :> from-below
     from-below movements append :> all-movements
@@ -95,25 +99,16 @@ DEFER: vertical-movement
 DEFER: horizontal-movement
 
 :: ask-right-neighbor ( node distance movements -- movement' )
-    movements mean distance - 0 > [ node movements distance v-n horizontal-movement unzip [ distance v+n ] map zip ] [ f f 2array ] if ;
-
-: closest ( seq -- seq )
-    [ loc>> first ] sort-with [ f ] [ first 1array ] if-empty ;
-
-:: (unique-movements) ( seq pair -- seq )
-    pair first seq [ first ] map member-eq? [ seq ] [ seq pair suffix ] if ;
-
-: unique-movements ( seq -- seq )
-    f [ (unique-movements) ] reduce [ second ] map concat sift ;
+    movements mean distance - 0 > [ node movements distance v-n horizontal-movement distance v+n ] [ f ] if ;
 
 :: horizontal-movement ( node seq -- seq )
     node centering-movements :> these-movements
     these-movements seq append :> movements
     node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat sift :> from-right
-    from-right unique-movements movements append :> all-movements
+    from-right movements append :> all-movements
     all-movements mean node left-movements supremum* max
     0 2array node swap [ v+ ] curry change-loc drop
-    from-right node these-movements 2array suffix ;
+    from-right these-movements append ;
 
 :: move-node ( node -- )
     node f horizontal-movement drop
