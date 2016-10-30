@@ -95,19 +95,25 @@ DEFER: vertical-movement
 DEFER: horizontal-movement
 
 :: ask-right-neighbor ( node distance movements -- movement' )
-    movements mean distance - 0 > [ node movements distance v-n horizontal-movement distance v+n ] [ f ] if ;
+    movements mean distance - 0 > [ node movements distance v-n horizontal-movement unzip [ distance v+n ] map zip ] [ f f 2array ] if ;
 
 : closest ( seq -- seq )
     [ loc>> first ] sort-with [ f ] [ first 1array ] if-empty ;
 
+:: (unique-movements) ( seq pair -- seq )
+    pair first seq [ first ] map member-eq? [ seq ] [ seq pair suffix ] if ;
+
+: unique-movements ( seq -- seq )
+    f [ (unique-movements) ] reduce [ second ] map concat sift ;
+
 :: horizontal-movement ( node seq -- seq )
-    node raw-horizontal-movements :> these-movements
+    node centering-movements :> these-movements
     these-movements seq append :> movements
-    node right>> closest [ dup node horizontal-distance movements ask-right-neighbor ] map concat :> from-right
-    from-right movements append :> all-movements
-    all-movements mean  node left-movements supremum* max
+    node right>> [ dup node horizontal-distance movements ask-right-neighbor ] map concat sift :> from-right
+    from-right unique-movements movements append :> all-movements
+    all-movements mean node left-movements supremum* max
     0 2array node swap [ v+ ] curry change-loc drop
-    these-movements from-right append ;
+    from-right node these-movements 2array suffix ;
 
 :: move-node ( node -- )
     node f horizontal-movement drop
