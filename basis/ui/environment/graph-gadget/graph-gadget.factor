@@ -83,21 +83,14 @@ SINGLETON: right
 : raw-vertical-movements ( node -- seq )
     [ above-movements ] [ below-movements ] bi append ;
 
+: infimum* ( seq -- x )  [ 1000 ] [ infimum ] if-empty ;
 : supremum* ( seq -- x )  [ -1000 ] [ supremum ] if-empty ;
 
-DEFER: vertical-movement
-
-:: ask-below-neighbor ( node distance movements -- movement' )
-    movements mean distance - 0 > [ node movements distance v-n vertical-movement distance v+n ] [ f ] if ;
-
-:: vertical-movement ( node seq -- seq )
-    node raw-vertical-movements :> these-movements
-    these-movements seq append :> movements
-    node below>> [ dup node vertical-distance movements ask-below-neighbor ] map concat :> from-below
-    from-below movements append :> all-movements
-    all-movements mean node above-movements supremum* max
-    0 swap 2array node swap [ v+ ] curry change-loc drop
-    these-movements from-below append ;
+:: vertical-movement ( node -- )
+    node raw-vertical-movements mean
+    node below-movements infimum* min
+    node above-movements supremum* max
+    0 swap 2array node swap [ v+ ] curry change-loc drop ;
 
 DEFER: horizontal-movement
 
@@ -115,7 +108,7 @@ DEFER: horizontal-movement
 
 :: move-node ( node -- )
     node f horizontal-movement drop
-    node f vertical-movement drop ;
+    node vertical-movement ;
 
 : move-nodes ( graph -- graph )
     dup nodes [ move-node ] each [ 1 + ] change-counter ;
