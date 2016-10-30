@@ -36,8 +36,11 @@ SINGLETON: right
 : reject-common ( set1 set2 -- set1' set2' )
     [ diff ] [ swap diff ] 2bi ;
 
-: assign-left-right ( left-node right-node -- )
-    [ register-right drop ] [ swap register-left drop ] 2bi ;
+:: assign-left-right ( left-node right-node -- )
+    right-node left-node left>> member-eq? not
+    left-node right-node right>> member-eq? not and
+    [ left-node right-node register-right drop
+      right-node left-node register-left drop ] when ;
 
 : process-connector-row ( seq -- )
     [ [ [ right all-nodes-above/below ]
