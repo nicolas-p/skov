@@ -198,6 +198,10 @@ M: output connected?
 M: input connect
     link<< ;
 
+:: unlink ( word -- word )
+    word word parent>> contents>>
+    [ inputs connected [ [ link>> parent>> word eq? ] [ f >>link ] smart-when ] map drop ] each ;
+
 GENERIC: disconnect ( connector -- )
 
 M: input disconnect

@@ -55,7 +55,7 @@ IN: ui.environment.node-gadget
       [ gadget control-value name >>name find-target { 
           { [ dup length 1 > ] [ completion set-control-value name gadget set-node-field-string ] }
           { [ dup length 1 = ] [ first name gadget set-name-and-target ] }
-          { [ dup empty? ] [ drop gadget dup control-value remove-from-parent unparent ] }
+          { [ dup empty? ] [ drop gadget dup control-value unlink remove-from-parent unparent ] }
         } cond
       ] if*
     ] [ f name gadget set-name-and-target ] if ;
