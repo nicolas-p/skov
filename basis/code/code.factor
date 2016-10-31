@@ -73,9 +73,9 @@ M: element factor-name
 
 M: word factor-name
     name>> {
-        { "while" "special-while" }
-        { "until" "special-until" }
-        { "if" "special-if" }
+        { "while" "special while" }
+        { "until" "special until" }
+        { "if" "special if" }
     } [ change-name ] each ;
 
 M: constructor factor-name
