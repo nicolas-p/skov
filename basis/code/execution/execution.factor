@@ -115,5 +115,5 @@ M:: tuple-definition define ( def -- )
 
 : run-word ( word -- )
     [ ?define ]
-    [ alt>> f pane new-pane dup swapd <pane-stream> [ execute( -- ) ] with-output-stream ]
+    [ alt>> first f pane new-pane dup swapd <pane-stream> [ execute( -- ) ] with-output-stream ]
     [ save-result ] tri ;
