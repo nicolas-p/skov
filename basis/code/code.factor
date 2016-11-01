@@ -76,6 +76,7 @@ M: word factor-name
         { "while" "special while" }
         { "until" "special until" }
         { "if" "special if" }
+        { "times" "special times" }
     } [ change-name ] each ;
 
 M: constructor factor-name
