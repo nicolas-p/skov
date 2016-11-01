@@ -42,10 +42,16 @@ SINGLETON: right
     [ left-node right-node register-right drop
       right-node left-node register-left drop ] when ;
 
+: common-nodes? ( seq seq -- ? )
+    intersect empty? not ;
+
 : process-connector-row ( seq -- )
     [ [ [ right all-nodes-above/below ]
-        [ left all-nodes-above/below ] bi* 
-        [ assign-left-right ] 2each ] each-pair ] when-more-than-one ;
+        [ left all-nodes-above/below ] bi*
+        [ common-nodes? ]
+        [ reject-common [ assign-left-right ] cartesian-each ]
+        [ [ assign-left-right ] 2each ] smart-if
+      ] each-pair ] when-more-than-one ;
 
 :: find-horizontal-relations ( node -- node )
     node inputs connected process-connector-row
