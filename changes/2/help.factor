@@ -1,6 +1,6 @@
-USING: accessors arrays assocs classes
-combinators generic help.markup help.topics kernel make
-namespaces prettyprint words words.symbol ;
+USING: accessors arrays assocs classes combinators effects
+generic help.markup help.topics kernel make namespaces
+prettyprint sequences words words.symbol ;
 IN: help
 
 M: word article-title
@@ -24,3 +24,14 @@ PRIVATE>
 M: generic article-content (word-help) ;
 
 M: class article-content (word-help) ;
+
+M: word word-help*
+    stack-effect [ in>> ] [ out>> ] bi [
+        [
+            dup pair? [
+                first2 dup effect? [ \ $quotation swap 2array ] when
+            ] [
+                object
+            ] if [ effect>string ] dip
+        ] { } map>assoc
+    ] bi@ [ \ $inputs prefix ] dip \ $outputs prefix 2array ;

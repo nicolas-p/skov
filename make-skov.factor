@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: calendar calendar.format images.loader io.directories vocabs regexp accessors combinators.smart
 io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
-ui.images splitting system io.files io.encodings.utf8 ui.environment code.import-export parser ;
+ui.images splitting system io.files io.encodings.utf8 ui.environment code.import-export parser help help.markup words debugger ;
 
 ! Setting Skov version in YYYY-MM-DD format
 gmt timestamp>ymd skov-version set-global
@@ -94,7 +94,16 @@ all-words [ [
     [ "2^" = ] [ drop "pow 2" ] smart-when
     [ "10^" = ] [ drop "pow 10" ] smart-when
     [ "t" = ] [ drop "true" ] smart-when
-] change-name drop ] each
+  ] change-name
+] each
+
+! Updating the help page of every word
+all-words [ [ 
+    [ "help" word-prop [ \ $description swap member? ] filter ]
+    [ word-help* swap append ]
+    [ swap "help" set-word-prop ] tri
+  ] try
+] each
 
 ! Saving and renaming the image
 save
