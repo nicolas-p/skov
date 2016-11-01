@@ -250,6 +250,6 @@ vocab new "●" >>name skov-root set-global
 
 : forget-alt ( vocab/def -- )
     { { [ dup vocab? ] [ path [ vocabs:forget-vocab ] with-compilation-unit ] }
-      { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] when* ] }
+      { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]
     } cond ;

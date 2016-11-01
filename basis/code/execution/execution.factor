@@ -84,11 +84,14 @@ M: subtree transform
 :: try-definition ( quot def -- )
     [ def f >>defined? quot with-compilation-unit t >>defined? drop ] try ; inline
 
+: register-alt ( alt def -- )
+    swap [ suffix ] curry change-alt drop ;
+
 GENERIC: define ( def -- )
 
 M:: word-definition define ( def -- )
     [ def factor-name
-      def path words:create-word dup dup def alt<<
+      def path words:create-word dup dup def register-alt
       def transform set-recursion rewrite-closures first
       def effect words:define-declared
     ] def try-definition ;
@@ -98,9 +101,10 @@ M:: tuple-definition define ( def -- )
     def path :> path
     def contents>> [ factor-name ] map >array :> slots
     [ name path create-class :> class
+      class def register-alt
       class tuple slots define-tuple-class
-      name " (constructor)" append path words:create-word class define-boa-word
-      name " (destructor)" append path words:create-word
+      name " (constructor)" append path words:create-word dup def register-alt class define-boa-word
+      name " (destructor)" append path words:create-word dup def register-alt
       slots [ " (accessor)" append [ search ] with-interactive-vocabs 1quotation ] map
       \ cleave 2array >quotation
       name 1array slots <effect> words:define-declared 
