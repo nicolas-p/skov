@@ -1,16 +1,16 @@
 @font-face {
-    font-family: biolinum;
-    src: url(fonts/LinBiolinum_R.woff);
+  font-family: biolinum;
+  src: url(fonts/LinBiolinum_R.woff);
 }
 @font-face {
-    font-family: biolinum;
-    src: url(fonts/LinBiolinum_RB.woff);
-    font-weight: bold;
+  font-family: biolinum;
+  src: url(fonts/LinBiolinum_RB.woff);
+  font-weight: bold;
 }
 body {
   background-color: #002B36;
   color: white;
-	font-family: "Linux Biolinum O", "Linux Biolinum", biolinum, sans-serif;
+  font-family: "Linux Biolinum O", "Linux Biolinum", biolinum, sans-serif;
   font-size: 14pt;
 }
 #language {
@@ -39,17 +39,27 @@ a:hover {
   text-decoration: underline;
 }
 a.download-link {
-  background-color: #A2D434;
   border-radius: 10px;
   padding: 5px 10px;
   color: black;
   font-weight: bold;
+  background-image: linear-gradient(to bottom, #69AA00, #BFE950, #69AA00);
 }
 a.download-link:hover {
   text-decoration: none;
-  background-color: #D0F07D;
+  background-image: linear-gradient(to bottom, #A2D434, #D0F07D, #A2D434);
 }
 .bloc {
   display:inline-block;
   vertical-align:middle;
+}
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, #002B36, #aaa, #002B36);
+}
+hr.title-sep {
+  background-image: linear-gradient(to right, #002B36, #fff, #002B36);
+  margin: 2px;
+  height: 2px;
 }
