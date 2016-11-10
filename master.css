@@ -68,17 +68,52 @@ hr.title-sep {
   margin: 2px;
   height: 2px;
 }
+p.question {
+  font-weight: bold;
+  color: #82A6A5;
+}
 key {
     font-family: biolinum-keyboard;
 }
 word {
-  border-radius: 10px;
+  border-radius: 100px;
   padding: 2px 6px;
   color: black;
   font-weight: bold;
   background-image: linear-gradient(to bottom, #69AA00, #BFE950, #69AA00);
 }
-p.question {
+text {
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: black;
   font-weight: bold;
-  color: #82A6A5;
+  background-image: linear-gradient(to bottom, #82A6A5, #FFFFFF, #82A6A5);
+}
+vocab {
+  border-radius: 100px;
+  padding: 2px 6px;
+  color: black;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #FF0000, #FF9C7F, #FF0000);
+}
+class {
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: black;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #0985FF, #6BD7FF, #0985FF);
+}
+slot {
+  border-radius: 100px;
+  padding: 2px 6px;
+  color: black;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #0985FF, #6BD7FF, #0985FF);
+}
+io {
+  border-radius: 100px;
+  padding: 2px 6px;
+  color: white;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #82A6A5, #002B36, #82A6A5);
 }
