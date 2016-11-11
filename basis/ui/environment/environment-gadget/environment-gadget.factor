@@ -16,7 +16,7 @@ ui.tools.common vocabs.parser ;
 FROM: code => inputs outputs ;
 IN: ui.environment.environment-gadget
 
-{ 700 600 } environment-gadget set-tool-dim
+environment-gadget { 700 600 } set-tool-dim
 
 : <help-button> ( -- button )
     [ drop show-browser ] "help" <word-button> "Help     ( H )" >>tooltip ;
