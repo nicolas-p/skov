@@ -29,7 +29,7 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <new-tuple-button> ( -- button )
     "blue" [ parent>> tuple-definition add-to-vocab ] <plus-button>
-    "New tuple class     ( U )" >>tooltip ;
+    "New class     ( K )" >>tooltip ;
 
 : associated-word ( button -- word )
     parent>> children>> last ;

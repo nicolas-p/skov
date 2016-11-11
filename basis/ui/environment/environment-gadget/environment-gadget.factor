@@ -163,8 +163,8 @@ environment-gadget "general" f {
     { T{ key-up f f "V" } add-vocab }
     { T{ key-up f f "n" } add-word-in-vocab }
     { T{ key-up f f "N" } add-word-in-vocab }
-    { T{ key-up f f "u" } add-tuple-in-vocab }
-    { T{ key-up f f "U" } add-tuple-in-vocab }
+    { T{ key-up f f "k" } add-tuple-in-vocab }
+    { T{ key-up f f "K" } add-tuple-in-vocab }
     { T{ key-up f f "x" } disconnect-connector-gadget }
     { T{ key-up f f "X" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }
