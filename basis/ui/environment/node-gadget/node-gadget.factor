@@ -112,9 +112,26 @@ M: node-gadget focusable-child*
 M: node-gadget graft*
    node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
+: node-type ( node-gadget -- str )
+    control-value {
+        { [ dup vocab? ] [ drop "Vocabulary" ] }
+        { [ dup text? ] [ drop "Text" ] }
+        { [ dup tuple-definition? ] [ drop "Class" ] }
+        { [ dup slot? ] [ drop "Class slot" ] }
+        { [ dup constructor? ] [ drop "Object constructor" ] }
+        { [ dup destructor? ] [ drop "Object destructor" ] }
+        { [ dup accessor? ] [ drop "Slot accessor" ] }
+        { [ dup mutator? ] [ drop "Slot mutator" ] }
+        { [ dup word? ] [ drop "Word" ] }
+        { [ dup word-definition? ] [ drop "Word" ] }
+        { [ dup introduce? ] [ drop "Input" ] }
+        { [ dup return? ] [ drop "Output" ] }
+    } cond ;
+
 : node-status-text ( node-gadget -- str )
-    "( R  remove )     ( E  edit )     ( H  help )" swap control-value
-    path "." " > " replace [ "Defined in " swap append swap "     " glue ] when* ;
+    [ node-type ] [ control-value ] bi
+    path "." " > " replace [ " defined in " swap append append ] when*
+    "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
 node-gadget H{
     { T{ button-up f f 1 }  [ ?select ] }
