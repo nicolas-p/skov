@@ -132,20 +132,20 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>Le premier est un <em>constructeur</em>, il prend deux nombres et retourne un objet point. Le deuxième est un <em>destructeur</em>, il prend un objet point et retourne la valeur de chaque emplacement. On a ensuite deux <em>accesseurs</em> pour les emplacements <slot>x</slot> et <slot>y</slot>. Ils prennent un objet point et retournent la valeur de l'emplacement. Et les deux derniers sont des <em>mutateurs</em>, ils prennent un objet point et un nombre et retournent l'objet avec la valeur insérée dans l'emplacement correspondant.</p>
 
 <hr>
-<p>We want to compute the distance between two points. Define a new word called <word>distance</word>.</p>
-<p>You will see that there are four dots on the right that let you insert a constructor, a destructor, an accessor or a mutator. Or you can insert them by pressing <key>C</key>, <key>D</key>, <key>A</key> and <key>M</key>, respectively. You should be able to reproduce this code:</p>
+<p>On veut calculer la distance entre deux points. Définissez un nouveau mot appelé <word>distance</word>.</p>
+<p>Vous verrez qu'il y a quatre points à gauche qui vous permettent d'insérer un constructeur, un destructeur, un accesseur ou un mutateur. Ou vous pouvez les insérer en appuyant sur <key>C</key>, <key>D</key>, <key>A</key> et <key>M</key>, respectivement. Vous devriez pouvoir reproduire ce code :</p>
 <div class="centred"><img class="bloc" src="../images/screenshot-distance.png" width="222" height="502"></div>
-<p><word>sq</word> is the square function and <word>sqrt</word> is the square root function.</p>
-<p>Look at this code carefully. Do you recognize the Pythagorean theorem that you learnt at school? Do you agree it looks better now?</p>
+<p><word>sq</word> est la fonction carré et <word>sqrt</word> est la fonction racine carrée.</p>
+<p>Regardez ce code attentivement. Vous reconnaissez le théorème de Pythogore que vous avez appris à l'école ? Est-ce que vous êtes d'accord qu'il a une meilleure tête comme ça ?</p>
 
 <hr>
-<p>To test our <word>distance</word> word, let's make a new word called <word>distance test</word>. You will notice that when you try to insert <word>distance</word> inside, this happens:</p>
+<p>Pour tester notre mot <word>distance</word> faisons un nouveau mot appelé <word>distance test</word>. Vous allez voir que quand vous essayerez d'insérer <word>distance</word> dedans, il se passera ceci :</p>
 <img class="bloc" src="../images/screenshot-choice.png" height="587">
-<p>Skov tells you that there are two words called <word>distance</word> in the system and it asks you to choose one. Having several words with the same name is not a problem in Skov because words are sorted in <em>vocabularies</em>. A vocabulary contains words, classes, and sub-vocabularies, they allow you to organize your code neatly instead of defining every word in the same big bag of words. All the words you have defined until now have been defined in the vocabulary called <vocab>scratchpad</vocab>.<p>
-<p>Select the second <word>distance</word> by pressing <key>↓</key> and <key></key>.</p>
-<p>Now you can test this code:</p>
+<p>Skov vous dit qu'il y a deux mots qui s'appellent <word>distance</word> dans le système et vous demande d'en choisir un. Avoir plusieurs mots avec le même nom n'est pas un problème dans Skov puisque les mots sont rangés dans des <em>vocabulaires</em>. Un vocabulaire contient des mots, des classes et des sous-vocabulaires, ils vous permettent d'organiser votre code proprement au lieu de définir tous les mot dans le même grand sac de mots. Tous les mots que vous avez définis jusqu'à maintenant ont été définis dans le vocabulaire appelé <vocab>scratchpad</vocab>.<p>
+<p>Sélectionner le deuxième <word>distance</word> en appuyant sur <key>↓</key> et <key></key>.</p>
+<p>Vous pouvez maintenant tester ce code :</p>
 <img class="bloc" src="../images/screenshot-distance-test.png" height="281">
-<p>See how we use two constructors to create two point objects that we pass to <word>distance</word>.
+<p>Remarquez qu'on utilise deux constructeurs pour créer deux objets point qu'on passe à <word>distance</word>.
 
 <hr>
 <p>By now we have encountered the three types of nodes that you can create on the right-hand side of the window:</p>
@@ -156,7 +156,7 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 </ul>
 
 <hr>
-<p>Vocabularies can be created by clicking the first dot on the left or by pressing <key>V</key>. The following example shows one class and several words grouped inside a vocabulary called <vocab>simulator</vocab>.</p>
+<p>Les vocabulaires peuvent être crées en cliquant sur le premier point à gauche ou en appuyant sur <key>V</key>. L'example suivant montre une classe et plusieurs mots groupés dans un vocabulaire appelé <vocab>simulator</vocab>.</p>
 <img class="bloc" src="../images/screenshot-simulator.png" height="701">
 
 <hr>
