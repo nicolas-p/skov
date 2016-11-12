@@ -35,12 +35,6 @@ M: definition (export)
 M: call (export)
     [ name>> ] [ path ] [ contents>> [ export ] map >array ] tri 3array ;
 
-M: input (export)
-    [ name>> ] [ link>> dup [ id>> ] when ] bi 2array ;
-
-M: output (export)
-    [ name>> ] [ id>> ] bi 2array ;
-
 M: introduce (export)
     [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
@@ -52,6 +46,12 @@ M: text (export)
 
 M: slot (export)
     [ name>> ] [ initial-value>> ] bi 2array ;
+
+M: input (export)
+    [ name>> ] [ link>> dup [ id>> ] when ] [ invisible?>> ] tri 3array ;
+
+M: output (export)
+    [ name>> ] [ id>> ] [ invisible?>> ] tri 3array ;
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
@@ -70,6 +70,15 @@ M: slot (export)
     [ inputs [ [ def find-output ] change-link ] map ] map
     drop def ;
 
+:: find-target-with-path ( call -- )
+    call target>> :> this-path
+    call dup find-target
+    [ [ fixnum? not ] [ vocabulary>> this-path = ] [ t ] smart-if* ] filter
+    first >>target drop ;
+
+:: find-targets ( def -- def )
+    def calls [ find-target-with-path ] each def ;
+
 GENERIC: (import) ( seq element -- element )
 
 : import ( seq -- element )
@@ -79,28 +88,28 @@ M: vocab (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
 
 M: definition (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* ids>links ;
+    swap first2 [ >>name ] [ [ import add-element ] each ] bi* find-targets ids>links ;
 
 M: call (import)
-    swap first3 [ >>name ] [ >>path ] [ [ import add-element ] each ] tri* ;
+    swap first3 [ >>name ] [ >>target ] [ [ import add-element ] each ] tri* ;
 
 M: introduce (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
 
-M: input (import)
-    swap first2 [ >>name ] [ >>link ] bi* ;
-
 M: return (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
-
-M: output (import)
-    swap first2 [ >>name ] [ >>id ] bi* ;
 
 M: text (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
 
 M: slot (import)
     swap first2 [ >>name ] [ >>initial-value ] bi* ;
+
+M: input (import)
+    swap first3 [ >>name ] [ >>link ] [ >>invisible? ] tri* ;
+
+M: output (import)
+    swap first3 [ >>name ] [ >>id ] [ >>invisible? ] tri* ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
