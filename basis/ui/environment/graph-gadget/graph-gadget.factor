@@ -46,12 +46,14 @@ SINGLETON: right
     intersect empty? not ;
 
 : process-connector-row ( seq -- )
+    dup
     [ [ [ right all-nodes-above/below ]
         [ left all-nodes-above/below ] bi*
         [ common-nodes? ]
         [ reject-common [ assign-left-right ] cartesian-each ]
         [ [ assign-left-right ] 2each ] smart-if
-      ] each-pair ] when-more-than-one ;
+      ] each-pair ] when-more-than-one
+      [ links>> [ parent>> ] map [ [ assign-left-right ] each-pair ] when-more-than-one ] each ;
 
 :: find-horizontal-relations ( node -- node )
     node inputs connected process-connector-row
