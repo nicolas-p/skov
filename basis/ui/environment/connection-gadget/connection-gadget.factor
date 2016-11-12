@@ -1,9 +1,9 @@
-! Copyright (C) 2015 Nicolas Pénet.
+! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators.smart kernel locals math
-math.vectors opengl opengl.gl sequences code ui.environment
-ui.environment.theme specialized-arrays.instances.alien.c-types.float
-ui.gadgets ui.render ;
+USING: accessors arrays code combinators.smart kernel locals
+math math.vectors opengl opengl.gl sequences
+specialized-arrays.instances.alien.c-types.float ui.environment
+ui.environment.theme ui.gadgets ui.render ;
 IN: ui.environment.connection-gadget
 
 :: <connection-gadget> ( end start -- connection-gadget )
@@ -29,7 +29,7 @@ IN: ui.environment.connection-gadget
     1 0x00FF glLineStipple
     connection-colour gl-color
     GL_LINE_SMOOTH glEnable 
-    3 glLineWidth
+    1.5 gl-scale glLineWidth
     GL_MAP1_VERTEX_3 0.0 1.0 3 4 loc1 loc2 control-points glMap1f
     GL_MAP1_VERTEX_3 glEnable
     100 0.0 1.0 glMapGrid1f
