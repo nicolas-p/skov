@@ -79,13 +79,16 @@ M: output (export)
 :: find-targets ( def -- def )
     def calls [ find-target-with-path ] each def ;
 
+: define-last-element ( def -- def )
+    dup contents>> [ last ?define ] unless-empty ;
+
 GENERIC: (import) ( seq element -- element )
 
 : import ( seq -- element )
     unclip new (import) ;
 
 M: vocab (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
+    swap first2 [ >>name ] [ [ import add-element define-last-element ] each ] bi* ;
 
 M: definition (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* find-targets ids>links ;
