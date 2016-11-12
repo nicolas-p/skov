@@ -91,7 +91,7 @@ GENERIC: define ( def -- )
 
 M:: word define ( def -- )
     [ def factor-name
-      def path words:create-word dup dup def register-alt
+      def path words:create-word dup dup def f >>alt register-alt
       def transform set-recursion rewrite-closures first
       def effect words:define-declared
     ] def try-definition ;
@@ -101,7 +101,7 @@ M:: class define ( def -- )
     def path :> path
     def contents>> [ factor-name ] map >array :> slots
     [ name path create-class :> class
-      class def register-alt
+      class def f >>alt register-alt
       class tuple slots define-tuple-class
       name " (constructor)" append path words:create-word dup def register-alt class define-boa-word
       name " (destructor)" append path words:create-word dup def register-alt

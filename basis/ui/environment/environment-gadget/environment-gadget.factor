@@ -131,9 +131,14 @@ environment-gadget { 700 600 } set-tool-dim
 : load-vocabs ( env -- )
     [ update-skov-root skov-root get-global swap set-control-value ] make-keyboard-safe ;
 
+: target/alt ( elt -- factor-word )
+    { { [ dup call? ] [ target>> ] }
+      { [ dup definition? ] [ alt>> [ f ] [ first ] if-empty ] }
+      [ drop f ] } cond ;
+
 : show-help ( env -- )
     [ hand-gadget get-global find-node
-      [ [ control-value factor-name search (browser-window) ] with-interactive-vocabs ]
+      [ [ control-value target/alt (browser-window) ] with-interactive-vocabs ]
       [ show-browser ] if* drop
     ] make-keyboard-safe ;
 
