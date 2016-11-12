@@ -4,15 +4,16 @@ USING: accessors arrays combinators combinators.smart kernel
 locals models namespaces sequences code ui.environment
 ui.gadgets.buttons.round ui.environment.vocab-gadget ui.gadgets
 ui.gestures ;
+FROM: code => call ;
 IN: ui.environment.plus-button-pile
 
 :: add-to-tuple ( env class -- )
-    env [ control-value tuple-definition? ]
+    env [ control-value class? ]
     [ [ class add-from-class ] change-control-value ] smart-when* ;
 
 :: add-to-word ( env class -- )
     hand-gadget get-global :> hand
-    env [ control-value word-definition? ] [
+    env [ control-value word? ] [
       [ class add-from-class
         hand connector-gadget?
         [ dup contents>> last 
@@ -25,7 +26,7 @@ IN: ui.environment.plus-button-pile
     [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input     ( I )" >>tooltip
       "dark" [ find-env return add-to-word ] <plus-button> "Add output     ( O )" >>tooltip
       <space>
-      "green" [ find-env word add-to-word ] <plus-button> "Add word     ( W )" >>tooltip
+      "green" [ find-env call add-to-word ] <plus-button> "Add call     ( W )" >>tooltip
       <space>
       "green" [ find-env constructor add-to-word ] <plus-button> "Add constructor     ( C )" >>tooltip
       "green" [ find-env accessor add-to-word ] <plus-button> "Add accessor     ( A )" >>tooltip
@@ -44,7 +45,7 @@ IN: ui.environment.plus-button-pile
 M: plus-button-pile model-changed
     dup clear-gadget swap
     value>> {
-      { [ dup tuple-definition? ] [ drop plus-buttons-for-tuple ] }
-      { [ dup word-definition? ] [ drop plus-buttons-for-word ] }
+      { [ dup class? ] [ drop plus-buttons-for-tuple ] }
+      { [ dup word? ] [ drop plus-buttons-for-word ] }
       [ drop { } ]
     } cond [ add-gadget ] each drop ;

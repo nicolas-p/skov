@@ -5,7 +5,7 @@ combinators.short-circuit combinators.smart kernel locals models
 namespaces sequences code ui.environment
 ui.environment.connection-gadget ui.environment.theme  system
 ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
-FROM: code => inputs outputs ;
+FROM: code => inputs outputs call ;
 IN: ui.environment.connector-gadget
 
 : selected? ( node-gadget -- ? )
@@ -21,20 +21,20 @@ IN: ui.environment.connector-gadget
       { { [ dup connector? ] [ drop "connector" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
         { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
-        { [ dup tuple-definition? ] [ drop "class" blue-background dark-text-colour ] }
+        { [ dup class? ] [ drop "class" blue-background dark-text-colour ] }
         { [ dup slot? ] [ drop "slot" blue-background dark-text-colour ] }
         { [ dup constructor? ] [ drop "constructor" green-background dark-text-colour ] }
         { [ dup destructor? ] [ drop "destructor" green-background dark-text-colour ] }
         { [ dup accessor? ] [ drop "accessor" green-background dark-text-colour ] }
         { [ dup mutator? ] [ drop "mutator" green-background dark-text-colour ] }
+        { [ dup call? ] [ drop "word" green-background dark-text-colour ] }
         { [ dup word? ] [ drop "word" green-background dark-text-colour ] }
-        { [ dup word-definition? ] [ drop "word" green-background dark-text-colour ] }
       } cond
     ] [ control-value
       { { [ dup vocab? ] [ drop "vocab-faded" faded-background faded-text-colour ] }
+        { [ dup call? ] [ drop "word-faded" faded-background faded-text-colour ] }
         { [ dup word? ] [ drop "word-faded" faded-background faded-text-colour ] }
-        { [ dup word-definition? ] [ drop "word-faded" faded-background faded-text-colour ] }
-        { [ dup tuple-definition? ] [ drop "class-faded" faded-background faded-text-colour ] }
+        { [ dup class? ] [ drop "class-faded" faded-background faded-text-colour ] }
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 

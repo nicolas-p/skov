@@ -5,7 +5,7 @@ combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
 splitting ui.gadgets.panes vocabs.parser ;
-FROM: code => inputs outputs ;
+FROM: code => inputs outputs call ;
 QUALIFIED: words
 IN: code.execution
 
@@ -47,9 +47,9 @@ TUPLE: subtree-introduce  id ;
 : set-output-ids ( def -- def )
     dup contents>> [ outputs ] map concat [ "local" <local> >>id ] map drop ;
 
-:: process-variadic ( seq word -- seq )
-    seq word [ variadic? ] [ inputs length 1 - ] [ 1 ] smart-if*
-    [ word target>> ] replicate append ;
+:: process-variadic ( seq call -- seq )
+    seq call [ variadic? ] [ inputs length 1 - ] [ 1 ] smart-if*
+    [ call target>> ] replicate append ;
 
 GENERIC: transform ( node -- compiler-node )
 
@@ -62,10 +62,10 @@ M: return transform
 M: text transform
     [ name>> ] [ output-ids <multi-def> ] bi 2array ;
 
-M: word transform
+M: call transform
     [ input-ids ] [ process-variadic ] [ output-ids <multi-def> suffix ] tri ;
 
-M: word-definition transform
+M: word transform
     add-subtree-introduces set-output-ids
     [ introduces [ output-ids first ] map ]
     [ contents>> sort-graph [ transform ] map concat >quotation ] bi <lambda> ;
@@ -89,14 +89,14 @@ M: subtree transform
 
 GENERIC: define ( def -- )
 
-M:: word-definition define ( def -- )
+M:: word define ( def -- )
     [ def factor-name
       def path words:create-word dup dup def register-alt
       def transform set-recursion rewrite-closures first
       def effect words:define-declared
     ] def try-definition ;
 
-M:: tuple-definition define ( def -- )
+M:: class define ( def -- )
     def factor-name :> name
     def path :> path
     def contents>> [ factor-name ] map >array :> slots

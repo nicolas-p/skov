@@ -4,7 +4,7 @@ USING: accessors arrays classes combinators combinators.smart
 eval io io.directories io.encodings.utf8 io.files io.files.info
 io.pathnames kernel locals math namespaces prettyprint sequences
 code system ui.gadgets ;
-FROM: code => inputs outputs ;
+FROM: code => inputs outputs call ;
 IN: code.import-export
 
 SYMBOL: skov-version
@@ -32,7 +32,7 @@ M: vocab (export)
 M: definition (export)
     set-output-ids [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
 
-M: word (export)
+M: call (export)
     [ name>> ] [ path ] [ contents>> [ export ] map >array ] tri 3array ;
 
 M: input (export)
@@ -81,7 +81,7 @@ M: vocab (import)
 M: definition (import)
     swap first2 [ >>name ] [ [ import add-element ] each ] bi* ids>links ;
 
-M: word (import)
+M: call (import)
     swap first3 [ >>name ] [ >>path ] [ [ import add-element ] each ] tri* ;
 
 M: introduce (import)

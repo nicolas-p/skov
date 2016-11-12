@@ -5,7 +5,7 @@ colors.hex kernel listener locals math.parser models namespaces
 sequences splitting ui.environment ui.environment.node-gadget
 ui.environment.theme ui.gadgets ui.gadgets.labels
 ui.gadgets.packs ui.pens.solid vocabs ;
-FROM: code => word vocab ;
+FROM: code => vocab ;
 IN: ui.environment.completion-gadget
 
 : <completion-gadget> ( model -- completion-gadget )
@@ -17,10 +17,10 @@ IN: ui.environment.completion-gadget
 : matching-words ( str -- seq )
     [ f ] [ matching-words* ] if-empty ;
 
-:: word-display ( wrd -- gadget )
+:: word-display ( word -- gadget )
     <shelf> 1/2 >>align
-    wrd vocabulary>> "." split [ vocab new swap >>name <node-gadget> add-gadget ] each
-    wrd word-from-factor <node-gadget> add-gadget ;
+    word vocabulary>> "." split [ vocab new swap >>name <node-gadget> add-gadget ] each
+    word call-from-factor <node-gadget> add-gadget ;
 
 :: add-selection-arrow ( completion-gadget -- completion-gadget )
     completion-gadget dup children>> [ label? ] reject

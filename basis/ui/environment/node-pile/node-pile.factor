@@ -11,7 +11,7 @@ IN: ui.environment.node-pile
 
 M: node-pile model-changed
     dup clear-gadget swap value>>
-    [ tuple-definition? ]
+    [ class? ]
     [ [ "Class with slots:" <label> set-light-font add-gadget ] dip ] smart-when
     [ definition? ]
     [ contents>> unconnected [ <node-gadget> add-gadget ] each ] smart-when* drop ;

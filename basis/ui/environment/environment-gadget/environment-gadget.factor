@@ -13,7 +13,7 @@ ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.packs ui.gadgets.scrollers ui.gadgets.status-bar
 ui.gadgets.tracks ui.gadgets.worlds ui.gestures ui.tools.browser
 ui.tools.common vocabs.parser ;
-FROM: code => inputs outputs ;
+FROM: code => inputs outputs call ;
 IN: ui.environment.environment-gadget
 
 environment-gadget { 700 600 } set-tool-dim
@@ -51,10 +51,10 @@ environment-gadget { 700 600 } set-tool-dim
 : add-destructor ( env -- ) [ destructor add-to-word ] make-keyboard-safe ;
 : add-accessor ( env -- ) [ accessor add-to-word ] make-keyboard-safe ;
 : add-mutator ( env -- ) [ mutator add-to-word ] make-keyboard-safe ;
-: add-word ( env -- ) [ word add-to-word ] make-keyboard-safe ;
+: add-call ( env -- ) [ call add-to-word ] make-keyboard-safe ;
 : add-vocab ( env -- ) [ vocab add-to-vocab ] make-keyboard-safe ;
-: add-word-in-vocab ( env -- ) [ word-definition add-to-vocab ] make-keyboard-safe ;
-: add-tuple-in-vocab ( env -- ) [ tuple-definition add-to-vocab ] make-keyboard-safe ;
+: add-word ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
+: add-class ( env -- ) [ class add-to-vocab ] make-keyboard-safe ;
 
 : disconnect-connector-gadget ( env -- )
     [ hand-gadget get-global dup
@@ -93,7 +93,7 @@ environment-gadget { 700 600 } set-tool-dim
 
 : toggle-result ( env -- )
     [ dup control-value {
-        { [ dup word-definition? ] [ dup run-word result>> swap set-control-value ] }
+        { [ dup word? ] [ dup run-word result>> swap set-control-value ] }
         { [ dup result? ] [ parent>> swap set-control-value ] }
         [ drop drop ]
       } cond 
@@ -110,7 +110,7 @@ environment-gadget { 700 600 } set-tool-dim
 
 :: next-nth-word ( env n -- )
     env [ dup control-value definition? [
-      [ vocab-control-value [ tuple-definitions ] [ word-definitions ] bi append ]
+      [ vocab-control-value [ classes ] [ words ] bi append ]
       [ control-value n next-nth ] [ dupd set-control-value ] tri
     ] when drop ] make-keyboard-safe ;
 
@@ -141,8 +141,8 @@ environment-gadget { 700 600 } set-tool-dim
     [ <environment-gadget> "Skov" open-status-window ] with-ui ;
 
 environment-gadget "general" f {
-    { T{ key-up f f "w" } add-word }
-    { T{ key-up f f "W" } add-word }
+    { T{ key-up f f "w" } add-call }
+    { T{ key-up f f "W" } add-call }
     { T{ key-up f f "i" } add-input }
     { T{ key-up f f "I" } add-input }
     { T{ key-up f f "o" } add-output }
@@ -161,10 +161,10 @@ environment-gadget "general" f {
     { T{ key-up f f "M" } add-mutator }
     { T{ key-up f f "v" } add-vocab }
     { T{ key-up f f "V" } add-vocab }
-    { T{ key-up f f "n" } add-word-in-vocab }
-    { T{ key-up f f "N" } add-word-in-vocab }
-    { T{ key-up f f "k" } add-tuple-in-vocab }
-    { T{ key-up f f "K" } add-tuple-in-vocab }
+    { T{ key-up f f "n" } add-word }
+    { T{ key-up f f "N" } add-word }
+    { T{ key-up f f "k" } add-class }
+    { T{ key-up f f "K" } add-class }
     { T{ key-up f f "x" } disconnect-connector-gadget }
     { T{ key-up f f "X" } disconnect-connector-gadget }
     { T{ key-up f f "r" } remove-node-gadget }

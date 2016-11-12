@@ -7,7 +7,7 @@ ui.environment.connection-gadget ui.environment.connector-gadget
 ui.environment.theme  splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ui.pens.tile ;
-FROM: code => inputs outputs ;
+FROM: code => inputs outputs call ;
 IN: ui.environment.node-gadget
 
 : width ( node-gadget -- w ) pref-dim first ;
@@ -48,7 +48,7 @@ IN: ui.environment.node-gadget
     children>> second children>> second ;
 
 :: enter-name ( name gadget -- )
-    gadget control-value word?
+    gadget control-value call?
     [ gadget find-env get-completion :> completion
       completion selected>>
       [ dup name>> gadget set-name-and-target completion reset-completion ]
@@ -116,14 +116,14 @@ M: node-gadget graft*
     control-value {
         { [ dup vocab? ] [ drop "Vocabulary" ] }
         { [ dup text? ] [ drop "Text" ] }
-        { [ dup tuple-definition? ] [ drop "Class" ] }
+        { [ dup class? ] [ drop "Class" ] }
         { [ dup slot? ] [ drop "Class slot" ] }
         { [ dup constructor? ] [ drop "Object constructor" ] }
         { [ dup destructor? ] [ drop "Object destructor" ] }
         { [ dup accessor? ] [ drop "Slot accessor" ] }
         { [ dup mutator? ] [ drop "Slot mutator" ] }
+        { [ dup call? ] [ drop "Word" ] }
         { [ dup word? ] [ drop "Word" ] }
-        { [ dup word-definition? ] [ drop "Word" ] }
         { [ dup introduce? ] [ drop "Input" ] }
         { [ dup return? ] [ drop "Output" ] }
     } cond ;

@@ -14,19 +14,19 @@ TUPLE: element < identity-tuple  name parent contents ;
 TUPLE: vocab < element ;
 
 TUPLE: definition < element  defined? alt ;
-TUPLE: word-definition < definition  result ;
-TUPLE: tuple-definition < definition ;
+TUPLE: word < definition  result ;
+TUPLE: class < definition ;
 
 TUPLE: node < element ;
 TUPLE: introduce < node ;
 TUPLE: return < node ;
-TUPLE: word < node  target ;
+TUPLE: call < node  target ;
 TUPLE: text < node ;
 TUPLE: slot < node  initial-value ;
-TUPLE: constructor < word ;
-TUPLE: destructor < word ;
-TUPLE: accessor < word ;
-TUPLE: mutator < word ;
+TUPLE: constructor < call ;
+TUPLE: destructor < call ;
+TUPLE: accessor < call ;
+TUPLE: mutator < call ;
 
 TUPLE: input < element  link invisible? ;
 TUPLE: output < element  id invisible? ;
@@ -37,9 +37,9 @@ TUPLE: result < element ;
 
 : vocabs ( elt -- seq )  contents>> [ vocab? ] filter ;
 : definitions ( elt -- seq )  contents>> [ definition? ] filter ;
-: word-definitions ( elt -- seq )  contents>> [ word-definition? ] filter ;
-: tuple-definitions ( elt -- seq )  contents>> [ tuple-definition? ] filter ;
 : words ( elt -- seq )  contents>> [ word? ] filter ;
+: classes ( elt -- seq )  contents>> [ class? ] filter ;
+: calls ( elt -- seq )  contents>> [ call? ] filter ;
 : introduces ( elt -- seq )  contents>> [ introduce? ] filter ;
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
 : slots ( elt -- seq )  contents>> [ slot? ] filter ;
@@ -71,7 +71,7 @@ GENERIC: factor-name ( obj -- str )
 M: element factor-name
     name>> ;
 
-M: word factor-name
+M: call factor-name
     name>> {
         { "while" "special while" }
         { "until" "special until" }
@@ -99,7 +99,7 @@ M: vocab path
 M: definition path
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
-M: word path
+M: call path
     target>> [ words:word? ] [ vocabulary>> ] [ drop f ] smart-if ;
 
 M: node path
@@ -111,17 +111,17 @@ M: node path
 : convert-stack-effect ( stack-effect -- seq seq )
     [ in>> ] [ out>> ] bi [ [ replace-quot ] map ] bi@ ;
 
-: same-name-as-parent? ( word -- ? )
+: same-name-as-parent? ( call -- ? )
     dup parent>> [ name>> ] bi@ = ;
 
-: input-output-names ( word -- seq seq )
+: input-output-names ( call -- seq seq )
     [ introduces ] [ returns ] bi [ [ name>> ] map ] bi@ ;
 
 SINGLETON: recursion
 
-:: in-out ( word -- seq seq )
-    word target>>
-    { { [ dup recursion? ] [ drop word parent>> input-output-names ] }
+:: in-out ( call -- seq seq )
+    call target>>
+    { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "number" } ] }
       { [ dup not ] [ drop { } { } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
@@ -130,9 +130,9 @@ SINGLETON: recursion
 :: matching-words-exact ( str -- seq )
     interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str = ] filter ;
 
-:: find-target ( word -- seq )
-    word factor-name :> name
-    { { [ word same-name-as-parent? ] [ recursion 1array ] }
+:: find-target ( call -- seq )
+    call factor-name :> name
+    { { [ call same-name-as-parent? ] [ recursion 1array ] }
       { [ name string>number ] [ name string>number 1array ] }
       [ name matching-words-exact ]
     } cond ;
@@ -150,7 +150,7 @@ M: introduce (add-connectors)  f >>contents dup name>> output add-with-name ;
 M: return (add-connectors)  f >>contents dup name>> input add-with-name ;
 M: text (add-connectors)  f >>contents dup name>> output add-with-name add-invisible-connectors ;
 
-M: word (add-connectors)
+M: call (add-connectors)
     f >>contents dup in-out
     [ [ input add-with-name ] each ]
     [ [ output add-with-name ] each ] bi*
@@ -178,7 +178,7 @@ GENERIC: connect ( output input -- )
 : output-and-input? ( connector connector -- ? )
     [ output? ] [ input? ] bi* and ;
 
-: same-word? ( connector connector -- ? )
+: same-node? ( connector connector -- ? )
     [ parent>> ] bi@ eq? ;
 
 GENERIC: connected? ( connector -- ? )
@@ -199,9 +199,9 @@ M: output connected?
 M: input connect
     link<< ;
 
-:: unlink ( word -- word )
-    word word parent>> contents>>
-    [ inputs connected [ [ link>> parent>> word eq? ] [ f >>link ] smart-when ] map drop ] each ;
+:: unlink ( node -- node )
+    node node parent>> contents>>
+    [ inputs connected [ [ link>> parent>> node eq? ] [ f >>link ] smart-when ] map drop ] each ;
 
 GENERIC: disconnect ( connector -- )
 
@@ -213,7 +213,7 @@ M: output disconnect
 
 : ?connect ( connector connector -- )
     order-connectors 
-    [ [ output-and-input? ] [ nip connected? not ] [ same-word? not ] 2tri and and ]
+    [ [ output-and-input? ] [ nip connected? not ] [ same-node? not ] 2tri and and ]
     [ connect ] smart-when* ;
 
 : complete-graph? ( def -- ? )
@@ -226,7 +226,7 @@ M: output disconnect
    { [ complete-graph? ]
      [ introduces empty? ]
      [ returns empty? ]
-     [ words empty? not ]
+     [ calls empty? not ]
      [ defined?>> ]
      [ any-empty-name? not ]
    } cleave>array t [ and ] reduce ;
@@ -240,7 +240,7 @@ M: output disconnect
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
-: variadic? ( word -- ? )
+: variadic? ( call -- ? )
     name>> variadic-words member? ;
 
 : save-result ( str word  -- )

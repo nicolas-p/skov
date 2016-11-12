@@ -4,17 +4,17 @@ USING: accessors arrays code code.import-export combinators
 combinators.smart continuations effects kernel locals math
 math.parser quotations regexp sequences splitting stack-checker
 strings ;
-FROM: code => inputs outputs return ;
+FROM: code => inputs outputs return call ;
 QUALIFIED: words
 IN: code.factor-abstraction
 
-:: word-from-factor ( factor-word -- word )
+:: call-from-factor ( factor-word -- call )
     factor-word name>>
     { { [ " (accessor)" ?tail ] [ accessor ] }
       { [ " (mutator)" ?tail ] [ mutator ] }
       { [ " (constructor)" ?tail ] [ constructor ] }
       { [ " (destructor)" ?tail ] [ destructor ] }
-      [ word ]
+      [ call ]
     } cond new swap >>name
     factor-word >>target
     add-connectors ;
@@ -28,9 +28,9 @@ CONSTANT: stack-shufflers [ drop 2drop 3drop nip 2nip dup 2dup 3dup
     nout [ words:gensym ] replicate :> out
     stack nin cut* :> in out append
     node-list node
-    { { [ dup words:word? ] [ word-from-factor ] }
+    { { [ dup words:word? ] [ call-from-factor ] }
       { [ dup string? ] [ drop text new node >>name add-connectors ] }
-      { [ dup number? ] [ drop word new node number>string >>name node >>target add-connectors ] } 
+      { [ dup number? ] [ drop call new node number>string >>name node >>target add-connectors ] } 
     } cond dup
     [ inputs in [ >>link drop ] 2each ]
     [ outputs out [ >>id drop ] 2each ] bi
@@ -47,11 +47,11 @@ CONSTANT: stack-shufflers [ drop 2drop 3drop nip 2nip dup 2dup 3dup
       node-list node [ process-quotation ] each ]
     [ stack node-list node process-shuffler ] if ;
 
-:: word-definition-from-factor ( factor-word -- word-definition )
+:: word-from-factor ( factor-word -- word )
     factor-word stack-effect :> effect
     effect in>> [ drop words:gensym ] map :> stack
     stack
-    word-definition new
+    word new
     stack effect in>> [ introduce new swap >>name add-connectors dup outputs first rot >>id drop add-element ] 2each
     factor-word def>> [ process-quotation ] each
     swap effect out>> [ return new swap >>name add-connectors dup inputs first rot >>link drop add-element ] 2each

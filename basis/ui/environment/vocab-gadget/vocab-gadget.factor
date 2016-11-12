@@ -24,11 +24,11 @@ M: space pref-dim*  drop { 0 25 } ;
     "New vocabulary     ( V )" >>tooltip ;
 
 : <new-word-button> ( -- button )
-    "green" [ parent>> word-definition add-to-vocab ] <plus-button>
+    "green" [ parent>> word add-to-vocab ] <plus-button>
     "New word     ( N )" >>tooltip ;
 
 : <new-tuple-button> ( -- button )
-    "blue" [ parent>> tuple-definition add-to-vocab ] <plus-button>
+    "blue" [ parent>> class add-to-vocab ] <plus-button>
     "New class     ( K )" >>tooltip ;
 
 : associated-word ( button -- word )
@@ -72,9 +72,9 @@ M:: vocab-gadget model-changed ( model gadget -- )
     <space> add-gadget
     value vocabs [ <node-gadget> ?add-space add-gadget ] each
     <new-vocab-button> add-gadget
-    value tuple-definitions [ <node-gadget> ?add-space add-gadget ] each
+    value classes [ <node-gadget> ?add-space add-gadget ] each
     <new-tuple-button> add-gadget
-    value word-definitions [ <node-gadget> ?add-result-button ?add-error-button ?add-space add-gadget ] each
+    value words [ <node-gadget> ?add-result-button ?add-error-button ?add-space add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
     value path add-interactive-vocab ;
