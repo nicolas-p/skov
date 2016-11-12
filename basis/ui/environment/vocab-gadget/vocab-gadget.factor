@@ -58,23 +58,19 @@ M: space pref-dim*  drop { 0 25 } ;
     dup node-gadget? [ dup control-value error? 
     [ <shelf> 1/2 >>align <error-button> add-gadget swap add-gadget ] when ] when ;
 
-: ?add-space ( node-gadget -- gadget )
-    dup node-gadget?
-    [ <shelf> 1/2 >>align { 30 0 } >>gap <shelf> add-gadget swap add-gadget ] when ;
-
 M:: vocab-gadget model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
     value path vocabs:create-vocab drop
-    value parents reverse [ <node-gadget> ?add-space add-gadget ] each
+    value parents reverse [ <node-gadget> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
     <space> add-gadget
-    value vocabs [ <node-gadget> ?add-space add-gadget ] each
+    value vocabs [ <node-gadget> add-gadget ] each
     <new-vocab-button> add-gadget
-    value classes [ <node-gadget> ?add-space add-gadget ] each
+    value classes [ <node-gadget> add-gadget ] each
     <new-tuple-button> add-gadget
-    value words [ <node-gadget> ?add-result-button ?add-error-button ?add-space add-gadget ] each
+    value words [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop
     value path add-interactive-vocab ;
@@ -82,4 +78,6 @@ M:: vocab-gadget model-changed ( model gadget -- )
 M:: vocab-gadget layout* ( gadget -- )
     gadget call-next-method
     gadget children>> [ pack? ] any?
-    [ gadget children>> [ [ pack? not ] [ [ { 15 0 } v+ ] change-loc drop ] smart-when* ] each ] when ;
+    [ gadget children>> [ [ pack? ] [ [ { 15 0 } v- ] change-loc drop ] smart-when* ] each ] when
+    gadget children>> [ loc>> first ] map infimum :> min-loc
+    gadget children>> [ [ min-loc 0 2array v- ] change-loc drop ] each ;
