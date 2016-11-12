@@ -3,7 +3,7 @@
 USING: accessors arrays classes combinators combinators.smart
 eval io io.directories io.encodings.utf8 io.files io.files.info
 io.pathnames kernel locals math namespaces prettyprint sequences
-code system ui.gadgets ;
+code system ui.gadgets code.execution ;
 FROM: code => inputs outputs call ;
 IN: code.import-export
 
