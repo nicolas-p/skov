@@ -93,7 +93,6 @@ all-words [ [
     [ "^" = ] [ drop "pow" ] smart-when
     [ "2^" = ] [ drop "pow 2" ] smart-when
     [ "10^" = ] [ drop "pow 10" ] smart-when
-    [ "t" = ] [ drop "true" ] smart-when
   ] change-name
 ] each
 
