@@ -4,9 +4,10 @@ USING: accessors arrays classes.parser classes.tuple code
 combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
-splitting ui.gadgets.panes vocabs.parser ;
+splitting ui.gadgets.panes vocabs.parser ui.gadgets.buttons.activate ;
 FROM: code => inputs outputs call ;
 QUALIFIED: words
+QUALIFIED: vocabs
 IN: code.execution
 
 TUPLE: subtree  contents ;
@@ -88,6 +89,9 @@ M: subtree transform
     swap [ suffix ] curry change-alt drop ;
 
 GENERIC: define ( def -- )
+
+M: vocab define ( def -- )
+    path [ vocabs:create-vocab drop ] [ add-interactive-vocab ] bi ;
 
 M:: word define ( def -- )
     [ def factor-name

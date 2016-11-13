@@ -2,11 +2,10 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors models namespaces sequences code
-code.execution ui.environment ui.gadgets.buttons.activate
+code.execution ui.environment
 ui.gadgets.buttons.round ui.environment.node-gadget ui.environment.theme
 ui.gadgets ui.gadgets.buttons ui.gadgets.icons ui.gadgets.packs
 ui.gestures ;
-QUALIFIED: vocabs
 IN: ui.environment.vocab-gadget
 
 TUPLE: space < gadget ;
@@ -61,7 +60,7 @@ M: space pref-dim*  drop { 0 25 } ;
 M:: vocab-gadget model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
-    value path vocabs:create-vocab drop
+    value ?define
     value parents reverse [ <node-gadget> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
@@ -72,8 +71,7 @@ M:: vocab-gadget model-changed ( model gadget -- )
     <new-tuple-button> add-gadget
     value words [ <node-gadget> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
-    ?select-result-button drop
-    value path add-interactive-vocab ;
+    ?select-result-button drop ;
 
 M:: vocab-gadget layout* ( gadget -- )
     gadget call-next-method

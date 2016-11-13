@@ -71,11 +71,13 @@ M: output (export)
     [ [ number? not ] [ vocabulary>> this-path = ] [ t ] smart-if* ] filter
     first >>target drop ;
 
-:: find-targets ( def -- def )
-    def calls [ find-target-with-path ] each def ;
+: find-targets ( def -- )
+    calls [ find-target-with-path ] each ;
 
-: define-last-element ( def -- def )
-    dup contents>> [ last ?define ] unless-empty ;
+: define-all-words ( vocab -- )
+    [ ?define ]
+    [ vocabs [ define-all-words ] each ]
+    [ definitions [ [ find-targets ] [ ?define ] bi ] each ] tri ;
 
 GENERIC: (import) ( seq element -- element )
 
@@ -83,10 +85,10 @@ GENERIC: (import) ( seq element -- element )
     unclip new swap unclip swapd >>name (import) ;
 
 M: vocab (import)
-    swap first [ import add-element define-last-element ] each ;
+    swap first [ import add-element ] each ;
 
 M: definition (import)
-    swap first [ import add-element ] each find-targets ids>links ;
+    swap first [ import add-element ] each ids>links ;
 
 M: call (import)
     swap first2 [ >>target ] [ [ import add-element ] each ] bi* ;
@@ -114,4 +116,4 @@ M: output (import)
     path sub-directories [ read-vocab-files add-element ] each ;
 
 : update-skov-root ( -- )
-    skov-root work-directory read-vocab-files swap set-global ;
+    skov-root work-directory read-vocab-files dup define-all-words swap set-global ;
