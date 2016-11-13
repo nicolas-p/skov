@@ -19,7 +19,8 @@ SYMBOL: skov-version
     parents reverse rest [ factor-name ] map path-separator join work-directory swap append-path ;
 
 : set-output-ids ( def -- def )
-    dup contents>> [ outputs ] map concat dup length iota [ >>id drop ] 2each ;
+    dup contents>> [ outputs ] map concat dup length iota [ >>id drop ] 2each
+    dup contents>> [ inputs ] map concat unconnected [ f >>link drop ] each ;
 
 GENERIC: (export) ( element -- seq )
 
