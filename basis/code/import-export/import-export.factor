@@ -25,34 +25,28 @@ SYMBOL: skov-version
 GENERIC: (export) ( element -- seq )
 
 : export ( element -- seq )
-    [ (export) ] [ class-of ] bi prefix ;
+    [ (export) ] [ name>> prefix ] [ class-of prefix ] tri ;
 
 M: vocab (export)
-    [ name>> ] [ definitions [ export ] map >array ] bi 2array ;
+    definitions [ export ] map >array 1array ;
 
 M: definition (export)
-    set-output-ids [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
+    set-output-ids contents>> [ export ] map >array 1array ;
 
 M: call (export)
-    [ name>> ] [ path ] [ contents>> [ export ] map >array ] tri 3array ;
+    [ path ] [ contents>> [ export ] map >array ] bi 2array ;
 
-M: introduce (export)
-    [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
-
-M: return (export)
-    [ name>> ] [ contents>> [ export ] map >array ] bi 2array ;
-
-M: text (export)
-    [ name>> ] [ contents>> [ export ] map >array ] bi 2array  ;
+M: node (export)
+    contents>> [ export ] map >array 1array ;
 
 M: slot (export)
-    [ name>> ] [ initial-value>> ] bi 2array ;
+    initial-value>> 1array ;
 
 M: input (export)
-    [ name>> ] [ link>> dup [ id>> ] when ] [ invisible?>> ] tri 3array ;
+    [ link>> dup [ id>> ] when ] [ invisible?>> ] bi 2array ;
 
 M: output (export)
-    [ name>> ] [ id>> ] [ invisible?>> ] tri 3array ;
+    [ id>> ] [ invisible?>> ] bi 2array ;
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
@@ -86,34 +80,28 @@ M: output (export)
 GENERIC: (import) ( seq element -- element )
 
 : import ( seq -- element )
-    unclip new (import) ;
+    unclip new swap unclip swapd >>name (import) ;
 
 M: vocab (import)
-    swap first2 [ >>name ] [ [ import add-element define-last-element ] each ] bi* ;
+    swap first [ import add-element define-last-element ] each ;
 
 M: definition (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* find-targets ids>links ;
+    swap first [ import add-element ] each find-targets ids>links ;
 
 M: call (import)
-    swap first3 [ >>name ] [ >>target ] [ [ import add-element ] each ] tri* ;
+    swap first2 [ >>target ] [ [ import add-element ] each ] bi* ;
 
-M: introduce (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
-
-M: return (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
-
-M: text (import)
-    swap first2 [ >>name ] [ [ import add-element ] each ] bi* ;
+M: node (import)
+    swap first [ import add-element ] each ;
 
 M: slot (import)
-    swap first2 [ >>name ] [ >>initial-value ] bi* ;
+    swap first >>initial-value ;
 
 M: input (import)
-    swap first3 [ >>name ] [ >>link ] [ >>invisible? ] tri* ;
+    swap first2 [ >>link ] [ >>invisible? ] bi* ;
 
 M: output (import)
-    swap first3 [ >>name ] [ >>id ] [ >>invisible? ] tri* ;
+    swap first2 [ >>id ] [ >>invisible? ] bi* ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
