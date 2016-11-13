@@ -58,7 +58,7 @@ M: output (export)
     skov-root get-global write-vocab-file ;
 
 :: find-output ( id def -- output )
-    def contents>> [ outputs ] map concat [ id>> id = ] filter [ f ] [ first ] if-empty ;
+    def contents>> [ outputs ] map concat [ id>> dup id = and ] filter [ f ] [ first ] if-empty ;
 
 :: ids>links ( def -- def )
     def contents>>
