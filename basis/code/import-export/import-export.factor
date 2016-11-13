@@ -73,7 +73,7 @@ M: output (export)
 :: find-target-with-path ( call -- )
     call target>> :> this-path
     call dup find-target
-    [ [ fixnum? not ] [ vocabulary>> this-path = ] [ t ] smart-if* ] filter
+    [ [ number? not ] [ vocabulary>> this-path = ] [ t ] smart-if* ] filter
     first >>target drop ;
 
 :: find-targets ( def -- def )
