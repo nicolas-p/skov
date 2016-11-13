@@ -1,6 +1,6 @@
 # Skov
 
-Skov is a visual programming environment based on [Factor](https://github.com/factor/factor/) and inspired by Lisp.
+Skov is a visual programming environment based on [Factor](https://github.com/factor/factor/).
 
 A functional program can be thought of as a tree (actually a graph) in which functions are connected together on several levels. Commonly used programming languages have to make more or less compromises to represent this tree as a one-dimensional stream of text. Skov uses a visual, two-dimensional representation to display the tree direcly. This makes the program easier to read and to reason about and reduces the risk of making mistakes. Skov lets you see a functional program as it really is.
 
@@ -12,7 +12,7 @@ More information on [the website](http://skov.software/en/).
 
 * Download this repository
 * Download a Factor binary package from [the Factor website](http://factorcode.org)
-* Extract the `factor` directory from the package
+* Extract the `factor` directory from the package (if you were already using Factor, don't use the `factor` directory you already had, make a new one)
 * Move or copy all the contents from the Skov repository into the `factor` directory
 * Drag and drop the `make-skov.factor` script onto the Factor application
 
