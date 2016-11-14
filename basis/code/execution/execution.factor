@@ -26,9 +26,6 @@ TUPLE: subtree-introduce  id ;
     dup contents>> [ inputs ] map concat unconnected visible
     [ subtree-introduce new "local" <local> >>id >>link ] map drop ;
 
-: unevaluated? ( connector -- ? )
-    name>> "quot" swap subseq? ;
-
 : walk ( node -- seq )
     [ inputs [ {
         { [ dup unevaluated? ] [ link>> parent>> walk <subtree> ] }

@@ -196,6 +196,9 @@ M: output connected?
 : unconnected ( seq -- seq )  [ connected? ] reject ;
 : visible ( seq -- seq )  [ invisible?>> ] reject ;
 
+: unevaluated? ( connector -- ? )
+    name>> "quot" swap subseq? ;
+
 M: input connect
     link<< ;
 
