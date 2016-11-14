@@ -56,8 +56,8 @@ IN: ui.environment.connection-gadget
     GL_MAP1_VERTEX_3 glDisable ;
 
 :: draw-curve-and-arc ( loc1 loc2 -- )
-    loc1 { 0 5 } v+ loc2 draw-curve
-    loc1 { 0 10 } v+ draw-arc ;
+    loc1 { 0 7 } v+ loc2 draw-curve
+    loc1 { 0 12 } v+ draw-arc ;
 
 M: connection-gadget draw-gadget*
     [ start>> control-value invisible?>> ]
