@@ -43,10 +43,10 @@ M: slot (export)
     initial-value>> 1array ;
 
 M: input (export)
-    [ link>> dup [ id>> ] when ] [ invisible?>> ] bi 2array ;
+    [ invisible?>> ] [ link>> dup [ id>> ] when ] bi 2array ;
 
 M: output (export)
-    [ id>> ] [ invisible?>> ] bi 2array ;
+    [ invisible?>> ] [ id>> ] bi 2array ;
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
@@ -100,10 +100,10 @@ M: slot (import)
     swap first >>initial-value ;
 
 M: input (import)
-    swap first2 [ >>link ] [ >>invisible? ] bi* ;
+    swap first2 [ >>invisible? ] [ >>link ] bi* ;
 
 M: output (import)
-    swap first2 [ >>id ] [ >>invisible? ] bi* ;
+    swap first2 [ >>invisible? ] [ >>id ] bi* ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
