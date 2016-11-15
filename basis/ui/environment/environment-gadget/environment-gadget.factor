@@ -93,7 +93,8 @@ environment-gadget { 700 600 } set-tool-dim
 
 : toggle-result ( env -- )
     [ dup control-value {
-        { [ dup word? ] [ dup run-word result>> swap set-control-value ] }
+        { [ dup { [ word? ] [ executable? ] } 1&& ]
+          [ dup run-word result>> swap set-control-value ] }
         { [ dup result? ] [ parent>> swap set-control-value ] }
         [ drop drop ]
       } cond 
