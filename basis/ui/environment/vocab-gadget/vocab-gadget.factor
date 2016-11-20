@@ -5,7 +5,7 @@ math.order math.vectors models namespaces sequences code
 code.execution ui.environment
 ui.gadgets.buttons.round ui.environment.node-gadget ui.environment.theme
 ui.gadgets ui.gadgets.buttons ui.gadgets.icons ui.gadgets.packs
-ui.gestures ;
+ui.gestures ui.environment.actions ;
 IN: ui.environment.vocab-gadget
 
 TUPLE: space < gadget ;
@@ -14,9 +14,6 @@ M: space pref-dim*  drop { 0 25 } ;
 
 : <separator> ( -- img )
     "separator" theme-image <icon> ;
-
-:: add-to-vocab ( env class -- )
-    env [ class add-from-class ] change-vocab-control-value ;
 
 : <new-vocab-button> ( -- button )
     "orange" [ parent>> vocab add-to-vocab ] <plus-button> 

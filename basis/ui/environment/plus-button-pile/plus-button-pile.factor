@@ -3,24 +3,9 @@
 USING: accessors arrays combinators combinators.smart kernel
 locals models namespaces sequences code ui.environment
 ui.gadgets.buttons.round ui.environment.vocab-gadget ui.gadgets
-ui.gestures ;
+ui.gestures ui.environment.actions ;
 FROM: code => call ;
 IN: ui.environment.plus-button-pile
-
-:: add-to-tuple ( env class -- )
-    env [ control-value class? ]
-    [ [ class add-from-class ] change-control-value ] smart-when* ;
-
-:: add-to-word ( env class -- )
-    hand-gadget get-global :> hand
-    env [ control-value word? ] [
-      [ class add-from-class
-        hand connector-gadget?
-        [ dup contents>> last 
-          hand control-value input? [ output ] [ input ] if add-from-class 
-          contents>> last hand control-value ?connect ] when
-      ] change-control-value 
-    ] smart-when* ;
 
 : plus-buttons-for-word ( -- seq )
     [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input     ( I )" >>tooltip
@@ -37,7 +22,14 @@ IN: ui.environment.plus-button-pile
     ] output>array ;
 
 : plus-buttons-for-tuple ( -- seq )
-    "blue" [ find-env slot add-to-tuple ] <plus-button> "Add slot     ( S )" >>tooltip 1array ;
+    "blue" [ find-env slot add-to-class ] <plus-button> "Add slot     ( S )" >>tooltip 1array ;
+
+: import-export-buttons ( -- seq )
+    [ [ find-env save-skov-image ] "save" <word-button>
+      "Save the image and export all the code to the \"work\" folder    ( Control + S )" >>tooltip
+      [ find-env load-vocabs ] "load" <word-button>
+      "Load all the code from the \"work\" folder     ( Control + L )" >>tooltip
+    ] output>array ;
 
 : <plus-button-pile> ( model -- gadget )
     plus-button-pile new vertical >>orientation swap >>model ;
@@ -47,5 +39,5 @@ M: plus-button-pile model-changed
     value>> {
       { [ dup class? ] [ drop plus-buttons-for-tuple ] }
       { [ dup word? ] [ drop plus-buttons-for-word ] }
-      [ drop { } ]
+      [ drop import-export-buttons ]
     } cond [ add-gadget ] each drop ;
