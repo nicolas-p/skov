@@ -106,7 +106,7 @@ M:: class define ( def -- )
       class tuple slots define-tuple-class
       name " (constructor)" append path words:create-word dup def register-alt class define-boa-word
       name " (destructor)" append path words:create-word dup def register-alt
-      slots [ " (accessor)" append [ search ] with-interactive-vocabs 1quotation ] map
+      slots [ ">>" append [ search ] with-interactive-vocabs 1quotation ] map
       \ cleave 2array >quotation
       name 1array slots <effect> words:define-declared 
     ] def try-definition ;
