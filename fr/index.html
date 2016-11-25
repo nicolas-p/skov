@@ -29,8 +29,8 @@
 <hr>
 <p>Téléchargez la version de Skov adaptée à votre plateforme :</p>
 <div class="centred">
-<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-macosx-64bit-2016-04-15.dmg">Download Skov pour Mac | 2016-04-15</a></p>
-<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-windows-64bit-2016-04-15.zip">Download Skov pour Windows | 2016-04-15</a></p>
+<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-11-25/skov-macos-2016-11-25.dmg">Télécharger Skov pour Mac | 2016-11-25</a></p>
+<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-windows-64bit-2016-04-15.zip">Télécharger Skov pour Windows | 2016-04-15</a></p>
 </div>
 <p>Le numéro de version est juste la date de publication, comme ça c'est facile de savoir de quand date la version que vous utilisez.</p>
 <p>Il n'y a pas de processus d'installation. Il suffit d'extraire le dossier Skov depuis l'archive <em>zip</em> ou <em>dmg</em> et lancer le programme.</p>
@@ -74,31 +74,31 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <hr>
 <p>L'exemple suivant va introduire un concept extrêmement important.</p>
 <p>Disons que nous avons du texte et que nous ne voulons garder que les lettres qui sont représentées par des nombres pairs (chaque lettre est en fait représentée par un nombre en interne). On fait ça comme ça :</p>
-<img class="bloc" src="../images/screenshot-filter-text.png" height="207">
+<img class="bloc" src="../images/screenshot-filter-text.png" height="205">
 <p>Ce code a l'air incomplet à première vue : l'entrée de <word>even?</word> n'est pas connectée. Mais le code est en fait correct car <word>filter</word> fonctionne d'une façon un peu spéciale. La première entrée de <word>filter</word> est une séquence (une séquence de caractères dans ce cas) mais la deuxième entrée est un mot. <word>filter</word> prend une séquence et un mot et utilise ce mot pour filter cette séquence.</p>
 <p>Vous pouvez imaginer que l'entrée non connectée de <word>even?</word> est successivement connectée à chaque lettre du texte.</p>
 
 <hr>
 <p>Nous voulons maintenant retirer chaque lettre qui est après "m" dans l'alphabet. Puisque chaque lettre est représentée par un nombre, nous pouvons faire (si nous savons que "m" a le numéro 109) :</p>
-<img class="bloc" src="../images/screenshot-reject-text.png" height="281">
+<img class="bloc" src="../images/screenshot-reject-text.png" height="279">
 <p><word>reject</word> fonctionne comme <word>filter</word> sauf qu'il utilise la condition qu'on lui donne pour retirer certains éléments de la séquence au lieu de les garder. Vous pouvez voir ici que la condition ne doit pas nécessairement être un seul mot (comme <word>even?</word> dans l'exemple précédent) mais peut être du code plus complexe (dans cet exemple, "plus que 109").</p>
 
 <hr>
 <p>On peut maintenant utiliser ce principe pour traiter des fichiers texte.</p>
 <p>On veut inverser l'ordre des lignes de texte dans un fichier. La dernière ligne deviendra la première et la première deviendra la dernière. C'est facile:</p>
-<img class="bloc" src="../images/screenshot-reverse-file.png" width="395" height="129">
+<img class="bloc" src="../images/screenshot-reverse-file.png" width="395" height="130">
 <p>(Évidemment, utilisez le chemin d'un vrai fichier sur votre ordinateur.)</p>
 <p><word>change file lines</word> est un mot qui prend trois entrées: le chemin vers un fichier, l'encodage des caractères (UTF-8 dans ce cas; c'est le standard qui dit quel nombre représente chaque lettre), et un mot (ou du code plus complexe) qui va prendre la séquence de lignes de texte et lui faire quelque chose.</p>
 <p>Si votre éditeur de texte est assez intelligend pour recharger les fichiers automatiquement, vous verrez que chaque fois que vous cliquez sur le bouton de résultat, le fichier est inversé.</p>
 
 <hr>
 <p>On peut aussi facilement retirer toutes les lignes vides d'un fichier</p>
-<img class="bloc" src="../images/screenshot-harvest-file.png" width="395" height="125">
+<img class="bloc" src="../images/screenshot-harvest-file.png" width="395" height="132">
 <p><word>harvest</word> est un mot qui retire toutes les sous-séquences vides dans une séquence.</p>
 
 <hr>
 <p>Comment fait-on pour enlever toutes les lignes d'un fichier qui contiennent "hello" ?</p>
-<img class="bloc" src="../images/screenshot-hello-file.png" width="414" height="292">
+<img class="bloc" src="../images/screenshot-hello-file.png" width="414" height="276">
 <p>Celui-là est pas mal ! On a vu que <word>change file lines</word> est un de ces mots spéciaux qui peuvent prendre un bout de code en entrée, et <word>reject</word> en est un aussi. Et maintenant ils sont utilisés ensemble !</p>
 
 <hr>

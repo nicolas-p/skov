@@ -29,7 +29,7 @@
 <hr>
 <p>Download the version of Skov adapted for your platform:</p>
 <div class="centred">
-<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-macosx-64bit-2016-04-15.dmg">Download Skov for Mac | 2016-04-15</a></p>
+<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-11-25/skov-macos-2016-11-25.dmg">Download Skov for Mac | 2016-11-25</a></p>
 <p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-windows-64bit-2016-04-15.zip">Download Skov for Windows | 2016-04-15</a></p>
 </div>
 <p>The version number is just the date it was published, so it is easy to know how old is the version you're using.</p>
@@ -74,31 +74,31 @@ You have just created a program that writes "Hello world!" to the screen.
 <hr>
 <p>The next example is going to introduce an extremely important concept.</p>
 <p>Let's say we have some text and we want to keep only the letters that are represented by an even number (every letter is actually represented by a number behind the scenes). We do it like this:</p>
-<img class="bloc" src="../images/screenshot-filter-text.png" height="207">
+<img class="bloc" src="../images/screenshot-filter-text.png" height="205">
 <p>This code looks incomplete at first sight: the input to <word>even?</word> is not connected. But the code is actually correct because <word>filter</word> works in a special way. The first input to <word>filter</word> is a sequence (a sequence of characters in this case) but the second input is a word. <word>filter</word> takes a sequence and a word and uses this word to filter the sequence.</p>
 <p>You can imagine the unconnected input of <word>even?</word> being connected to each individual letter of the text successively.</p>
 
 <hr>
 <p>Now we want to remove every letter that comes after "m" in the alphabet. Because every letter is represented by a number, we can do (if we know that "m" is number 109):</p>
-<img class="bloc" src="../images/screenshot-reject-text.png" height="281">
+<img class="bloc" src="../images/screenshot-reject-text.png" height="279">
 <p><word>reject</word> works like <word>filter</word> except that it uses the given condition to discard certain elements of the sequence, instead of keeping them. What you can see here is that the condition doesn't have to be a single word (like <word>even?</word> in the previous example) but can be more complex code (in this example, "more than 109").</p>
 
 <hr>
 <p>We can now use this principle to process some text files.</p>
 <p>We want to reverse the order of the lines of text in a file. The last line will become the first and the first will become the last. That's easy:</p>
-<img class="bloc" src="../images/screenshot-reverse-file.png" width="395" height="129">
+<img class="bloc" src="../images/screenshot-reverse-file.png" width="395" height="130">
 <p>(Of course, use the path to a real text file on your computer.)</p>
 <p><word>change file lines</word> is a word that takes three inputs: the path to a text file, the character encoding (UTF-8 in this case; it is the standard that tells you which letter is represented by which number), and a word (or some more complex code) that is going to take the sequence of lines of text and do something to it.</p>
 <p>If your text editor is intelligent enough to reload files automatically, you will see that every time you click the result button, the file is reversed.</p>
 
 <hr>
 <p>We can also easily remove all empty lines in a file</p>
-<img class="bloc" src="../images/screenshot-harvest-file.png" width="395" height="125">
+<img class="bloc" src="../images/screenshot-harvest-file.png" width="395" height="132">
 <p><word>harvest</word> is a word that removes every empty sub-sequence in a sequence.</p>
 
 <hr>
 <p>How do we remove all the lines of a file that contain "hello"?</p>
-<img class="bloc" src="../images/screenshot-hello-file.png" width="414" height="292">
+<img class="bloc" src="../images/screenshot-hello-file.png" width="414" height="276">
 <p>This one is great! We've seen that <word>change file lines</word> is one of these special words that can take a piece of code as an input, and <word>reject</word> is also one of them. And now they're used together.</p>
 
 <hr>
