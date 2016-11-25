@@ -148,11 +148,11 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>Remarquez qu'on utilise deux constructeurs pour créer deux objets point qu'on passe à <word>distance</word>.
 
 <hr>
-<p>By now we have encountered the three types of nodes that you can create on the right-hand side of the window:</p>
+<p>Nous avons à présent rencontré les trois types de noeuds qu'on peut créer dans la partie droite de la fenêtre :</p>
 <ul>
-    <li>Words are a code abstraction. A word has inputs and outputs and it can process data. It can also perform an action like displaying something on the screen and modifying files. Most of the time, an input takes a piece of data, but sometimes, an input can take a piece of code instead. This allows a word to use an external piece of code to process the data. A word can be used in the definition of another word and this is how you build programs: words calling other words, calling other words, etc.</li>
-    <li>Classes are a data abstraction. A class describes a type of object by specifying the name of the slots that this object has. An object is just a way of combining several pieces of data together. An object doesn't do anything, or compute anything or process anything, it's just data. You can put objects inside objects inside objects, this is how you handle complex data.</li>
-    <li>Vocabularies are used to organize your code like folders let your organize your files. Vocabularies can contain words, classes and other vocabularies.</li>
+    <li>Les mots sont une abstraction sur le code. Un mot a des entrées et des sorties et il peut traiter des données. Il peut aussi réaliser une action comme afficher quelque chose à l'écran et modifier des fichiers. La plupart du temps une entrée prend une donnée, mais parfois une entrée peut prendre un bout de code à la place. Ça permet à un mot d'utiliser un bout de code externe pour traiter les données. Un mot peut être utilisé dans la définition d'un autre mot et c'est comme ça qu'on construit des programmes : des mots qui appellent des mots, qui appellent d'autres mots, etc.</li>
+    <li>Les classes sont une abstraction sur les données. Une classe décrit un type d'objet en spécifiant le nom des champs que cet objet possède. Un objet est juste une façon de combiner des données ensemble. Un objet de fait rien, ne calcule rien, ne traite rien, c'est juste des données. On peut mettre des objets dans des objets dans des objets, c'est comme ça qu'on manipule des données complexes.</li>
+    <li>Les vocabulaires servent à organiser votre code de la même façon que les dossiers servent à organiser vos fichiers. Les vocabulaires peuvent contenir des mots, des classes et d'autres vocabulaires.</li>
 </ul>
 
 <hr>
@@ -160,7 +160,7 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <img class="bloc" src="../images/screenshot-simulator.png" height="701">
 
 <hr>
-<p>If you know some other programming languages, I would like to take the time to highlight some differences with Skov.</p>
+<p>Si vous connaissez d'autres langages de programmation, je voudrais prendre le temps de souligner quelques différences avec Skov.</p>
 
 <p>I have just explained that words, classes and vocabularies do three different things: describing computation, describing data and organizing code. In other languages the distinction is not so easy. In object-oriented languages like Smalltalk and Java, the class is a concept used to describe data <em>and</em> organize code. You have to define your "words" (called "methods") <em>inside</em> classes. Classes take the role of vocabularies. The Scheme language relies on the concept of lexical closure, which is used to describe computation, hold data and organize code. Words take the role of classes and vocabularies. I believe having three separate concepts to describe computation, describe data and organize code makes things easier.</p>
 
@@ -187,20 +187,20 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>Every now and then, someone comes up with a new programming language with a slightly different syntax so that a particular type of operation is easier to express. But there are always compromises so inevitably other types of operations will be harder to express and there is no way to solve the problem while staying inside the text file paradigm.</p>
 
 <hr>
-<p class="question">Where does the name come from?</p>
-<p>Skov means <i>forest</i> in Danish because Skov contains a lot of trees.</p>
+<p class="question">D'où vient le nom ?</p>
+<p>Skov veut dire <i>forêt</i> en danois parce que Skov contient beaucoup d'arbres.</p>
 
 <hr>
-<p class="question">What is the goal of the Skov project?</p>
-<p>Imagine that you don't know any programming language and that you don't have any programming tools on your computer, but you want to write a program to do a relatively simple task. Then Skov will be the easiest tool to use. It's going to be the easiest to install, the easiest to learn, the easiest to understand and the easiest to get working. This is the goal of the project.</p>
+<p class="question">Quel est le but du projet Skov ?</p>
+<p>Imaginez que vous ne connaissez aucun langage de programmation et que vous n'avez aucun outil de programmation sur votre ordinateur, mais que vous voulez écrire un programme pour réaliser une tâche relativement simple. Alors Skov sera l'outil le plus simple à utiliser. Ce sera le plus simple à installer, le plus simple à apprendre, le plus simple à comprendre et le plus simple à faire fonctionner. C'est l'objectif du projet.</p>
 
 <hr>
-<p class="question">How is Skov implemented?</p>
-<p>Skov is based on Factor, which is a concatenative programming language (or stack language). Factor is not just a programming language, it's also a dynamic environment where you can see and modify everything on the fly. (It's inspired by Smalltalk.) There is a virtual machine written in C++ that executes the Factor code that makes the environment. The compiler that converts Factor code to machine instructions is itself written in Factor and is part of the dynamic environment. All the user interface is programmed in Factor except the low-level OpenGL primitives. It's really a fantastic system!</p>
+<p class="question">Comment Skov est-il implémenté ?</p>
+<p>Skov est basé sur Factor, un langage de programmation concaténatif. Factor is not just a programming language, it's also a dynamic environment where you can see and modify everything on the fly. (It's inspired by Smalltalk.) There is a virtual machine written in C++ that executes the Factor code that makes the environment. The compiler that converts Factor code to machine instructions is itself written in Factor and is part of the dynamic environment. All the user interface is programmed in Factor except the low-level OpenGL primitives. It's really a fantastic system!</p>
 <p>Skov is entirely coded in Factor. Most of the code is for the user interface. The rest is quite simple.</p>
 
 <hr>
-<p class="question">How is my Skov code compiled?</p>
+<p class="question">Comment mon code est-il compilé ?</p>
 <p>Skov code (by that I mean the hierarchy of objects that describe the tree that you see on the screen) is sort of converted into Factor code but not how you think. Skov does not generate code as a string of characters. The initial hierarchy of objects is converted into another hierarchy of objects that the Factor compiler can understand. The compiler then converts that to different hierarchies of objects to perform its successive optimizations. It's objects all the way down and there's never any text involved. It's a true visual system and there's no cheating.</p>
 
 <hr>
@@ -210,20 +210,20 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>Factor really is a great system but nobody uses it because nobody likes the language. I hope Skov will make this great system useful to a much wider audience.</p>
 
 <hr>
-<p class="question">But couldn't Skov be coded in Skov?</p>
-<p>In theory, yes! Maybe in the future it will be, but it's not a priority.</p>
+<p class="question">Mais est-ce que Skov ne pourrait pas être codé en Skov ?</p>
+<p>En théorie, oui ! Peut-être que ce sera le cas dans le futur, mais ce n'est pas une priorité.</p>
 
 <hr>
-<p class="question">How can I run Skov in my web browser?</p>
-<p>Why does everything have to run in a web browser these days?</p>
+<p class="question">Comment est-ce que je peux faire tourner Skov dans mon navigateur web ?</p>
+<p>Pourquoi est-ce que tout doit tourner dans un navigateur web de nos jours ?</p>
 
 <hr>
 <p class="question">Can the user interface, the documentation and the language itself be translated into other languages than English?</p>
 <p>I think making the user interface multilingual but keeping English words in the programming language makes no sense, so everything would have to be made multilingual at once, but that would be an absolute nightmare to implement. Making Skov multilingual would be absolutely fantastic but there would be so much work to do that I doubt it will ever happen. Using a <em>lingua franca</em> is so much easier.</p>
 
 <hr>
-<p class="question">How can I contribute?</p>
-<p>The project is hosted on <a href="https://github.com/nicolas-p/skov">GitHub</a>. There you can report bugs and contribute to the development.</p>
+<p class="question">Comment est-ce que je peux contribuer ?</p>
+<p>Le projet est hébergé sur <a href="https://github.com/nicolas-p/skov">GitHub</a>. C'est là que vous pouvez rapporter des bugs et contribuer au développement.</p>
 
 <hr>
 <p class="question">How mature is this project?</p>
