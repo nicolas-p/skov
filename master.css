@@ -24,6 +24,13 @@ body {
   padding: 10px;
   font-size: 13pt;
 }
+#contact {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 10px;
+  font-size: 13pt;
+}
 #site {
   max-width: 830px;
   text-align: left;
