@@ -37,8 +37,8 @@
 <p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-11-25/skov-macos-2016-11-25.dmg">Télécharger Skov pour Mac | 2016-11-25</a></p>
 <p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-04-15/skov-windows-64bit-2016-04-15.zip">Télécharger Skov pour Windows | 2016-04-15</a></p>
 </div>
-<p>Le numéro de version est juste la date de publication, comme ça c'est facile de savoir de quand date la version que vous utilisez.</p>
 <p>Il n'y a pas de processus d'installation. Il suffit d'extraire le dossier Skov depuis l'archive <em>zip</em> ou <em>dmg</em> et lancer le programme.</p>
+<p>Si vous êtes sur un Mac et que Skov ne fonctionne pas, il faut faire un clic droit sur l'application et sélectionner <b>Ouvrir</b> ou <a href="https://support.apple.com/fr-fr/HT202491">désactiver Gatekeeper</a>.</p>
 
 <hr>
 <p>Vous verrez cette fenêtre.</p>
@@ -80,7 +80,7 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>L'exemple suivant va introduire un concept extrêmement important.</p>
 <p>Disons que nous avons du texte et que nous ne voulons garder que les lettres qui sont représentées par des nombres pairs (chaque lettre est en fait représentée par un nombre en interne). On fait ça comme ça :</p>
 <img class="bloc" src="../images/screenshot-filter-text.png" height="205">
-<p>Ce code a l'air incomplet à première vue : l'entrée de <word>even?</word> n'est pas connectée. Mais le code est en fait correct car <word>filter</word> fonctionne d'une façon un peu spéciale. La première entrée de <word>filter</word> est une séquence (une séquence de caractères dans ce cas) mais la deuxième entrée est un mot. <word>filter</word> prend une séquence et un mot et utilise ce mot pour filter cette séquence.</p>
+<p>Remarquez que la connexion entre <word>even?</word> et <word>filter</word> est différente. C'est parce que <word>filter</word> fonctionne d'une façon un peu spéciale. La première entrée de <word>filter</word> est une séquence (une séquence de caractères dans ce cas) mais la deuxième entrée est un mot. <word>filter</word> prend une séquence et un mot et utilise ce mot pour filter cette séquence.</p>
 <p>Vous pouvez imaginer que l'entrée non connectée de <word>even?</word> est successivement connectée à chaque lettre du texte.</p>
 
 <hr>
@@ -231,12 +231,12 @@ Vous venez de créer un programme qui affiche "Hello world!" à l'écran.
 <p>Le projet est hébergé sur <a href="https://github.com/nicolas-p/skov">GitHub</a>. C'est là que vous pouvez rapporter des bugs et contribuer au développement.</p>
 
 <hr>
-<p class="question">How mature is this project?</p>
-<p>The Skov project started on 7 August 2015 so it's not very mature. But Skov is based on Factor, which has been developped since 2003 and is a mature system.</p>
+<p class="question">Quelle est la maturité de ce projet ?</p>
+<p>Le projet Skov a démarré le 7 août 2015 donc il n'est pas très mature. Mais Skov est basé sur Factor, qui est développé depuis 2003 et est un système mature.</p>
 
 <hr>
-<p class="question">How can I share my Skov code with other people?</p>
-<p>If you press <key>D</key>, Skov will export all you code as text files in the "work" folder. There will be a file for each vocabulary. If you send theses files to someone, he can import them in Skov by placing them in his own "work" folder and pressing <key>L</key>.</p>
+<p class="question">Comment partager mon code Skov avec d'autres ?</p>
+<p>Si vous appuyez sur <key>D</key>, Skov exportera tout votre code dans les fichiers texte dans le dossier "work". Il y aura un fichier pour chaque vocabulaire. Si vous envoyez ces fichiers à quelqu'un, il pourra les importer dans Skov en les plaçant dans son propre dossier "work" et en appuyant sur <key>L</key>.</p>
 
 </div>
 
