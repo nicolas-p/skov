@@ -63,15 +63,14 @@ You have just created a program that writes "Hello world!" to the screen.
 
 <hr>
 <p>Press <key>N</key> to create a new word and call it <word>process text</word>. Press <key>I</key> to enter an input and call it <io>text</io>. Press <key>O</key> to enter an output and call it <io>text</io> also. You should be able to reproduce the rest of the code easily.</p>
-<img class="bloc" src="../images/screenshot-process-text.png" height="435">
+<img class="bloc" src="../images/screenshot-process-text.png" height="348">
 <p>To enter Skov code, you don't actually have to first enter all the nodes and then connect them together. You can do it in one step. If you place your cursor on a connector and press <key>W</key>, the new word will be linked to this connector automatically. This allows you to enter Skov code almost as fast as in conventional programming languages.</p>
-<p><word>>upper</word> converts some text to upper case.</p>
 <p><word>reverse</word> simply reverses a sequence (including text, which is a sequence of characters).</p>
 <p><word>append</word> takes two sequences and sticks them together in one sequence.</p>
 <p>This is the first word you define that has inputs and outputs, which means you can use it to process data. The previous words you defined just displayed something on the screen. This one doesn't display anything, but you can use it in another word. Let's do it.</p>
 <p>Define a new word called <word>text test</word> and enter this code.</p>
 <img class="bloc" src="../images/screenshot-text-test.png" height="218">
-<p>Click the result button and you should see "((VOKS))" because the input text <text>skov</text> was converted to upper case, reversed, and double parentheses were added on either side, as requested.</p>
+<p>Click the result button and you should see "((voks))" because the input text <text>skov</text> was converted to upper case, reversed, and double parentheses were added on either side, as requested.</p>
 
 <hr>
 <p>Look back at <word>process text</word> and see how easily you can chain operations. When you look at Skov code, you can imagine data flowing from top to bottom through a chain of operations, as if data was attracted by gravity.</p>
