@@ -70,8 +70,7 @@ M: word transform
 
 M: subtree transform
     { [ subtree-introduces [ id>> ] map ]
-      [ contents>> [ transform ] map concat >quotation ]
-      [ subtree-output id>> suffix <lambda> ]
+      [ contents>> [ transform ] map concat but-last >quotation <lambda> ]
       [ subtree-output id>> <def> ]
     } cleave 2array ;
 

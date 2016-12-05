@@ -60,7 +60,7 @@ IN: ui.environment.connection-gadget
     loc1 { 0 12 } v+ draw-arc ;
 
 M: connection-gadget draw-gadget*
-    [ start>> control-value invisible?>> ]
+    [ end>> control-value invisible?>> ]
     [ GL_LINE_STIPPLE glEnable ] [ GL_LINE_STIPPLE glDisable ] smart-if
     [ start-loc ] [ end-loc ] [ end>> control-value unevaluated? ] tri
     [ draw-curve-and-arc ] [ draw-curve ] if
