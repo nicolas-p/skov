@@ -1,9 +1,9 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart kernel
-locals models namespaces sequences code ui.environment
-ui.gadgets.buttons.round ui.environment.vocab-gadget ui.gadgets
-ui.gestures ui.environment.actions ;
+USING: accessors arrays code combinators combinators.smart
+kernel locals models namespaces sequences system ui.environment
+ui.environment.actions ui.environment.vocab-gadget ui.gadgets
+ui.gadgets.buttons.round ui.gestures ;
 FROM: code => call ;
 IN: ui.environment.plus-button-pile
 
@@ -26,9 +26,11 @@ IN: ui.environment.plus-button-pile
 
 : import-export-buttons ( -- seq )
     [ [ find-env save-skov-image ] "save" <word-button>
-      "Save the image and export all the code to the \"work\" folder    ( Control + S )" >>tooltip
+      "Save the image and export all the code to the \"work\" folder    "
+      os macosx = "( ⌘S )" "( Control + S )" ? append >>tooltip
       [ find-env load-vocabs ] "load" <word-button>
-      "Load all the code from the \"work\" folder     ( Control + L )" >>tooltip
+      "Load all the code from the \"work\" folder     "
+      os macosx = "( ⌘L )" "( Control + L )" ? append >>tooltip
     ] output>array ;
 
 : <plus-button-pile> ( model -- gadget )

@@ -1,14 +1,14 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors code kernel locals models namespaces ui
-ui.commands ui.environment ui.environment.actions
-ui.environment.completion-gadget
-ui.environment.graph-gadget ui.environment.node-pile
-ui.environment.plus-button-pile ui.environment.result-gadget
-ui.environment.theme ui.environment.vocab-gadget ui.gadgets
-ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.packs
-ui.gadgets.scrollers ui.gadgets.status-bar ui.gadgets.tracks
-ui.gestures ui.tools.browser ui.tools.common ;
+USING: accessors code kernel locals models namespaces sequences
+system ui ui.commands ui.environment ui.environment.actions
+ui.environment.completion-gadget ui.environment.graph-gadget
+ui.environment.node-pile ui.environment.plus-button-pile
+ui.environment.result-gadget ui.environment.theme
+ui.environment.vocab-gadget ui.gadgets ui.gadgets.borders
+ui.gadgets.buttons.round ui.gadgets.packs ui.gadgets.scrollers
+ui.gadgets.status-bar ui.gadgets.tracks ui.gestures
+ui.tools.browser ui.tools.common ;
 IN: ui.environment.environment-gadget
 
 environment-gadget { 700 600 } set-tool-dim
@@ -71,14 +71,20 @@ environment-gadget "general" f {
     { T{ key-up f f "E" } edit-node-gadget }
     { T{ key-up f f "RIGHT" } more-inputs }
     { T{ key-up f f "LEFT" } less-inputs }
-    { T{ key-down f { C+ } "s" } save-skov-image }
-    { T{ key-down f { C+ } "S" } save-skov-image }
-    { T{ key-down f { C+ } "l" } load-vocabs }
-    { T{ key-down f { C+ } "L" } load-vocabs }
     { T{ key-up f f "h" } show-help-browser }
     { T{ key-up f f "H" } show-help-browser }
     { T{ key-up f f "BACKSPACE" } toggle-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
     { T{ key-up f f "TAB" } completion }
-} define-command-map
+} os macosx = { 
+    { T{ key-down f { A+ } "s" } save-skov-image }
+    { T{ key-down f { A+ } "S" } save-skov-image }
+    { T{ key-down f { A+ } "l" } load-vocabs }
+    { T{ key-down f { A+ } "L" } load-vocabs }
+} { 
+    { T{ key-down f { C+ } "s" } save-skov-image }
+    { T{ key-down f { C+ } "S" } save-skov-image }
+    { T{ key-down f { C+ } "l" } load-vocabs }
+    { T{ key-down f { C+ } "L" } load-vocabs }
+} ? append define-command-map
