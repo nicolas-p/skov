@@ -5,38 +5,38 @@ ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
 FROM: code => inputs outputs ;
 IN: ui.environment
 
-TUPLE: environment-gadget < tool ;
+TUPLE: environment < tool ;
 TUPLE: plus-button-pile < pack ;
 TUPLE: node-pile < pack ;
-TUPLE: graph-gadget < gadget  { counter initial: 0 } ;
-TUPLE: content-gadget < pack ;
-TUPLE: vocab-gadget < pack ;
-TUPLE: node-gadget < border  left right below above immobile? ;
-TUPLE: connector-gadget < icon  links ;
-TUPLE: connection-gadget < gadget  start end ;
+TUPLE: graph < gadget  { counter initial: 0 } ;
+TUPLE: content < pack ;
+TUPLE: navigation < pack ;
+TUPLE: bubble < border  left right below above immobile? ;
+TUPLE: connector < icon  links ;
+TUPLE: connection < gadget  start end ;
 TUPLE: proto-connection < gadget  loc1 loc2 ;
-TUPLE: completion-gadget < pack  selected ;
+TUPLE: completion < pack  selected ;
 
-: nodes ( gadget -- seq )  children>> [ node-gadget? ] filter ;
-: connections ( gadget -- seq )  children>> [ connection-gadget? ] filter ;
+: nodes ( gadget -- seq )  children>> [ bubble? ] filter ;
+: connections ( gadget -- seq )  children>> [ connection? ] filter ;
 
-M: node-gadget connectors ( gadget -- seq )
-    children>> [ connector-gadget? ] filter ;
+M: bubble connectors ( gadget -- seq )
+    children>> [ connector? ] filter ;
 
-M: node-gadget inputs ( gadget -- seq )
+M: bubble inputs ( gadget -- seq )
     connectors [ control-value [ input? ] [ introduce? ] bi or ] filter ;
 
-M: node-gadget outputs ( gadget -- seq )
+M: bubble outputs ( gadget -- seq )
     connectors [ control-value [ output? ] [ return? ] bi or ] filter ;
 
-: find-env ( gadget -- env )  [ environment-gadget? ] find-parent ;
-: find-vocab ( gadget -- vocab )  [ vocab-gadget? ] find-parent ;
-: find-graph ( gadget -- graph )  [ graph-gadget? ] find-parent ;
-: find-node ( gadget -- node )  [ node-gadget? ] find-parent ;
-: find-completion ( gadget -- node )  [ completion-gadget? ] find-parent ;
+: find-env ( gadget -- env )  [ environment? ] find-parent ;
+: find-vocab ( gadget -- vocab )  [ navigation? ] find-parent ;
+: find-graph ( gadget -- graph )  [ graph? ] find-parent ;
+: find-node ( gadget -- node )  [ bubble? ] find-parent ;
+: find-completion ( gadget -- node )  [ completion? ] find-parent ;
 
 CONSTANT: connector-size 10
-CONSTANT: node-height 28
+CONSTANT: bubble-height 28
 CONSTANT: min-node-width 45
 
 : vocab-control-value ( gadget -- value )

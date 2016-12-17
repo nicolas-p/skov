@@ -2,39 +2,39 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code kernel locals models namespaces sequences
 system ui ui.commands ui.environment ui.environment.actions
-ui.environment.completion-gadget ui.environment.content-gadget
-ui.environment.graph-gadget ui.environment.node-pile
-ui.environment.plus-button-pile ui.environment.result-gadget
-ui.environment.theme ui.environment.vocab-gadget ui.gadgets
+ui.environment.completion ui.environment.content
+ui.environment.graph
+ui.environment.plus-button-pile ui.environment.content
+ui.environment.theme ui.environment.navigation ui.gadgets
 ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.packs
 ui.gadgets.scrollers ui.gadgets.status-bar ui.gadgets.tracks
 ui.gestures ui.tools.browser ui.tools.common ;
-IN: ui.environment.environment-gadget
+IN: ui.environment.environment
 
-environment-gadget { 700 600 } set-tool-dim
+environment { 700 600 } set-tool-dim
 
 : <help-button> ( -- button )
     [ drop show-browser ] "help" <word-button> "Help     ( H )" >>tooltip ;
 
-:: <environment-gadget> ( -- gadget )
+:: <environment> ( -- gadget )
     skov-root get-global <model> :> model
-    horizontal environment-gadget new-track model >>model
+    horizontal environment new-track model >>model
     vertical <track>
         <help-button> f track-add
         model <plus-button-pile> { 0 0 } <border> 1 track-add
     { 10 10 } <filled-border>
     f track-add
     vertical <track>
-        model <content-gadget> { 10 10 } <border> <scroller> 1 track-add
-        f <model> <completion-gadget> f track-add
+        model <content> { 10 10 } <border> <scroller> 1 track-add
+        f <model> <completion> f track-add
     1 track-add
-    model <vocab-gadget> { 10 10 } <filled-border> <scroller> f track-add
+    model <navigation> { 10 10 } <filled-border> <scroller> f track-add
     with-background ;
 
 : environment-window ( -- )
-    [ <environment-gadget> "Skov" open-status-window ] with-ui ;
+    [ <environment> "Skov" open-status-window ] with-ui ;
 
-environment-gadget "general" f {
+environment "general" f {
     { T{ key-up f f "w" } add-call }
     { T{ key-up f f "W" } add-call }
     { T{ key-up f f "i" } add-input }
@@ -59,12 +59,12 @@ environment-gadget "general" f {
     { T{ key-up f f "N" } add-word }
     { T{ key-up f f "k" } add-class }
     { T{ key-up f f "K" } add-class }
-    { T{ key-up f f "x" } disconnect-connector-gadget }
-    { T{ key-up f f "X" } disconnect-connector-gadget }
-    { T{ key-up f f "r" } remove-node-gadget }
-    { T{ key-up f f "R" } remove-node-gadget }
-    { T{ key-up f f "e" } edit-node-gadget }
-    { T{ key-up f f "E" } edit-node-gadget }
+    { T{ key-up f f "x" } disconnect-connector }
+    { T{ key-up f f "X" } disconnect-connector }
+    { T{ key-up f f "r" } remove-bubble }
+    { T{ key-up f f "R" } remove-bubble }
+    { T{ key-up f f "e" } edit-bubble }
+    { T{ key-up f f "E" } edit-bubble }
     { T{ key-up f f "RIGHT" } more-inputs }
     { T{ key-up f f "LEFT" } less-inputs }
     { T{ key-up f f "h" } show-help-browser }
@@ -72,7 +72,7 @@ environment-gadget "general" f {
     { T{ key-up f f "BACKSPACE" } toggle-result }
     { T{ key-up f f "UP" } previous-word }
     { T{ key-up f f "DOWN" } next-word }
-    { T{ key-up f f "TAB" } completion }
+    { T{ key-up f f "TAB" } show-completion }
 } os macosx = { 
     { T{ key-down f { A+ } "s" } save-skov-image }
     { T{ key-down f { A+ } "S" } save-skov-image }

@@ -5,10 +5,10 @@ locals math math.vectors opengl opengl.gl sequences
 specialized-arrays.instances.alien.c-types.float ui.environment
 ui.environment.theme ui.gadgets ui.render ;
 FROM: code => inputs ;
-IN: ui.environment.connection-gadget
+IN: ui.environment.connection
 
-:: <connection-gadget> ( end start -- connection-gadget )
-    connection-gadget new start >>start end >>end ;
+:: <connection> ( end start -- connection )
+    connection new start >>start end >>end ;
 
 : loc-in-definition ( connector -- loc ) [ loc>> ] [ parent>> loc>> ] bi v+ ;
 
@@ -74,7 +74,7 @@ IN: ui.environment.connection-gadget
     [ connection start>> lambda-inputs [ connector-tip ] map draw-curve-and-arcs ]
     [ draw-curve ] if ;
 
-M: connection-gadget draw-gadget* ( connection -- )
+M: connection draw-gadget* ( connection -- )
     [ draw-connection ] with-line-stipple? ;
 
 :: <proto-connection> ( loc1 -- dummy-connection )

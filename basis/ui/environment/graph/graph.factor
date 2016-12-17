@@ -4,10 +4,10 @@ USING: accessors arrays assocs code code.execution combinators
 combinators.smart fry kernel locals math math.functions
 math.order math.statistics math.vectors models sequences
 sequences.deep sets sorting ui.environment
-ui.environment.connector-gadget ui.environment.node-gadget
+ui.environment.connector ui.environment.bubble
 ui.gadgets ;
 FROM: code => inputs outputs ;
-IN: ui.environment.graph-gadget
+IN: ui.environment.graph
 
 : register-above ( node node' -- node )  [ suffix ] curry change-above ;
 : register-below ( node node' -- node )  [ suffix ] curry change-below ;
@@ -125,7 +125,7 @@ DEFER: horizontal-movement
     0 >>counter find-relations [ dup no-movement? ] [ move-nodes ] until ;
 
 : add-nodes ( seq graph -- graph )
-    swap connected [ <node-gadget> ] map add-gadgets ;
+    swap connected [ <bubble> ] map add-gadgets ;
 
 : top-left-corner ( graph -- xy )
     nodes [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;
@@ -136,11 +136,11 @@ DEFER: horizontal-movement
 : fix-locations ( graph -- graph )
     dup [ top-left-corner ] keep nodes [ swap '[ _ v- ] change-loc drop ] with each ;
 
-: <graph-gadget> ( seq -- graph-gadget )
-    graph-gadget new add-nodes add-connections place-nodes fix-locations ;
+: <graph> ( seq -- graph )
+    graph new add-nodes add-connections place-nodes fix-locations ;
 
-M: graph-gadget pref-dim*
+M: graph pref-dim*
     bottom-right-corner ;
 
-M: graph-gadget layout*
+M: graph layout*
     [ dup pref-dim swap dim<< ] each-child ;

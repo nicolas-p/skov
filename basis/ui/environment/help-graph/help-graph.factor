@@ -1,7 +1,7 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code code.factor-abstraction kernel
-locals models sequences ui.environment.graph-gadget
+locals models sequences ui.environment.graph
 ui.environment.theme ui.gadgets.borders ;
 IN: ui.environment.help-graph
 
@@ -15,4 +15,4 @@ IN: ui.environment.help-graph
       inside outside contents>> first order-connectors connect
       outside add-element
     ] each
-    contents>> <graph-gadget> { 20 10 } <filled-border> with-background ;
+    contents>> <graph> { 20 10 } <filled-border> with-background ;

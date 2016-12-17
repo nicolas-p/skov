@@ -2,14 +2,14 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code code.factor-abstraction colors.constants
 colors.hex kernel listener locals math.parser models namespaces
-sequences splitting ui.environment ui.environment.node-gadget
+sequences splitting ui.environment ui.environment.bubble
 ui.environment.theme ui.gadgets ui.gadgets.labels
 ui.gadgets.packs ui.pens.solid vocabs ;
 FROM: code => vocab ;
-IN: ui.environment.completion-gadget
+IN: ui.environment.completion
 
-: <completion-gadget> ( model -- completion-gadget )
-    completion-gadget new swap >>model ;
+: <completion> ( model -- completion )
+    completion new swap >>model ;
 
 :: matching-words* ( str -- seq )
     interactive-vocabs get [ vocab-words ] map concat [ name>> str head? ] filter ;
@@ -19,23 +19,23 @@ IN: ui.environment.completion-gadget
 
 :: word-display ( word -- gadget )
     <shelf> 1/2 >>align
-    word vocabulary>> "." split [ vocab new swap >>name <node-gadget> add-gadget ] each
-    word call-from-factor <node-gadget> add-gadget ;
+    word vocabulary>> "." split [ vocab new swap >>name <bubble> add-gadget ] each
+    word call-from-factor <bubble> add-gadget ;
 
-:: add-selection-arrow ( completion-gadget -- completion-gadget )
-    completion-gadget dup children>> [ label? ] reject
-    [ dup children>> last control-value target>> completion-gadget selected>> eq? 
+:: add-selection-arrow ( completion -- completion )
+    completion dup children>> [ label? ] reject
+    [ dup children>> last control-value target>> completion selected>> eq? 
       [ HEXCOLOR: 586e75 <solid> >>interior ] when drop 
     ] each ;
 
-: ?add-completion-label ( completion-gadget -- completion-gadget )
+: ?add-completion-label ( completion -- completion )
     dup control-value
     [ length number>string "Choose one of these " " words:" surround <label> set-light-font add-gadget ]
     unless-empty ;
 
-: redraw-completion ( completion-gadget -- completion-gadget )
+: redraw-completion ( completion -- completion )
     dup clear-gadget ?add-completion-label dup control-value 
     [ word-display add-gadget ] each add-selection-arrow ;
 
-M: completion-gadget model-changed ( model completion-gadget -- )
+M: completion model-changed ( model completion -- )
     nip dup control-value [ first >>selected ] unless-empty redraw-completion drop ;

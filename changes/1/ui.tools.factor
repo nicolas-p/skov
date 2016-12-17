@@ -1,4 +1,4 @@
-USING: ui.environment.environment-gadget ;
+USING: ui.environment.environment ;
 IN: ui.tools
 
 MAIN: environment-window

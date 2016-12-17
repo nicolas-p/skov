@@ -3,51 +3,51 @@
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences code code.execution ui.environment
-ui.environment.connection-gadget ui.environment.connector-gadget
+ui.environment.connection ui.environment.connector
 ui.environment.theme  splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ui.pens.tile ;
 FROM: code => inputs outputs call ;
-IN: ui.environment.node-gadget
+IN: ui.environment.bubble
 
-: width ( node-gadget -- w ) pref-dim first ;
-: half-width ( node-gadget -- w/2 ) width 2 /i ;
+: width ( bubble -- w ) pref-dim first ;
+: half-width ( bubble -- w/2 ) width 2 /i ;
 
-: left-edge ( node -- x )  loc>> first ;
-: center ( node -- x )  [ left-edge ] [ half-width ] bi + ;
-: right-edge ( node -- x )  [ left-edge ] [ width ] bi + ;
-: top-edge ( node -- y )  loc>> second ;
+: left-edge ( bubble -- x )  loc>> first ;
+: center ( bubble -- x )  [ left-edge ] [ half-width ] bi + ;
+: right-edge ( bubble -- x )  [ left-edge ] [ width ] bi + ;
+: top-edge ( bubble -- y )  loc>> second ;
 
-: ?select ( node-gadget -- )
+: ?select ( bubble -- )
     [ [ find-vocab ] [ find-env ] smart-unless control-value ]
     [ find-env set-control-value ] bi ;
 
-: select-result ( node-gadget -- )
+: select-result ( bubble -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;
 
-: node-theme ( node-gadget -- node-gadget )
-    dup (node-theme)
+: bubble-theme ( bubble -- bubble )
+    dup (bubble-theme)
     [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
     <tile-pen> >>interior
     horizontal >>orientation ;
 
-: add-connector-gadgets ( node-gadget -- node-gadget )
-    dup control-value connectors [ <connector-gadget> add-gadget ] each ;
+: add-connectors ( bubble -- bubble )
+    dup control-value connectors [ <connector> add-gadget ] each ;
 
-: set-name-and-target ( target name gadget -- )
+: set-name-and-target ( target name bubble -- )
     [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
     [ ?select ] bi ;
 
-: set-node-field-string ( str gadget -- )
+: set-node-field-string ( str bubble -- )
     children>> first editor>> set-editor-string ;
 
-: reset-completion ( completion-gadget -- )
+: reset-completion ( completion -- )
     f >>selected f swap set-control-value ;
 
 : get-completion ( env --  completion )
     children>> second children>> second ;
 
-:: enter-name ( name gadget -- )
+:: enter-name ( name bubble -- )
     gadget control-value call?
     [ gadget find-env get-completion :> completion
       completion selected>>
@@ -60,9 +60,9 @@ IN: ui.environment.node-gadget
       ] if*
     ] [ f name gadget set-name-and-target ] if ;
 
-:: add-name-field ( node-gadget -- node-gadget )
-    node-gadget dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
-    node-gadget (node-theme) :> text-colour :> bg-colour drop
+:: add-name-field ( bubble -- bubble )
+    bubble dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
+    bubble (bubble-theme) :> text-colour :> bg-colour drop
     bg-colour <solid> >>boundary
     bg-colour <solid> >>interior
     { 0 0 } >>size
@@ -76,14 +76,14 @@ IN: ui.environment.node-gadget
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-: add-name-label ( node-gadget -- node-gadget )
+: add-name-label ( bubble -- bubble )
     dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
 
-: add-name ( node-gadget -- node-gadget )
-    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if add-connector-gadgets ;
+: add-name ( bubble -- bubble )
+    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if add-connectors ;
 
-: <node-gadget> ( value -- node )
-    <model> node-gadget new swap >>model add-name ;
+: <bubble> ( value -- node )
+    <model> bubble new swap >>model add-name ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb
@@ -92,27 +92,27 @@ IN: ui.environment.node-gadget
     nb [ gap ] replicate :> gaps
     gaps nb iota [ connector-size * connector-size min ] map v+ cum-sum ;
 
-M: node-gadget connected?
+M: bubble connected?
     connectors [ connected? ] any? ;
 
-M: node-gadget layout*
+M: bubble layout*
     { [ call-next-method ]
       [ [ inputs dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
-      [ [ outputs dup ] [ width ] bi spread [ node-height 2array ] map [ swap loc<< ] 2each ]
+      [ [ outputs dup ] [ width ] bi spread [ bubble-height 2array ] map [ swap loc<< ] 2each ]
     } cleave ;
 
-M:: node-gadget pref-dim* ( node -- dim )
-    node gadget-child pref-dim first node-height +
-    node inputs length node outputs length max node-height connector-size - * max
-    min-node-width max node-height connector-size + 2array ;
+M:: bubble pref-dim* ( bubble -- dim )
+    node gadget-child pref-dim first bubble-height +
+    node inputs length node outputs length max bubble-height connector-size - * max
+    min-node-width max bubble-height connector-size + 2array ;
 
-M: node-gadget focusable-child*
+M: bubble focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
 
-M: node-gadget graft*
-   node-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
+M: bubble graft*
+   bubble-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
-: node-type ( node-gadget -- str )
+: node-type ( bubble -- str )
     control-value {
         { [ dup vocab? ] [ drop "Vocabulary" ] }
         { [ dup text? ] [ drop "Text" ] }
@@ -128,12 +128,12 @@ M: node-gadget graft*
         { [ dup return? ] [ drop "Output" ] }
     } cond ;
 
-: node-status-text ( node-gadget -- str )
+: node-status-text ( bubble -- str )
     [ node-type ] [ control-value ] bi
     path "." " > " replace [ " defined in " swap append append ] when*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
-node-gadget H{
+bubble H{
     { T{ button-up f f 1 }  [ ?select ] }
     { mouse-enter           [ [ node-status-text ] keep show-status ] }
     { mouse-leave           [ hide-status ] }

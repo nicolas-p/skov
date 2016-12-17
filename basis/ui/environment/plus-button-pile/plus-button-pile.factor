@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code combinators combinators.smart
 kernel locals models namespaces sequences system ui.environment
-ui.environment.actions ui.environment.vocab-gadget ui.gadgets
+ui.environment.actions ui.environment.navigation ui.gadgets
 ui.gadgets.buttons.round ui.gestures ;
 FROM: code => call ;
 IN: ui.environment.plus-button-pile

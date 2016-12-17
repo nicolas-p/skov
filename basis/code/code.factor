@@ -31,7 +31,7 @@ TUPLE: mutator < call ;
 TUPLE: input < element  link invisible? ;
 TUPLE: output < element  id invisible? ;
 
-UNION: connector  introduce return input output ;
+UNION: input/output  introduce return input output ;
 
 TUPLE: result < element ;
 
@@ -47,7 +47,7 @@ TUPLE: result < element ;
 GENERIC: connectors ( elt -- seq )
 GENERIC: inputs ( elt -- seq )
 GENERIC: outputs ( elt -- seq )
-M: element connectors ( elt -- seq )  contents>> [ connector? ] filter ;
+M: element connectors ( elt -- seq )  contents>> [ input/output? ] filter ;
 M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
 M: element outputs ( elt -- seq )  contents>> [ output? ] filter ;
 

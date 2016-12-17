@@ -3,8 +3,8 @@
 USING: accessors code code.execution code.import-export
 combinators combinators.short-circuit combinators.smart kernel
 listener locals math math.order memory namespaces sequences
-ui.environment ui.environment.completion-gadget
-ui.environment.connector-gadget ui.environment.node-gadget
+ui.environment ui.environment.completion
+ui.environment.connector ui.environment.bubble
 ui.gadgets ui.gadgets.editors ui.gadgets.worlds ui.gestures
 ui.tools.browser ;
 FROM: code => inputs outputs call ;
@@ -21,7 +21,7 @@ IN: ui.environment.actions
     hand-gadget get-global :> hand
     env [ control-value word? ] [
       [ class add-from-class
-        hand connector-gadget?
+        hand connector?
         [ dup contents>> last 
           hand control-value input? [ output ] [ input ] if add-from-class 
           contents>> last hand control-value ?connect ] when
@@ -44,13 +44,13 @@ IN: ui.environment.actions
 : add-word ( env -- ) [ word add-to-vocab ] make-keyboard-safe ;
 : add-class ( env -- ) [ class add-to-vocab ] make-keyboard-safe ;
 
-: disconnect-connector-gadget ( env -- )
+: disconnect-connector ( env -- )
     [ hand-gadget get-global dup
-      [ [ connector-gadget? ] [ connected? ] bi and ] [ control-value disconnect ] smart-when*
+      [ [ connector? ] [ connected? ] bi and ] [ control-value disconnect ] smart-when*
       find-env [ ] change-control-value drop
     ] make-keyboard-safe ;
 
-: remove-node-gadget ( env -- )
+: remove-bubble ( env -- )
     [ hand-gadget get-global find-node
       [ [ outputs [ links>> [ control-value disconnect ] each ] each ]
         [ control-value dup dup forget-alt remove-from-parent
@@ -58,7 +58,7 @@ IN: ui.environment.actions
       ] [ drop ] if*
     ] make-keyboard-safe ;
 
-: edit-node-gadget ( env -- )
+: edit-bubble ( env -- )
     [ hand-gadget get-global find-node
       [ dup f f rot set-name-and-target request-focus ] when* drop
     ] make-keyboard-safe ;
@@ -67,7 +67,7 @@ IN: ui.environment.actions
     [ hand-gadget get-global find-node
       [ [ control-value variadic? ]
         [ dup control-value input add-from-class inputs last
-          <connector-gadget> add-gadget drop
+          <connector> add-gadget drop
         ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
@@ -88,7 +88,7 @@ IN: ui.environment.actions
       } cond 
     ] make-keyboard-safe ;
 
-: completion ( env -- )
+: show-completion ( env -- )
     [ find-world world-focus control-value first matching-words ]
     [ get-completion set-control-value ] bi ;
 
