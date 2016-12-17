@@ -2,13 +2,13 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code kernel locals models namespaces sequences
 system ui ui.commands ui.environment ui.environment.actions
-ui.environment.completion-gadget ui.environment.graph-gadget
-ui.environment.node-pile ui.environment.plus-button-pile
-ui.environment.result-gadget ui.environment.theme
-ui.environment.vocab-gadget ui.gadgets ui.gadgets.borders
-ui.gadgets.buttons.round ui.gadgets.packs ui.gadgets.scrollers
-ui.gadgets.status-bar ui.gadgets.tracks ui.gestures
-ui.tools.browser ui.tools.common ;
+ui.environment.completion-gadget ui.environment.content-gadget
+ui.environment.graph-gadget ui.environment.node-pile
+ui.environment.plus-button-pile ui.environment.result-gadget
+ui.environment.theme ui.environment.vocab-gadget ui.gadgets
+ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.packs
+ui.gadgets.scrollers ui.gadgets.status-bar ui.gadgets.tracks
+ui.gestures ui.tools.browser ui.tools.common ;
 IN: ui.environment.environment-gadget
 
 environment-gadget { 700 600 } set-tool-dim
@@ -25,11 +25,7 @@ environment-gadget { 700 600 } set-tool-dim
     { 10 10 } <filled-border>
     f track-add
     vertical <track>
-        <shelf> 1/2 >>align { 40 0 } >>gap
-            model <node-pile> add-gadget
-            model <result-gadget> add-gadget
-            model <graph-gadget> add-gadget 
-            { 10 10 } <border> <scroller> 1 track-add
+        model <content-gadget> { 10 10 } <border> <scroller> 1 track-add
         f <model> <completion-gadget> f track-add
     1 track-add
     model <vocab-gadget> { 10 10 } <filled-border> <scroller> f track-add

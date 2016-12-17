@@ -9,7 +9,7 @@ TUPLE: environment-gadget < tool ;
 TUPLE: plus-button-pile < pack ;
 TUPLE: node-pile < pack ;
 TUPLE: graph-gadget < gadget  { counter initial: 0 } ;
-TUPLE: result-gadget < pack ;
+TUPLE: content-gadget < pack ;
 TUPLE: vocab-gadget < pack ;
 TUPLE: node-gadget < border  left right below above immobile? ;
 TUPLE: connector-gadget < icon  links ;

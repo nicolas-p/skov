@@ -42,14 +42,11 @@ SINGLETON: right
     [ left-node right-node register-right drop
       right-node left-node register-left drop ] when ;
 
-: common-nodes? ( seq seq -- ? )
-    intersect empty? not ;
-
 : process-connector-row ( seq -- )
     dup
     [ [ [ right all-nodes-above/below ]
         [ left all-nodes-above/below ] bi*
-        [ common-nodes? ]
+        [ intersects? ]
         [ reject-common [ assign-left-right ] cartesian-each ]
         [ [ assign-left-right ] 2each ] smart-if
       ] each-pair ] when-more-than-one
@@ -127,11 +124,8 @@ DEFER: horizontal-movement
 : place-nodes ( graph -- graph )
     0 >>counter find-relations [ dup no-movement? ] [ move-nodes ] until ;
 
-: add-nodes ( graph -- graph )
-    dup control-value contents>> connected [ <node-gadget> add-gadget ] each ;
-
-: <graph-gadget> ( model -- graph-gadget )
-    graph-gadget new swap >>model ;
+: add-nodes ( seq graph -- graph )
+    swap connected [ <node-gadget> ] map add-gadgets ;
 
 : top-left-corner ( graph -- xy )
     nodes [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;
@@ -142,9 +136,8 @@ DEFER: horizontal-movement
 : fix-locations ( graph -- graph )
     dup [ top-left-corner ] keep nodes [ swap '[ _ v- ] change-loc drop ] with each ;
 
-M: graph-gadget model-changed
-    dup clear-gadget swap value>> [ definition? ]
-    [ ?define add-nodes add-connections place-nodes fix-locations ] smart-when* drop ;
+: <graph-gadget> ( seq -- graph-gadget )
+    graph-gadget new add-nodes add-connections place-nodes fix-locations ;
 
 M: graph-gadget pref-dim*
     bottom-right-corner ;

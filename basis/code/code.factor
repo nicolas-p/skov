@@ -2,8 +2,8 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
 compiler.units effects fry hashtables.private kernel listener
-locals math math.parser namespaces sequences splitting
-ui.gadgets vectors vocabs.parser ;
+locals math math.parser namespaces sequences sequences.deep sets
+splitting ui.gadgets vectors vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
@@ -257,3 +257,18 @@ vocab new "●" >>name skov-root set-global
       { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]
     } cond ;
+
+: neighbors ( node -- seq )
+    inputs connected [ link>> parent>> ] map ;
+
+: connected-nodes ( node -- seq )
+    dup neighbors [ connected-nodes ] map 2array flatten members ;
+
+:: gather-graphs ( seq graph -- seq )
+    seq [ graph subset? ] reject dup [ graph swap subset? ] any? [ graph suffix ] unless ;
+
+: remove-partial-graphs ( seq -- seq ) 
+    f [ gather-graphs ] reduce ;
+
+: group-connected-nodes ( word -- seq )
+    contents>> connected [ connected-nodes ] map remove-partial-graphs ;

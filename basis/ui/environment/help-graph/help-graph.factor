@@ -15,4 +15,4 @@ IN: ui.environment.help-graph
       inside outside contents>> first order-connectors connect
       outside add-element
     ] each
-    <model> <graph-gadget> { 20 10 } <filled-border> with-background ;
+    contents>> <graph-gadget> { 20 10 } <filled-border> with-background ;
