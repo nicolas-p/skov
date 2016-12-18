@@ -2,7 +2,8 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: calendar calendar.format images.loader io.directories vocabs regexp accessors combinators.smart
 io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
-ui.images splitting system io.files io.encodings.utf8 ui.environment code.import-export parser help help.markup words debugger ;
+ui.images splitting system io.files io.encodings.utf8 ui.tools.environment.common
+code.import-export parser help help.markup words debugger ;
 
 ! Setting Skov version in YYYY-MM-DD format
 gmt timestamp>ymd skov-version set-global
@@ -12,7 +13,7 @@ image-path parent-directory set-current-directory
 
 ! Loading all bitmaps into the image
 { 
-  "vocab:ui/environment/theme/"
+  "vocab:ui/tools/environment/theme/"
   "vocab:definitions/icons/"
   "vocab:ui/theme/images"
 } [ 

@@ -1,11 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code combinators combinators.smart
-kernel locals models namespaces sequences system ui.environment
-ui.environment.actions ui.environment.navigation ui.gadgets
+kernel locals models namespaces sequences system ui.tools.environment.common
+ui.tools.environment.actions ui.tools.environment.navigation ui.gadgets
 ui.gadgets.buttons.round ui.gestures ;
 FROM: code => call ;
-IN: ui.environment.plus-button-pile
+IN: ui.tools.environment.button-pile
 
 : plus-buttons-for-word ( -- seq )
     [ "dark" [ find-env introduce add-to-word ] <plus-button> "Add input     ( I )" >>tooltip
@@ -33,10 +33,10 @@ IN: ui.environment.plus-button-pile
       os macosx = "( ⌘L )" "( Control + L )" ? append >>tooltip
     ] output>array ;
 
-: <plus-button-pile> ( model -- gadget )
-    plus-button-pile new vertical >>orientation swap >>model ;
+: <button-pile> ( model -- gadget )
+    button-pile new vertical >>orientation swap >>model ;
 
-M: plus-button-pile model-changed
+M: button-pile model-changed
     dup clear-gadget swap
     value>> {
       { [ dup class? ] [ drop plus-buttons-for-tuple ] }

@@ -1,6 +1,6 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors kernel locals sequences ui.environment.theme
+USING: accessors kernel locals sequences ui.tools.environment.theme
 ui.gadgets ui.gadgets.buttons ui.pens ui.pens.image ;
 IN: ui.gadgets.buttons.round
 

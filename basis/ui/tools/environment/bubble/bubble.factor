@@ -2,13 +2,13 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
-sequences code code.execution ui.environment
-ui.environment.connection ui.environment.connector
-ui.environment.theme  splitting ui.gadgets
+sequences code code.execution ui.tools.environment.actions ui.tools.environment.common
+ui.tools.environment.connection ui.tools.environment.bubble.connector
+ui.tools.environment.bubble.theme ui.tools.environment.theme splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ui.pens.tile ;
 FROM: code => inputs outputs call ;
-IN: ui.environment.bubble
+IN: ui.tools.environment.bubble
 
 : width ( bubble -- w ) pref-dim first ;
 : half-width ( bubble -- w/2 ) width 2 /i ;
@@ -18,47 +18,8 @@ IN: ui.environment.bubble
 : right-edge ( bubble -- x )  [ left-edge ] [ width ] bi + ;
 : top-edge ( bubble -- y )  loc>> second ;
 
-: ?select ( bubble -- )
-    [ [ find-vocab ] [ find-env ] smart-unless control-value ]
-    [ find-env set-control-value ] bi ;
-
-: select-result ( bubble -- )
-    [ control-value result>> ] [ find-env ] bi set-control-value ;
-
-: bubble-theme ( bubble -- bubble )
-    dup (bubble-theme)
-    [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
-    <tile-pen> >>interior
-    horizontal >>orientation ;
-
 : add-connectors ( bubble -- bubble )
-    dup control-value connectors [ <connector> add-gadget ] each ;
-
-: set-name-and-target ( target name bubble -- )
-    [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
-    [ ?select ] bi ;
-
-: set-node-field-string ( str bubble -- )
-    children>> first editor>> set-editor-string ;
-
-: reset-completion ( completion -- )
-    f >>selected f swap set-control-value ;
-
-: get-completion ( env --  completion )
-    children>> second children>> second ;
-
-:: enter-name ( name bubble -- )
-    gadget control-value call?
-    [ gadget find-env get-completion :> completion
-      completion selected>>
-      [ dup name>> gadget set-name-and-target completion reset-completion ]
-      [ gadget control-value name >>name find-target { 
-          { [ dup length 1 > ] [ completion set-control-value name gadget set-node-field-string ] }
-          { [ dup length 1 = ] [ first name gadget set-name-and-target ] }
-          { [ dup empty? ] [ drop gadget dup control-value unlink remove-from-parent unparent ] }
-        } cond
-      ] if*
-    ] [ f name gadget set-name-and-target ] if ;
+    dup control-value connectors [ <connector> ] map add-gadgets ;
 
 :: add-name-field ( bubble -- bubble )
     bubble dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
@@ -102,8 +63,8 @@ M: bubble layout*
     } cleave ;
 
 M:: bubble pref-dim* ( bubble -- dim )
-    node gadget-child pref-dim first bubble-height +
-    node inputs length node outputs length max bubble-height connector-size - * max
+    bubble gadget-child pref-dim first bubble-height +
+    bubble inputs length bubble outputs length max bubble-height connector-size - * max
     min-node-width max bubble-height connector-size + 2array ;
 
 M: bubble focusable-child*

@@ -1,5 +1,5 @@
 USING: help.markup.private io namespaces sequences
-ui.environment.help-graph ui.gadgets.panes ;
+ui.tools.environment.graph.help-graph ui.gadgets.panes ;
 IN: help.markup
 
 : $graph ( element -- )

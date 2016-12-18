@@ -2,20 +2,14 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code code.factor-abstraction colors.constants
 colors.hex kernel listener locals math.parser models namespaces
-sequences splitting ui.environment ui.environment.bubble
-ui.environment.theme ui.gadgets ui.gadgets.labels
+sequences splitting ui.tools.environment.common ui.tools.environment.bubble
+ui.tools.environment.theme ui.gadgets ui.gadgets.labels
 ui.gadgets.packs ui.pens.solid vocabs ;
 FROM: code => vocab ;
-IN: ui.environment.completion
+IN: ui.tools.environment.completion
 
 : <completion> ( model -- completion )
     completion new swap >>model ;
-
-:: matching-words* ( str -- seq )
-    interactive-vocabs get [ vocab-words ] map concat [ name>> str head? ] filter ;
-
-: matching-words ( str -- seq )
-    [ f ] [ matching-words* ] if-empty ;
 
 :: word-display ( word -- gadget )
     <shelf> 1/2 >>align

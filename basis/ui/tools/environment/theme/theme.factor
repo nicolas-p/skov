@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors colors colors.constants colors.hex io.pathnames
 kernel sequences system ui.images ui.pens.image ui.pens.solid ;
-IN: ui.environment.theme
+IN: ui.tools.environment.theme
 
 CONSTANT: content-background-colour HEXCOLOR: 002b36
 CONSTANT: connection-colour HEXCOLOR: 93A1A1
@@ -29,7 +29,7 @@ CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
     content-background-colour <solid> >>interior ;
 
 : theme-image ( name -- image-name )
-    "vocab:ui/environment/theme/" prepend-path ".png" append <image-name> ;
+    "vocab:ui/tools/environment/theme/" prepend-path ".png" append <image-name> ;
 
 : 2-theme-image ( prefix suffix -- image-name )
     "--" glue theme-image ;

@@ -1,12 +1,15 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays colors combinators
-combinators.short-circuit combinators.smart kernel locals models
-namespaces sequences code ui.environment
-ui.environment.connection ui.environment.theme  system
-ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
+USING: accessors code colors combinators
+combinators.short-circuit combinators.smart kernel sequences
+system ui.tools.environment.common ui.tools.environment.theme ui.gadgets
+ui.pens.image ui.pens.tile ;
 FROM: code => inputs outputs call ;
-IN: ui.environment.connector
+IN: ui.tools.environment.bubble.theme
+
+CONSTANT: connector-size 10
+CONSTANT: bubble-height 28
+CONSTANT: min-node-width 45
 
 : selected? ( bubble -- ? )
     { { [ dup find-vocab not ] [ drop t ] }
@@ -38,8 +41,11 @@ IN: ui.environment.connector
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 
-: <connector> ( value -- connector )
-    <model> connector new swap >>model connector-size dup 2array >>dim ;
+: bubble-theme ( bubble -- bubble )
+    dup (bubble-theme)
+    [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
+    <tile-pen> >>interior
+    horizontal >>orientation ;
 
 : connector-theme ( connector -- connector )
     dup [ control-value { [ node? not ] [ invisible?>> ] } 1&& ] 
@@ -47,56 +53,8 @@ IN: ui.environment.connector
     [ parent>> (bubble-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
-:: link ( connector -- connector )
-    connector find-graph children>>
-    [ outputs [ control-value connector control-value link>> eq? ] filter ] map
-    concat first ;
-
-: add-connections ( graph -- graph )
-    dup connections [ unparent ] each
-    dup nodes
-    [ inputs
-      [ control-value connected? ] filter
-      [ dup link 2dup connect <connection> ] map
-    ] map concat [ add-gadget ] each ;
-
-M: connector connect
-    dupd [ swap suffix ] change-links swap [ swap suffix ] change-links drop ;
-
-: proto-connection>> ( definition-gadget -- pc )
-    children>> [ proto-connection? ] filter first ;
-
-: create-connection ( connector -- )
-    dup hand-gadget get-global
-    [ [ connector? ] bi@ and ]
-    [ [ control-value ] bi@ ?connect ] smart-when*
-    find-env [ ] change-control-value ;
-
-: display-proto-connection ( connector -- )
-    hand-click-loc get-global <proto-connection> add-gadget drop ;
-
-: update-proto-connection ( connector -- )
-    proto-connection>> hand-loc get-global >>loc2 relayout ;
-
-M: connector graft*
-    connector-theme drop ;
-
-M: connector connected?
-    links>> [ connector? ] any? ;
-
-: connector-status-text ( connector -- str )
-    [ control-value name>> ] [ connected? ] bi [ "     ( X  disconnect )" append ] when ;
-
 : make-bigger ( connector -- connector )
     "big" "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
 : make-smaller ( connector -- connector )
     connector-theme ;
-
-connector H{
-    { T{ button-down f f 1 }  [ [ find-vocab not ] [ display-proto-connection ] smart-when* ] }
-    { T{ drag }               [ [ find-vocab not ] [ update-proto-connection ] smart-when* ] }
-    { T{ button-up f f 1 }    [ [ find-vocab not ] [ create-connection ] smart-when* ] }
-    { mouse-enter [ [ make-bigger connector-status-text ] keep show-status ] }
-    { mouse-leave [ make-smaller hide-status ] }
-} set-gestures

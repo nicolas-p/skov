@@ -3,11 +3,11 @@
 USING: accessors arrays assocs code code.execution combinators
 combinators.smart fry kernel locals math math.functions
 math.order math.statistics math.vectors models sequences
-sequences.deep sets sorting ui.environment
-ui.environment.connector ui.environment.bubble
+sequences.deep sets sorting ui.tools.environment.common
+ui.tools.environment.bubble.connector ui.tools.environment.bubble
 ui.gadgets ;
 FROM: code => inputs outputs ;
-IN: ui.environment.graph
+IN: ui.tools.environment.graph
 
 : register-above ( node node' -- node )  [ suffix ] curry change-above ;
 : register-below ( node node' -- node )  [ suffix ] curry change-below ;

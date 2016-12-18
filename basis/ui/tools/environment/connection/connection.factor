@@ -2,10 +2,10 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code combinators.smart kernel
 locals math math.vectors opengl opengl.gl sequences
-specialized-arrays.instances.alien.c-types.float ui.environment
-ui.environment.theme ui.gadgets ui.render ;
+specialized-arrays.instances.alien.c-types.float ui.tools.environment.common
+ui.tools.environment.bubble.theme ui.tools.environment.theme ui.gadgets ui.render ;
 FROM: code => inputs ;
-IN: ui.environment.connection
+IN: ui.tools.environment.connection
 
 :: <connection> ( end start -- connection )
     connection new start >>start end >>end ;

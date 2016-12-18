@@ -2,11 +2,11 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors models namespaces sequences code
-code.execution ui.environment
-ui.gadgets.buttons.round ui.environment.bubble ui.environment.theme
+code.execution ui.tools.environment.common
+ui.gadgets.buttons.round ui.tools.environment.bubble ui.tools.environment.theme
 ui.gadgets ui.gadgets.buttons ui.gadgets.icons ui.gadgets.packs
-ui.gestures ui.environment.actions ;
-IN: ui.environment.navigation
+ui.gestures ui.tools.environment.actions ;
+IN: ui.tools.environment.navigation
 
 TUPLE: space < gadget ;
 : <space> ( -- gadget ) space new ;
@@ -57,7 +57,6 @@ M: space pref-dim*  drop { 0 25 } ;
 M:: navigation model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
-    value ?define
     value parents reverse [ <bubble> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget

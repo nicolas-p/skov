@@ -3,12 +3,56 @@
 USING: accessors code code.execution code.import-export
 combinators combinators.short-circuit combinators.smart kernel
 listener locals math math.order memory namespaces sequences
-ui.environment ui.environment.completion
-ui.environment.connector ui.environment.bubble
 ui.gadgets ui.gadgets.editors ui.gadgets.worlds ui.gestures
-ui.tools.browser ;
+ui.tools.browser ui.tools.environment.common ;
 FROM: code => inputs outputs call ;
-IN: ui.environment.actions
+FROM: vocabs => vocab-words ;
+IN: ui.tools.environment.actions
+
+:: change-control-value ( gadget quot -- )
+    gadget control-value quot call( x -- x ) gadget set-control-value ;
+
+:: change-vocab-control-value ( gadget quot -- )
+    gadget control-value dup [ vocab? ] find-parent quot call( x -- x ) drop gadget set-control-value ;
+
+: ?select ( bubble -- )
+    [ [ find-vocab ] [ find-env ] smart-unless control-value dup ?define ]
+    [ find-env set-control-value ] bi ;
+
+: select-result ( bubble -- )
+    [ control-value result>> ] [ find-env ] bi set-control-value ;
+
+: set-name-and-target ( target name bubble -- )
+    [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
+    [ ?select ] bi ;
+
+: set-node-field-string ( str bubble -- )
+    children>> first editor>> set-editor-string ;
+
+: reset-completion ( completion -- )
+    f >>selected f swap set-control-value ;
+
+: get-completion ( env --  completion )
+    children>> second children>> second ;
+
+:: enter-name ( name bubble -- )
+    bubble control-value call?
+    [ bubble find-env get-completion :> completion
+      completion selected>>
+      [ dup name>> bubble set-name-and-target completion reset-completion ]
+      [ bubble control-value name >>name find-target { 
+          { [ dup length 1 > ] [ completion set-control-value name bubble set-node-field-string ] }
+          { [ dup length 1 = ] [ first name bubble set-name-and-target ] }
+          { [ dup empty? ] [ drop bubble dup control-value unlink remove-from-parent unparent ] }
+        } cond
+      ] if*
+    ] [ f name bubble set-name-and-target ] if ;
+
+: create-connection ( connector -- )
+    dup hand-gadget get-global
+    [ [ connector? ] bi@ and ]
+    [ [ control-value ] bi@ ?connect ] smart-when*
+    find-env [ ] change-control-value ;
 
 : make-keyboard-safe ( env quot -- )
     [ world-focus editor? not ] swap smart-when* ; inline
@@ -66,9 +110,7 @@ IN: ui.environment.actions
 : more-inputs ( env -- )
     [ hand-gadget get-global find-node
       [ [ control-value variadic? ]
-        [ dup control-value input add-from-class inputs last
-          <connector> add-gadget drop
-        ] smart-when*
+        [ [ input add-from-class ] change-control-value drop ] smart-when*
       ] when* drop
     ] make-keyboard-safe ;
 
@@ -88,6 +130,12 @@ IN: ui.environment.actions
       } cond 
     ] make-keyboard-safe ;
 
+:: matching-words* ( str -- seq )
+    interactive-vocabs get [ vocab-words ] map concat [ name>> str head? ] filter ;
+
+: matching-words ( str -- seq )
+    [ f ] [ matching-words* ] if-empty ;
+
 : show-completion ( env -- )
     [ find-world world-focus control-value first matching-words ]
     [ get-completion set-control-value ] bi ;
@@ -105,7 +153,7 @@ IN: ui.environment.actions
 
 :: next-nth-completion ( env n -- )
     env get-completion dup [ control-value ] [ selected>> ] bi
-    n next-nth >>selected redraw-completion drop ;
+    n next-nth >>selected [  ] change-control-value drop ;
 
 :: next-nth-word/completion ( env n -- )
     env dup get-completion control-value 

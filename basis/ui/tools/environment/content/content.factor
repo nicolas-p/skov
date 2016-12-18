@@ -1,11 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code combinators combinators.smart kernel
-locals models sequences strings ui.environment
-ui.environment.graph ui.environment.bubble
-ui.environment.theme ui.gadgets ui.gadgets.icons
+locals models sequences strings ui.tools.environment.common
+ui.tools.environment.graph ui.tools.environment.bubble
+ui.tools.environment.theme ui.gadgets ui.gadgets.icons
 ui.gadgets.labels ui.gadgets.packs ;
-IN: ui.environment.content
+IN: ui.tools.environment.content
 
 : <content> ( model -- gadget )
      content new swap >>model ;

@@ -1,5 +1,5 @@
 USING: kernel listener lists.lazy math.trig namespaces sequences
-ui.environment.environment splitting ui ui.gadgets.borders ;
+ui.tools.environment splitting ui ui.gadgets.borders ;
 IN: ui.tools.listener
 
 : show-listener ( -- ) [ border? ] find-window [ raise-window ] [ environment-window ] if* ;

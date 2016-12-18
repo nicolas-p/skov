@@ -3,10 +3,10 @@
 USING: accessors kernel locals sequences code ui.gadgets
 ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
 FROM: code => inputs outputs ;
-IN: ui.environment
+IN: ui.tools.environment.common
 
 TUPLE: environment < tool ;
-TUPLE: plus-button-pile < pack ;
+TUPLE: button-pile < pack ;
 TUPLE: node-pile < pack ;
 TUPLE: graph < gadget  { counter initial: 0 } ;
 TUPLE: content < pack ;
@@ -35,15 +35,5 @@ M: bubble outputs ( gadget -- seq )
 : find-node ( gadget -- node )  [ bubble? ] find-parent ;
 : find-completion ( gadget -- node )  [ completion? ] find-parent ;
 
-CONSTANT: connector-size 10
-CONSTANT: bubble-height 28
-CONSTANT: min-node-width 45
-
 : vocab-control-value ( gadget -- value )
     control-value [ vocab? ] find-parent ;
-
-:: change-control-value ( gadget quot -- )
-    gadget control-value quot call( x -- x ) gadget set-control-value ;
-
-:: change-vocab-control-value ( gadget quot -- )
-    gadget control-value dup [ vocab? ] find-parent quot call( x -- x ) drop gadget set-control-value ;

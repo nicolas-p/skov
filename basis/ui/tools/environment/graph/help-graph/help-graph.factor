@@ -1,9 +1,9 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code code.factor-abstraction kernel
-locals models sequences ui.environment.graph
-ui.environment.theme ui.gadgets.borders ;
-IN: ui.environment.help-graph
+locals models sequences ui.tools.environment.graph
+ui.tools.environment.theme ui.gadgets.borders ;
+IN: ui.tools.environment.graph.help-graph
 
 :: <help-graph> ( factor-word -- gadget )
     word new

@@ -1,15 +1,15 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code kernel locals models namespaces sequences
-system ui ui.commands ui.environment ui.environment.actions
-ui.environment.completion ui.environment.content
-ui.environment.graph
-ui.environment.plus-button-pile ui.environment.content
-ui.environment.theme ui.environment.navigation ui.gadgets
+system ui ui.commands ui.tools.environment.common ui.tools.environment.actions
+ui.tools.environment.completion ui.tools.environment.content
+ui.tools.environment.graph
+ui.tools.environment.button-pile
+ui.tools.environment.theme ui.tools.environment.navigation ui.gadgets
 ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.packs
 ui.gadgets.scrollers ui.gadgets.status-bar ui.gadgets.tracks
 ui.gestures ui.tools.browser ui.tools.common ;
-IN: ui.environment.environment
+IN: ui.tools.environment
 
 environment { 700 600 } set-tool-dim
 
@@ -21,7 +21,7 @@ environment { 700 600 } set-tool-dim
     horizontal environment new-track model >>model
     vertical <track>
         <help-button> f track-add
-        model <plus-button-pile> { 0 0 } <border> 1 track-add
+        model <button-pile> { 0 0 } <border> 1 track-add
     { 10 10 } <filled-border>
     f track-add
     vertical <track>
