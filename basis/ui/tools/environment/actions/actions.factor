@@ -108,17 +108,17 @@ IN: ui.tools.environment.actions
     ] make-keyboard-safe ;
 
 : more-inputs ( env -- )
-    [ hand-gadget get-global find-node
+    [ dup hand-gadget get-global find-node
       [ [ control-value variadic? ]
-        [ [ input add-from-class ] change-control-value drop ] smart-when*
-      ] when* drop
+        [ [ input add-from-class ] change-control-value ] smart-when*
+      ] when* drop [ ] change-control-value
     ] make-keyboard-safe ;
 
 : less-inputs ( env -- )
-    [ hand-gadget get-global find-node
+    [ dup hand-gadget get-global find-node
       [ [ control-value [ variadic? ] [ inputs length 2 > ] bi and ]
-        [ dup control-value [ but-last ] change-contents drop inputs last unparent ] smart-when*
-      ] when* drop
+        [ [ [ but-last ] change-contents ] change-control-value ] smart-when*
+      ] when* drop [ ] change-control-value
     ] make-keyboard-safe ;
 
 : toggle-result ( env -- )
