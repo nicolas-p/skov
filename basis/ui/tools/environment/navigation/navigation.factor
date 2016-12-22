@@ -39,7 +39,7 @@ M: space pref-dim*  drop { 0 25 } ;
     "There is an error in this word" >>tooltip ;
 
 : <navigation> ( model -- navigation )
-     navigation new swap >>model vertical >>orientation { 0 5 } >>gap 1/2 >>align ;
+     navigation new swap >>model vertical >>orientation { 0 4 } >>gap 1/2 >>align ;
 
 :: ?select-result-button ( navigation -- navigation )
     navigation dup find-env control-value :> env-model
