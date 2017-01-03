@@ -232,14 +232,14 @@ M: output disconnect
      [ calls empty? not ]
      [ defined?>> ]
      [ any-empty-name? not ]
-   } cleave>array t [ and ] reduce ;
+   } cleave>array [ ] all? ;
 
 : error? ( def -- ? )
     { [ complete-graph? not ]
       [ defined?>> not ]
       [ any-empty-name? ] 
       [ contents>> empty? ]
-    } cleave>array f [ or ] reduce ;
+    } cleave>array [ ] any? ;
 
 CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
 
