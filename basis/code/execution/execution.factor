@@ -45,9 +45,20 @@ TUPLE: subtree-introduce  id ;
 : set-output-ids ( def -- def )
     dup contents>> [ outputs ] map concat [ "local" <local> >>id ] map drop ;
 
+:: process-simple-variadic ( seq call -- seq )
+    seq call inputs length 1 - [ call target>> ] replicate append ;
+
+:: process-special-variadic ( seq call -- seq )
+    seq call inputs length
+    call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
+    2array append ;
+
 :: process-variadic ( seq call -- seq )
-    seq call [ variadic? ] [ inputs length 1 - ] [ 1 ] smart-if*
-    [ call target>> ] replicate append ;
+    seq call {
+        { [ dup simple-variadic? ] [ process-simple-variadic ] }
+        { [ dup special-variadic? ] [ process-special-variadic ] }
+        [ target>> suffix ]
+    } cond ;
 
 GENERIC: transform ( node -- compiler-node )
 

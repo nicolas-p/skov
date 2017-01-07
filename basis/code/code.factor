@@ -241,10 +241,17 @@ M: output disconnect
       [ contents>> empty? ]
     } cleave>array [ ] any? ;
 
-CONSTANT: variadic-words { "add" "mul" "and" "or" "min" "max" }
+CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
+CONSTANT: special-variadic-words { "1array" "1sequence" "each" "map" "append" "produce" }
+
+: simple-variadic? ( call -- ? )
+    name>> simple-variadic-words member? ;
+
+: special-variadic? ( call -- ? )
+    name>> special-variadic-words member? ;
 
 : variadic? ( call -- ? )
-    name>> variadic-words member? ;
+    [ simple-variadic? ] [ special-variadic? ] bi or ;
 
 : save-result ( str word  -- )
     swap dupd result new swap >>contents swap >>parent >>result drop ;
