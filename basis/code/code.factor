@@ -3,7 +3,7 @@
 USING: accessors arrays combinators combinators.smart
 compiler.units effects fry hashtables.private kernel listener
 locals math math.parser namespaces sequences sequences.deep sets
-splitting ui.gadgets vectors vocabs.parser ;
+splitting ui.gadgets vectors vocabs.parser combinators.short-circuit ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
@@ -232,14 +232,14 @@ M: output disconnect
      [ calls empty? not ]
      [ defined?>> ]
      [ any-empty-name? not ]
-   } cleave>array [ ] all? ;
+   } 1&& ;
 
 : error? ( def -- ? )
     { [ complete-graph? not ]
       [ defined?>> not ]
       [ any-empty-name? ] 
       [ contents>> empty? ]
-    } cleave>array [ ] any? ;
+    } 1|| ;
 
 CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
 CONSTANT: special-variadic-words { "1array" "1sequence" "each" "map" "append" "produce" }
