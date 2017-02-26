@@ -7,8 +7,7 @@ ui.pens.image ui.pens.tile ;
 FROM: code => inputs outputs call ;
 IN: ui.tools.environment.cell.theme
 
-CONSTANT: cell-height 28
-CONSTANT: min-node-width 45
+CONSTANT: min-cell-size 28
 
 : selected? ( cell -- ? )
     { { [ dup find-vocab not ] [ drop t ] }
@@ -23,10 +22,7 @@ CONSTANT: min-node-width 45
       { { [ dup input/output? ] [ drop "connector" dark-background light-text-colour ] }
         { [ dup vocab? ] [ drop "vocab" orange-background dark-text-colour ] }
         { [ dup text? ] [ drop "text" grey-background dark-text-colour ] }
-        { [ dup class? ] [ drop "class" blue-background dark-text-colour ] }
-        { [ dup slot? ] [ drop "slot" blue-background dark-text-colour ] }
         { [ dup constructor? ] [ drop "constructor" green-background dark-text-colour ] }
-        { [ dup destructor? ] [ drop "destructor" green-background dark-text-colour ] }
         { [ dup accessor? ] [ drop "accessor" green-background dark-text-colour ] }
         { [ dup mutator? ] [ drop "mutator" green-background dark-text-colour ] }
         { [ dup call? ] [ drop "word" green-background dark-text-colour ] }

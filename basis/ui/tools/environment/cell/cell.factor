@@ -52,13 +52,13 @@ M: cell connected?
 M: cell layout*
     { [ call-next-method ]
       [ [ inputs dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
-      [ [ outputs dup ] [ width ] bi spread [ cell-height 2array ] map [ swap loc<< ] 2each ]
+      [ [ outputs dup ] [ width ] bi spread [ min-cell-size 2array ] map [ swap loc<< ] 2each ]
     } cleave ;
 
 M:: cell pref-dim* ( cell -- dim )
-    cell gadget-child pref-dim first cell-height +
-    cell inputs length cell outputs length max cell-height connector-size - * max
-    min-node-width max cell-height connector-size + 2array ;
+    cell gadget-child pref-dim first min-cell-size +
+    cell inputs length cell outputs length max min-cell-size connector-size - * max
+    min-cell-size max min-cell-size connector-size + 2array ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
