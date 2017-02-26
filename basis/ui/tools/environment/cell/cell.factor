@@ -1,14 +1,27 @@
-! Copyright (C) 2015-2016 Nicolas Pénet.
+! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences code code.execution ui.tools.environment.actions ui.tools.environment.common
-ui.tools.environment.cell.connector
-ui.tools.environment.cell.theme ui.tools.environment.theme splitting ui.gadgets
+ui.tools.environment.theme splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
-ui.gestures ui.pens.solid ui.pens.tile ;
+ui.gestures ui.pens.solid ;
 FROM: code => inputs outputs call ;
 IN: ui.tools.environment.cell
+
+CONSTANT: min-cell-size 28
+
+: cell-colors ( cell -- bg-color text-color )
+    control-value
+    { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
+      { [ dup vocab? ] [ drop orange-background dark-text-colour ] }
+      { [ dup text? ] [ drop grey-background dark-text-colour ] }
+      { [ dup call? ] [ drop green-background dark-text-colour ] }
+      { [ dup word? ] [ drop green-background dark-text-colour ] }
+    } cond ;
+
+: cell-theme ( cell -- cell )
+    dup cell-colors drop <solid> >>interior ;
 
 : width ( cell -- w ) pref-dim first ;
 : half-width ( cell -- w/2 ) width 2 /i ;
@@ -18,16 +31,13 @@ IN: ui.tools.environment.cell
 : right-edge ( cell -- x )  [ left-edge ] [ width ] bi + ;
 : top-edge ( cell -- y )  loc>> second ;
 
-: add-connectors ( cell -- cell )
-    dup control-value connectors [ <connector> ] map add-gadgets ;
-
 :: add-name-field ( cell -- cell )
     cell dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
-    cell (cell-theme) :> text-colour :> bg-colour drop
-    bg-colour <solid> >>boundary
-    bg-colour <solid> >>interior
+    cell cell-color :> text-color :> cell-color drop
+    cell-color <solid> >>boundary
+    cell-color <solid> >>interior
     { 0 0 } >>size
-    [ set-font [ text-colour >>foreground bg-colour >>background ] change-font ] change-editor
+    [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
     add-gadget ;
 
 : replace-space ( char -- char )
@@ -41,24 +51,10 @@ IN: ui.tools.environment.cell
     dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
 
 : add-name ( cell -- cell )
-    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if add-connectors ;
+    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if ;
 
 : <cell> ( value -- node )
     <model> cell new swap >>model add-name ;
-
-M: cell connected?
-    connectors [ connected? ] any? ;
-
-M: cell layout*
-    { [ call-next-method ]
-      [ [ inputs dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
-      [ [ outputs dup ] [ width ] bi spread [ min-cell-size 2array ] map [ swap loc<< ] 2each ]
-    } cleave ;
-
-M:: cell pref-dim* ( cell -- dim )
-    cell gadget-child pref-dim first min-cell-size +
-    cell inputs length cell outputs length max min-cell-size connector-size - * max
-    min-cell-size max min-cell-size connector-size + 2array ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
@@ -70,10 +66,7 @@ M: cell graft*
     control-value {
         { [ dup vocab? ] [ drop "Vocabulary" ] }
         { [ dup text? ] [ drop "Text" ] }
-        { [ dup class? ] [ drop "Class" ] }
-        { [ dup slot? ] [ drop "Class slot" ] }
         { [ dup constructor? ] [ drop "Object constructor" ] }
-        { [ dup destructor? ] [ drop "Object destructor" ] }
         { [ dup accessor? ] [ drop "Slot accessor" ] }
         { [ dup mutator? ] [ drop "Slot mutator" ] }
         { [ dup call? ] [ drop "Word" ] }
