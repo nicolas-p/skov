@@ -8,7 +8,7 @@ IN: ui.tools.environment.graph.help-graph
 :: <help-graph> ( factor-word -- gadget )
     word new
     factor-word call-from-factor add-element
-    dup contents>> first contents>> visible
+    dup contents>> first contents>>
     [ :> inside
       inside input? [ introduce ] [ return ] if new
       inside name>> >>name add-connectors :> outside

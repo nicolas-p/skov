@@ -23,7 +23,7 @@ TUPLE: subtree-introduce  id ;
     contents>> last outputs connected first ;
 
 : add-subtree-introduces ( definition -- definition )
-    dup contents>> [ inputs ] map concat unconnected visible
+    dup contents>> [ inputs ] map concat unconnected
     [ subtree-introduce new "local" <local> >>id >>link ] map drop ;
 
 : walk ( node -- seq )
@@ -36,8 +36,8 @@ TUPLE: subtree-introduce  id ;
 : sort-graph ( seq -- seq )
     [ outputs [ connected? not ] all? ] filter [ walk ] map flatten members ;
 
-: input-ids ( node -- seq )  inputs visible [ link>> id>> ] map ;
-: output-ids ( node -- seq )  outputs visible [ id>> ] map ;
+: input-ids ( node -- seq )  inputs [ link>> id>> ] map ;
+: output-ids ( node -- seq )  outputs [ id>> ] map ;
 
 : effect ( def -- effect )
     [ introduces ] [ returns ] bi [ [ factor-name ] map >array ] bi@ <effect> ;

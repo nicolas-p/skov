@@ -23,7 +23,7 @@ TUPLE: constructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
 
-TUPLE: input < element  link invisible? ;
+TUPLE: input < element  link ;
 
 UNION: input/output  introduce return input ;
 
@@ -123,24 +123,16 @@ SINGLETON: recursion
       [ name matching-words-exact ]
     } cond ;
 
-: add-invisible-connector ( node class -- node )
-    new "invisible connector" >>name t >>invisible? add-element ;
-
-: add-invisible-connectors ( node -- node )
-    [ inputs empty? ] [ input add-invisible-connector ] smart-when
-    [ outputs empty? ] [ output add-invisible-connector ] smart-when ;
-
 GENERIC: (add-connectors) ( node -- node )
 M: element (add-connectors)  ;
 M: introduce (add-connectors)  f >>contents dup name>> output add-with-name ;
 M: return (add-connectors)  f >>contents dup name>> input add-with-name ;
-M: text (add-connectors)  f >>contents dup name>> output add-with-name add-invisible-connectors ;
+M: text (add-connectors)  f >>contents dup name>> output add-with-name ;
 
 M: call (add-connectors)
     f >>contents dup in-out
     [ [ input add-with-name ] each ]
-    [ [ output add-with-name ] each ] bi*
-    add-invisible-connectors ;
+    [ [ output add-with-name ] each ] bi* ;
 
 GENERIC: connect ( output input -- )
 
@@ -177,7 +169,6 @@ M: input connected?
 
 : connected ( seq -- seq )  [ connected? ] filter ;
 : unconnected ( seq -- seq )  [ connected? ] reject ;
-: visible ( seq -- seq )  [ invisible?>> ] reject ;
 
 : unevaluated? ( connector -- ? )
     name>> "quot" swap subseq? ;

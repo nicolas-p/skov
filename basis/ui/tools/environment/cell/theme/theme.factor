@@ -43,7 +43,7 @@ CONSTANT: min-cell-size 28
     horizontal >>orientation ;
 
 : connector-theme ( connector -- connector )
-    dup [ control-value { [ node? not ] [ invisible?>> ] } 1&& ] 
+    dup [ control-value node? not ] 
     [ drop "special" ]
     [ parent>> (cell-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
