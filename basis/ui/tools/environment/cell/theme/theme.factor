@@ -7,7 +7,6 @@ ui.pens.image ui.pens.tile ;
 FROM: code => inputs outputs call ;
 IN: ui.tools.environment.cell.theme
 
-CONSTANT: connector-size 10
 CONSTANT: cell-height 28
 CONSTANT: min-node-width 45
 
@@ -52,9 +51,3 @@ CONSTANT: min-node-width 45
     [ drop "special" ]
     [ parent>> (cell-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
-
-: make-bigger ( connector -- connector )
-    "big" "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
-
-: make-smaller ( connector -- connector )
-    connector-theme ;

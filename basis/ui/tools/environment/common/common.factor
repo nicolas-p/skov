@@ -12,22 +12,9 @@ TUPLE: graph < gadget  { counter initial: 0 } ;
 TUPLE: content < pack ;
 TUPLE: navigation < pack ;
 TUPLE: cell < border  left right below above immobile? ;
-TUPLE: connector < icon  links ;
-TUPLE: connection < gadget  start end ;
-TUPLE: proto-connection < gadget  loc1 loc2 ;
 TUPLE: completion < pack  selected ;
 
 : nodes ( gadget -- seq )  children>> [ cell? ] filter ;
-: connections ( gadget -- seq )  children>> [ connection? ] filter ;
-
-M: cell connectors ( gadget -- seq )
-    children>> [ connector? ] filter ;
-
-M: cell inputs ( gadget -- seq )
-    connectors [ control-value [ input? ] [ introduce? ] bi or ] filter ;
-
-M: cell outputs ( gadget -- seq )
-    connectors [ control-value [ output? ] [ return? ] bi or ] filter ;
 
 : find-env ( gadget -- env )  [ environment? ] find-parent ;
 : find-vocab ( gadget -- vocab )  [ navigation? ] find-parent ;

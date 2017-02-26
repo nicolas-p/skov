@@ -3,7 +3,7 @@
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences code code.execution ui.tools.environment.actions ui.tools.environment.common
-ui.tools.environment.connection ui.tools.environment.cell.connector
+ui.tools.environment.cell.connector
 ui.tools.environment.cell.theme ui.tools.environment.theme splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ui.pens.tile ;
@@ -45,13 +45,6 @@ IN: ui.tools.environment.cell
 
 : <cell> ( value -- node )
     <model> cell new swap >>model add-name ;
-
-:: spread ( connectors width -- seq )
-    connectors length :> nb
-    width nb connector-size * - :> width
-    width nb 1 + /i :> gap
-    nb [ gap ] replicate :> gaps
-    gaps nb iota [ connector-size * connector-size min ] map v+ cum-sum ;
 
 M: cell connected?
     connectors [ connected? ] any? ;

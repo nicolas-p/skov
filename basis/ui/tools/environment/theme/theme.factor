@@ -5,7 +5,6 @@ kernel sequences system ui.images ui.pens.image ui.pens.solid ;
 IN: ui.tools.environment.theme
 
 CONSTANT: content-background-colour HEXCOLOR: 002b36
-CONSTANT: connection-colour HEXCOLOR: 93A1A1
 
 CONSTANT: faded-background HEXCOLOR: 0E4153
 CONSTANT: dark-background HEXCOLOR: 214A53

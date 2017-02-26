@@ -137,7 +137,7 @@ DEFER: horizontal-movement
     dup [ top-left-corner ] keep nodes [ swap '[ _ v- ] change-loc drop ] with each ;
 
 : <graph> ( seq -- graph )
-    graph new add-nodes add-connections place-nodes fix-locations ;
+    graph new add-nodes place-nodes fix-locations ;
 
 M: graph pref-dim*
     bottom-right-corner ;
