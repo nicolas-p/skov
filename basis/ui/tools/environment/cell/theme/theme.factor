@@ -5,20 +5,20 @@ combinators.short-circuit combinators.smart kernel sequences
 system ui.tools.environment.common ui.tools.environment.theme ui.gadgets
 ui.pens.image ui.pens.tile ;
 FROM: code => inputs outputs call ;
-IN: ui.tools.environment.bubble.theme
+IN: ui.tools.environment.cell.theme
 
 CONSTANT: connector-size 10
-CONSTANT: bubble-height 28
+CONSTANT: cell-height 28
 CONSTANT: min-node-width 45
 
-: selected? ( bubble -- ? )
+: selected? ( cell -- ? )
     { { [ dup find-vocab not ] [ drop t ] }
       { [ dup control-value name>> empty? ] [ drop t ] }
       { [ dup control-value vocab? ] [ [ find-env vocab-control-value ] [ control-value ] bi eq? ] }
       { [ dup control-value definition? ] [ [ find-env control-value ] [ control-value ] bi eq? ] }
     } cond ;
 
-: (bubble-theme) ( bubble -- img-name bg-colour text-colour )
+: (cell-theme) ( cell -- img-name bg-colour text-colour )
     dup selected?
     [ control-value
       { { [ dup input/output? ] [ drop "connector" dark-background light-text-colour ] }
@@ -41,8 +41,8 @@ CONSTANT: min-node-width 45
       } cond ] if
     [ os windows? not [ drop transparent ] when ] dip ;
 
-: bubble-theme ( bubble -- bubble )
-    dup (bubble-theme)
+: cell-theme ( cell -- cell )
+    dup (cell-theme)
     [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
     <tile-pen> >>interior
     horizontal >>orientation ;
@@ -50,7 +50,7 @@ CONSTANT: min-node-width 45
 : connector-theme ( connector -- connector )
     dup [ control-value { [ node? not ] [ invisible?>> ] } 1&& ] 
     [ drop "special" ]
-    [ parent>> (bubble-theme) 2drop ] smart-if
+    [ parent>> (cell-theme) 2drop ] smart-if
     "connector" 2-theme-image <image-pen> t >>fill? >>interior ;
 
 : make-bigger ( connector -- connector )

@@ -3,7 +3,7 @@
 USING: accessors arrays combinators.smart kernel locals math
 math.order math.vectors models namespaces sequences code
 code.execution ui.tools.environment.common
-ui.gadgets.buttons.round ui.tools.environment.bubble ui.tools.environment.theme
+ui.gadgets.buttons.round ui.tools.environment.cell ui.tools.environment.theme
 ui.gadgets ui.gadgets.buttons ui.gadgets.icons ui.gadgets.packs
 ui.gestures ui.tools.environment.actions ;
 IN: ui.tools.environment.navigation
@@ -46,26 +46,26 @@ M: space pref-dim*  drop { 0 25 } ;
     dup children>> [ pack? ] filter [ gadget-child button? ] filter
     [ children>> first2 control-value result>> env-model eq? >>selected? drop ] each ;
 
-: ?add-result-button ( bubble -- gadget )
+: ?add-result-button ( cell -- gadget )
     dup control-value executable? 
     [ <shelf> 1/2 >>align <result-button> add-gadget swap add-gadget ] when ;
 
-: ?add-error-button ( bubble -- gadget )
-    dup bubble? [ dup control-value error? 
+: ?add-error-button ( cell -- gadget )
+    dup cell? [ dup control-value error? 
     [ <shelf> 1/2 >>align <error-button> add-gadget swap add-gadget ] when ] when ;
 
 M:: navigation model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> [ vocab? ] find-parent :> value
-    value parents reverse [ <bubble> add-gadget ] each
+    value parents reverse [ <cell> add-gadget ] each
     <space> add-gadget
     <separator> add-gadget
     <space> add-gadget
-    value vocabs [ <bubble> add-gadget ] each
+    value vocabs [ <cell> add-gadget ] each
     <new-vocab-button> add-gadget
-    value classes [ <bubble> add-gadget ] each
+    value classes [ <cell> add-gadget ] each
     <new-tuple-button> add-gadget
-    value words [ <bubble> ?add-result-button ?add-error-button add-gadget ] each
+    value words [ <cell> ?add-result-button ?add-error-button add-gadget ] each
     <new-word-button> add-gadget
     ?select-result-button drop ;
 

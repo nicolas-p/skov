@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code code.factor-abstraction colors.constants
 colors.hex kernel listener locals math.parser models namespaces
-sequences splitting ui.tools.environment.common ui.tools.environment.bubble
+sequences splitting ui.tools.environment.common ui.tools.environment.cell
 ui.tools.environment.theme ui.gadgets ui.gadgets.labels
 ui.gadgets.packs ui.pens.solid vocabs ;
 FROM: code => vocab ;
@@ -13,8 +13,8 @@ IN: ui.tools.environment.completion
 
 :: word-display ( word -- gadget )
     <shelf> 1/2 >>align
-    word vocabulary>> "." split [ vocab new swap >>name <bubble> add-gadget ] each
-    word call-from-factor <bubble> add-gadget ;
+    word vocabulary>> "." split [ vocab new swap >>name <cell> add-gadget ] each
+    word call-from-factor <cell> add-gadget ;
 
 :: add-selection-arrow ( completion -- completion )
     completion dup children>> [ label? ] reject

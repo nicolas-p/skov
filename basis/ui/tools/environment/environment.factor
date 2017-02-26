@@ -61,10 +61,10 @@ environment "general" f {
     { T{ key-up f f "K" } add-class }
     { T{ key-up f f "x" } disconnect-connector }
     { T{ key-up f f "X" } disconnect-connector }
-    { T{ key-up f f "r" } remove-bubble }
-    { T{ key-up f f "R" } remove-bubble }
-    { T{ key-up f f "e" } edit-bubble }
-    { T{ key-up f f "E" } edit-bubble }
+    { T{ key-up f f "r" } remove-cell }
+    { T{ key-up f f "R" } remove-cell }
+    { T{ key-up f f "e" } edit-cell }
+    { T{ key-up f f "E" } edit-cell }
     { T{ key-up f f "RIGHT" } more-inputs }
     { T{ key-up f f "LEFT" } less-inputs }
     { T{ key-up f f "h" } show-help-browser }

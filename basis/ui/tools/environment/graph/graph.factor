@@ -4,7 +4,7 @@ USING: accessors arrays assocs code code.execution combinators
 combinators.smart fry kernel locals math math.functions
 math.order math.statistics math.vectors models sequences
 sequences.deep sets sorting ui.tools.environment.common
-ui.tools.environment.bubble.connector ui.tools.environment.bubble
+ui.tools.environment.cell.connector ui.tools.environment.cell
 ui.gadgets ;
 FROM: code => inputs outputs ;
 IN: ui.tools.environment.graph
@@ -125,7 +125,7 @@ DEFER: horizontal-movement
     0 >>counter find-relations [ dup no-movement? ] [ move-nodes ] until ;
 
 : add-nodes ( seq graph -- graph )
-    swap connected [ <bubble> ] map add-gadgets ;
+    swap connected [ <cell> ] map add-gadgets ;
 
 : top-left-corner ( graph -- xy )
     nodes [ 0 0 ] [ [ loc>> ] map unzip [ infimum ] bi@ ] if-empty 2array ;

@@ -3,27 +3,27 @@
 USING: accessors arrays combinators combinators.smart fry kernel
 locals math math.order math.statistics math.vectors models
 sequences code code.execution ui.tools.environment.actions ui.tools.environment.common
-ui.tools.environment.connection ui.tools.environment.bubble.connector
-ui.tools.environment.bubble.theme ui.tools.environment.theme splitting ui.gadgets
+ui.tools.environment.connection ui.tools.environment.cell.connector
+ui.tools.environment.cell.theme ui.tools.environment.theme splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ui.pens.tile ;
 FROM: code => inputs outputs call ;
-IN: ui.tools.environment.bubble
+IN: ui.tools.environment.cell
 
-: width ( bubble -- w ) pref-dim first ;
-: half-width ( bubble -- w/2 ) width 2 /i ;
+: width ( cell -- w ) pref-dim first ;
+: half-width ( cell -- w/2 ) width 2 /i ;
 
-: left-edge ( bubble -- x )  loc>> first ;
-: center ( bubble -- x )  [ left-edge ] [ half-width ] bi + ;
-: right-edge ( bubble -- x )  [ left-edge ] [ width ] bi + ;
-: top-edge ( bubble -- y )  loc>> second ;
+: left-edge ( cell -- x )  loc>> first ;
+: center ( cell -- x )  [ left-edge ] [ half-width ] bi + ;
+: right-edge ( cell -- x )  [ left-edge ] [ width ] bi + ;
+: top-edge ( cell -- y )  loc>> second ;
 
-: add-connectors ( bubble -- bubble )
+: add-connectors ( cell -- cell )
     dup control-value connectors [ <connector> ] map add-gadgets ;
 
-:: add-name-field ( bubble -- bubble )
-    bubble dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
-    bubble (bubble-theme) :> text-colour :> bg-colour drop
+:: add-name-field ( cell -- cell )
+    cell dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
+    cell (cell-theme) :> text-colour :> bg-colour drop
     bg-colour <solid> >>boundary
     bg-colour <solid> >>interior
     { 0 0 } >>size
@@ -37,14 +37,14 @@ IN: ui.tools.environment.bubble
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-: add-name-label ( bubble -- bubble )
+: add-name-label ( cell -- cell )
     dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
 
-: add-name ( bubble -- bubble )
+: add-name ( cell -- cell )
     [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if add-connectors ;
 
-: <bubble> ( value -- node )
-    <model> bubble new swap >>model add-name ;
+: <cell> ( value -- node )
+    <model> cell new swap >>model add-name ;
 
 :: spread ( connectors width -- seq )
     connectors length :> nb
@@ -53,27 +53,27 @@ IN: ui.tools.environment.bubble
     nb [ gap ] replicate :> gaps
     gaps nb iota [ connector-size * connector-size min ] map v+ cum-sum ;
 
-M: bubble connected?
+M: cell connected?
     connectors [ connected? ] any? ;
 
-M: bubble layout*
+M: cell layout*
     { [ call-next-method ]
       [ [ inputs dup ] [ width ] bi spread [ 0 2array ] map [ swap loc<< ] 2each ]
-      [ [ outputs dup ] [ width ] bi spread [ bubble-height 2array ] map [ swap loc<< ] 2each ]
+      [ [ outputs dup ] [ width ] bi spread [ cell-height 2array ] map [ swap loc<< ] 2each ]
     } cleave ;
 
-M:: bubble pref-dim* ( bubble -- dim )
-    bubble gadget-child pref-dim first bubble-height +
-    bubble inputs length bubble outputs length max bubble-height connector-size - * max
-    min-node-width max bubble-height connector-size + 2array ;
+M:: cell pref-dim* ( cell -- dim )
+    cell gadget-child pref-dim first cell-height +
+    cell inputs length cell outputs length max cell-height connector-size - * max
+    min-node-width max cell-height connector-size + 2array ;
 
-M: bubble focusable-child*
+M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
 
-M: bubble graft*
-   bubble-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
+M: cell graft*
+   cell-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
 
-: node-type ( bubble -- str )
+: node-type ( cell -- str )
     control-value {
         { [ dup vocab? ] [ drop "Vocabulary" ] }
         { [ dup text? ] [ drop "Text" ] }
@@ -89,12 +89,12 @@ M: bubble graft*
         { [ dup return? ] [ drop "Output" ] }
     } cond ;
 
-: node-status-text ( bubble -- str )
+: node-status-text ( cell -- str )
     [ node-type ] [ control-value ] bi
     path "." " > " replace [ " defined in " swap append append ] when*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
-bubble H{
+cell H{
     { T{ button-up f f 1 }  [ ?select ] }
     { mouse-enter           [ [ node-status-text ] keep show-status ] }
     { mouse-leave           [ hide-status ] }

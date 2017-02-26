@@ -15,18 +15,18 @@ IN: ui.tools.environment.actions
 :: change-vocab-control-value ( gadget quot -- )
     gadget control-value dup [ vocab? ] find-parent quot call( x -- x ) drop gadget set-control-value ;
 
-: ?select ( bubble -- )
+: ?select ( cell -- )
     [ [ find-vocab ] [ find-env ] smart-unless control-value dup ?define ]
     [ find-env set-control-value ] bi ;
 
-: select-result ( bubble -- )
+: select-result ( cell -- )
     [ control-value result>> ] [ find-env ] bi set-control-value ;
 
-: set-name-and-target ( target name bubble -- )
+: set-name-and-target ( target name cell -- )
     [ control-value swap >>name swap [ >>target ] when* add-connectors drop ]
     [ ?select ] bi ;
 
-: set-node-field-string ( str bubble -- )
+: set-node-field-string ( str cell -- )
     children>> first editor>> set-editor-string ;
 
 : reset-completion ( completion -- )
@@ -35,18 +35,18 @@ IN: ui.tools.environment.actions
 : get-completion ( env --  completion )
     children>> second children>> second ;
 
-:: enter-name ( name bubble -- )
-    bubble control-value call?
-    [ bubble find-env get-completion :> completion
+:: enter-name ( name cell -- )
+    cell control-value call?
+    [ cell find-env get-completion :> completion
       completion selected>>
-      [ dup name>> bubble set-name-and-target completion reset-completion ]
-      [ bubble control-value name >>name find-target { 
-          { [ dup length 1 > ] [ completion set-control-value name bubble set-node-field-string ] }
-          { [ dup length 1 = ] [ first name bubble set-name-and-target ] }
-          { [ dup empty? ] [ drop bubble dup control-value unlink remove-from-parent unparent ] }
+      [ dup name>> cell set-name-and-target completion reset-completion ]
+      [ cell control-value name >>name find-target { 
+          { [ dup length 1 > ] [ completion set-control-value name cell set-node-field-string ] }
+          { [ dup length 1 = ] [ first name cell set-name-and-target ] }
+          { [ dup empty? ] [ drop cell dup control-value unlink remove-from-parent unparent ] }
         } cond
       ] if*
-    ] [ f name bubble set-name-and-target ] if ;
+    ] [ f name cell set-name-and-target ] if ;
 
 : create-connection ( connector -- )
     dup hand-gadget get-global
@@ -94,7 +94,7 @@ IN: ui.tools.environment.actions
       find-env [ ] change-control-value drop
     ] make-keyboard-safe ;
 
-: remove-bubble ( env -- )
+: remove-cell ( env -- )
     [ hand-gadget get-global find-node
       [ [ outputs [ links>> [ control-value disconnect ] each ] each ]
         [ control-value dup dup forget-alt remove-from-parent
@@ -102,7 +102,7 @@ IN: ui.tools.environment.actions
       ] [ drop ] if*
     ] make-keyboard-safe ;
 
-: edit-bubble ( env -- )
+: edit-cell ( env -- )
     [ hand-gadget get-global find-node
       [ dup f f rot set-name-and-target request-focus ] when* drop
     ] make-keyboard-safe ;

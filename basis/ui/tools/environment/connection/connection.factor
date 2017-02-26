@@ -3,7 +3,7 @@
 USING: accessors arrays code combinators.smart kernel
 locals math math.vectors opengl opengl.gl sequences
 specialized-arrays.instances.alien.c-types.float ui.tools.environment.common
-ui.tools.environment.bubble.theme ui.tools.environment.theme ui.gadgets ui.render ;
+ui.tools.environment.cell.theme ui.tools.environment.theme ui.gadgets ui.render ;
 FROM: code => inputs ;
 IN: ui.tools.environment.connection
 

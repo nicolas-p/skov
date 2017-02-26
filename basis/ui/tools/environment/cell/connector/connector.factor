@@ -3,10 +3,10 @@
 USING: accessors arrays colors combinators
 combinators.short-circuit combinators.smart kernel locals models
 namespaces sequences code ui.tools.environment.actions ui.tools.environment.common
-ui.tools.environment.connection ui.tools.environment.bubble.theme system
+ui.tools.environment.connection ui.tools.environment.cell.theme system
 ui.gadgets ui.gadgets.worlds ui.gestures ui.pens.image ;
 FROM: code => inputs outputs call ;
-IN: ui.tools.environment.bubble.connector
+IN: ui.tools.environment.cell.connector
 
 : <connector> ( value -- connector )
     <model> connector new swap >>model connector-size dup 2array >>dim ;
