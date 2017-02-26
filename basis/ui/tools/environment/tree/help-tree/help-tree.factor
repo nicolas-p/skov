@@ -3,9 +3,9 @@
 USING: accessors code code.factor-abstraction kernel
 locals models sequences ui.tools.environment.graph
 ui.tools.environment.theme ui.gadgets.borders ;
-IN: ui.tools.environment.graph.help-graph
+IN: ui.tools.environment.graph.help-tree
 
-:: <help-graph> ( factor-word -- gadget )
+:: <help-tree> ( factor-word -- gadget )
     word new
     factor-word call-from-factor add-element
     dup contents>> first contents>>
