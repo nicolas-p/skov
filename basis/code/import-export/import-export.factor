@@ -18,10 +18,6 @@ SYMBOL: skov-version
 : vocab-directory-path ( elt -- str )
     parents reverse rest [ factor-name ] map path-separator join work-directory swap append-path ;
 
-: set-output-ids ( def -- def )
-    dup contents>> [ outputs ] map concat dup length iota [ >>id drop ] 2each
-    dup contents>> [ inputs ] map concat unconnected [ f >>link drop ] each ;
-
 GENERIC: (export) ( element -- seq )
 
 : export ( element -- seq )
@@ -30,23 +26,14 @@ GENERIC: (export) ( element -- seq )
 M: vocab (export)
     definitions [ export ] map >array 1array ;
 
-M: definition (export)
-    set-output-ids contents>> [ export ] map >array 1array ;
+M: word (export)
+    contents>> [ export ] map >array 1array ;
 
 M: call (export)
     [ path ] [ contents>> [ export ] map >array ] bi 2array ;
 
 M: node (export)
     contents>> [ export ] map >array 1array ;
-
-M: slot (export)
-    initial-value>> 1array ;
-
-M: input (export)
-    [ invisible?>> ] [ link>> dup [ id>> ] when ] bi 2array ;
-
-M: output (export)
-    [ invisible?>> ] [ id>> ] bi 2array ;
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
@@ -56,14 +43,6 @@ M: output (export)
 
 : export-vocabs ( -- )
     skov-root get-global write-vocab-file ;
-
-:: find-output ( id def -- output )
-    def contents>> [ outputs ] map concat [ id>> dup id = and ] filter [ f ] [ first ] if-empty ;
-
-:: ids>links ( def -- def )
-    def contents>>
-    [ inputs [ [ def find-output ] change-link ] map ] map
-    drop def ;
 
 :: find-target-with-path ( call -- )
     call target>> :> this-path
@@ -87,23 +66,14 @@ GENERIC: (import) ( seq element -- element )
 M: vocab (import)
     swap first [ import add-element ] each ;
 
-M: definition (import)
-    swap first [ import add-element ] each ids>links ;
+M: word (import)
+    swap first import add-element ;
 
 M: call (import)
     swap first2 [ >>target ] [ [ import add-element ] each ] bi* ;
 
 M: node (import)
-    swap first [ import add-element ] each ;
-
-M: slot (import)
-    swap first >>initial-value ;
-
-M: input (import)
-    swap first2 [ >>invisible? ] [ >>link ] bi* ;
-
-M: output (import)
-    swap first2 [ >>invisible? ] [ >>id ] bi* ;
+    swap first import add-element ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
