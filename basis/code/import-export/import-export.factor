@@ -63,17 +63,11 @@ GENERIC: (import) ( seq element -- element )
 : import ( seq -- element )
     unclip new swap unclip swapd >>name (import) ;
 
-M: vocab (import)
+M: element (import)
     swap first [ import add-element ] each ;
-
-M: word (import)
-    swap first import add-element ;
 
 M: call (import)
     swap first2 [ >>target ] [ [ import add-element ] each ] bi* ;
-
-M: node (import)
-    swap first import add-element ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
