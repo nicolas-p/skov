@@ -12,44 +12,33 @@ IN: code
 TUPLE: element < identity-tuple  name parent contents ;
 
 TUPLE: vocab < element ;
-
-TUPLE: definition < element  defined? alt ;
-TUPLE: word < definition  result ;
-TUPLE: class < definition ;
+TUPLE: word < element  defined? alt result ;
 
 TUPLE: node < element ;
 TUPLE: introduce < node ;
 TUPLE: return < node ;
 TUPLE: call < node  target ;
 TUPLE: text < node ;
-TUPLE: slot < node  initial-value ;
 TUPLE: constructor < call ;
-TUPLE: destructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
 
 TUPLE: input < element  link invisible? ;
-TUPLE: output < element  id invisible? ;
 
-UNION: input/output  introduce return input output ;
+UNION: input/output  introduce return input ;
 
 TUPLE: result < element ;
 
 : vocabs ( elt -- seq )  contents>> [ vocab? ] filter ;
-: definitions ( elt -- seq )  contents>> [ definition? ] filter ;
 : words ( elt -- seq )  contents>> [ word? ] filter ;
-: classes ( elt -- seq )  contents>> [ class? ] filter ;
 : calls ( elt -- seq )  contents>> [ call? ] filter ;
 : introduces ( elt -- seq )  contents>> [ introduce? ] filter ;
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
-: slots ( elt -- seq )  contents>> [ slot? ] filter ;
 
 GENERIC: connectors ( elt -- seq )
 GENERIC: inputs ( elt -- seq )
-GENERIC: outputs ( elt -- seq )
 M: element connectors ( elt -- seq )  contents>> [ input/output? ] filter ;
 M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
-M: element outputs ( elt -- seq )  contents>> [ output? ] filter ;
 
 :: add-element ( parent child -- parent )
      child parent >>parent parent [ ?push ] change-contents ;
@@ -82,9 +71,6 @@ M: call factor-name
 M: constructor factor-name
     name>> " (constructor)" append ;
 
-M: destructor factor-name
-    name>> " (destructor)" append ;
-
 M: accessor factor-name
     name>> " (accessor)" append ;
 
@@ -96,7 +82,7 @@ GENERIC: path ( obj -- str )
 M: vocab path
     parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
-M: definition path
+M: word path
     parents reverse rest but-last [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
 
 M: call path
@@ -189,9 +175,6 @@ M: node connected?
 M: input connected?
     link>> output? ;
 
-M: output connected?
-    dup parent>> parent>> contents>> [ inputs [ link>> ] map ] map concat [ eq? ] with any? ;
-
 : connected ( seq -- seq )  [ connected? ] filter ;
 : unconnected ( seq -- seq )  [ connected? ] reject ;
 : visible ( seq -- seq )  [ invisible?>> ] reject ;
@@ -210,9 +193,6 @@ GENERIC: disconnect ( connector -- )
 
 M: input disconnect
     f >>link drop ;
-
-M: output disconnect
-    links [ disconnect ] each ;
 
 : ?connect ( connector connector -- )
     order-connectors 
