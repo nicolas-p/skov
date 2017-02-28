@@ -6,7 +6,7 @@ sequences code code.execution ui.tools.environment.actions ui.tools.environment.
 ui.tools.environment.theme splitting ui.gadgets
 ui.gadgets.editors ui.gadgets.labels ui.gadgets.worlds
 ui.gestures ui.pens.solid ;
-FROM: code => inputs outputs call ;
+FROM: code => inputs call ;
 IN: ui.tools.environment.cell
 
 CONSTANT: min-cell-size 28
@@ -15,7 +15,7 @@ CONSTANT: min-cell-size 28
     control-value
     { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup vocab? ] [ drop orange-background dark-text-colour ] }
-      { [ dup text? ] [ drop grey-background dark-text-colour ] }
+      { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
       { [ dup word? ] [ drop green-background dark-text-colour ] }
     } cond ;
@@ -33,7 +33,7 @@ CONSTANT: min-cell-size 28
 
 :: add-name-field ( cell -- cell )
     cell dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
-    cell cell-color :> text-color :> cell-color drop
+    cell cell-colors :> text-color :> cell-color
     cell-color <solid> >>boundary
     cell-color <solid> >>interior
     { 0 0 } >>size
@@ -47,14 +47,16 @@ CONSTANT: min-cell-size 28
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-: add-name-label ( cell -- cell )
-    dup control-value name>> make-spaces-visible <label> set-font add-gadget ;
+:: add-name-label ( cell -- cell )
+    cell dup control-value name>> make-spaces-visible <label> set-font 
+    [ cell cell-colors nip >>foreground ] change-font add-gadget ;
 
 : add-name ( cell -- cell )
     [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if ;
 
 : <cell> ( value -- node )
-    <model> cell new swap >>model add-name ;
+    <model> cell new { 10 5 } >>size min-cell-size dup 2array >>min-dim 
+    swap >>model add-name ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
@@ -81,7 +83,7 @@ M: cell graft*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
 cell H{
-    { T{ button-up f f 1 }  [ ?select ] }
+    { T{ button-up f f 1 }  [ edit-cell ] }
     { mouse-enter           [ [ node-status-text ] keep show-status ] }
     { mouse-leave           [ hide-status ] }
 } set-gestures

@@ -1,11 +1,13 @@
 ! Copyright (C) 2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: ui.tools.environment.common
-ui.tools.environment.cell ui.gadgets ;
-FROM: code => inputs outputs ;
+USING: accessors locals sequences ui.gadgets ui.gadgets.packs
+ui.tools.environment.cell ui.tools.environment.common ;
 IN: ui.tools.environment.tree
 
-:: <tree> ( node -- shelf )
-    <shelf>
-    <pile> node contents>> [ <tree> ] map add-gadgets add-gadget
-    node add-gadget ;
+:: build-tree ( node -- shelf )
+    <shelf> { 3 3 } >>gap 1 >>fill
+    <pile> { 3 3 } >>gap 1 >>align node contents>> [ build-tree ] map add-gadgets add-gadget
+    node <cell> add-gadget ;
+
+:: <tree> ( word -- pile )
+    <pile> word contents>> [ build-tree ] map add-gadgets ;

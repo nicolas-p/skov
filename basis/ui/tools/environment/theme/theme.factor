@@ -7,11 +7,11 @@ IN: ui.tools.environment.theme
 CONSTANT: content-background-colour HEXCOLOR: 002b36
 
 CONSTANT: faded-background HEXCOLOR: 0E4153
-CONSTANT: dark-background HEXCOLOR: 214A53
-CONSTANT: orange-background HEXCOLOR: FF6F5A
-CONSTANT: green-background HEXCOLOR: A8D83B
-CONSTANT: grey-background HEXCOLOR: E5ECEC
-CONSTANT: blue-background HEXCOLOR: 4DBDFF
+CONSTANT: dark-background HEXCOLOR: 355E67
+CONSTANT: orange-background HEXCOLOR: E95813
+CONSTANT: green-background HEXCOLOR: 7CBB00
+CONSTANT: white-background HEXCOLOR: D0D0D0
+CONSTANT: blue-background HEXCOLOR: 1096FD
 
 CONSTANT: content-text-colour HEXCOLOR: E5E5E5
 CONSTANT: dark-text-colour COLOR: black
