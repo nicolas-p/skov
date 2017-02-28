@@ -15,7 +15,7 @@ TUPLE: vocab < element ;
 TUPLE: word < element  defined? alt result ;
 
 TUPLE: node < element ;
-TUPLE: introduce < node ;
+TUPLE: introduce < node id ;
 TUPLE: return < node ;
 TUPLE: call < node  target ;
 TUPLE: text < node ;
@@ -29,10 +29,16 @@ UNION: input/output  introduce return input ;
 
 TUPLE: result < element ;
 
+: walk ( node -- seq )
+    [ contents>> [ walk ] map ] [ ] bi 2array ;
+
+: sort-tree ( word -- seq )
+    contents>> [ walk ] map flatten ;
+
 : vocabs ( elt -- seq )  contents>> [ vocab? ] filter ;
 : words ( elt -- seq )  contents>> [ word? ] filter ;
-: calls ( elt -- seq )  contents>> [ call? ] filter ;
-: introduces ( elt -- seq )  contents>> [ introduce? ] filter ;
+: calls ( elt -- seq )  sort-tree [ call? ] filter ;
+: introduces ( elt -- seq )  sort-tree [ introduce? ] filter ;
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
 
 GENERIC: connectors ( elt -- seq )
@@ -232,7 +238,7 @@ vocab new "●" >>name skov-root set-global
 
 : forget-alt ( vocab/def -- )
     { { [ dup vocab? ] [ path [ vocabs:forget-vocab ] with-compilation-unit ] }
-      { [ dup definition? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
+      { [ dup word? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]
     } cond ;
 
