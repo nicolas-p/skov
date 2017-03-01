@@ -23,22 +23,19 @@ GENERIC: (export) ( element -- seq )
 : export ( element -- seq )
     [ (export) ] [ name>> prefix ] [ class-of prefix ] tri ;
 
+M: element (export)
+    contents>> [ export ] map >array 1array ;
+
 M: vocab (export)
     words [ export ] map >array 1array ;
-
-M: word (export)
-    contents>> [ export ] map >array 1array ;
 
 M: call (export)
     [ path ] [ contents>> [ export ] map >array ] bi 2array ;
 
-M: node (export)
-    contents>> [ export ] map >array 1array ;
-
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
     vocab factor-name ".skov" append append-path utf8
-    [ "! Skov version " skov-version get-global append print vocab export . ] with-file-writer
+    [ "! Skov version " skov-version get-global append print vocab export [ . ] without-limits ] with-file-writer
     vocab vocabs [ write-vocab-file ] each ;
 
 : export-vocabs ( -- )
