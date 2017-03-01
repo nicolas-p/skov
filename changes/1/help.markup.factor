@@ -1,9 +1,9 @@
 USING: help.markup.private io namespaces sequences
-ui.tools.environment.graph.help-graph ui.gadgets.panes ;
+ui.tools.environment.tree.help-tree ui.gadgets.panes kernel ;
 IN: help.markup
 
 : $graph ( element -- )
-    check-first <help-graph> nl nl output-stream get write-gadget ;
+    check-first <help-tree> nl nl output-stream get write-gadget ;
 
 : $inputs ( element -- )
     "Inputs" $heading
