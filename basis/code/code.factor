@@ -1,4 +1,4 @@
-! Copyright (C) 2015-2016 Nicolas Pénet.
+! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
 compiler.units effects fry hashtables.private kernel listener
@@ -129,58 +129,19 @@ SINGLETON: recursion
       [ name matching-words-exact ]
     } cond ;
 
-GENERIC: (add-connectors) ( node -- node )
-M: element (add-connectors)  ;
-M: introduce (add-connectors)  f >>contents dup name>> output add-with-name ;
-M: return (add-connectors)  f >>contents dup name>> input add-with-name ;
-M: text (add-connectors)  f >>contents dup name>> output add-with-name ;
-
-M: call (add-connectors)
-    f >>contents dup in-out
-    [ [ input add-with-name ] each ]
-    [ [ output add-with-name ] each ] bi* ;
-
-GENERIC: connect ( output input -- )
-
-:: links ( output -- seq )
-    output parent>> parent>> contents>> [ inputs [ link>> output eq? ] filter ] map concat ;
-
-:: add-connectors ( elt -- elt )
-    elt name>> [
-      elt node? [
-        elt inputs [ link>> ] map 
-        elt outputs [ links ] map
-      ] [ f f ] if :> saved-output-links :> saved-input-links
-      elt (add-connectors)
-      saved-input-links elt inputs [ connect ] 2each
-      elt outputs saved-output-links [ [ connect ] with each ] 2each
-    ] [ elt ] if ;
-
-: order-connectors ( connector connector -- connector connector )
-    dup output? [ swap ] when ;
-
-: output-and-input? ( connector connector -- ? )
-    [ output? ] [ input? ] bi* and ;
-
-: same-node? ( connector connector -- ? )
-    [ parent>> ] bi@ eq? ;
-
 GENERIC: connected? ( connector -- ? )
 
 M: node connected?
     connectors [ connected? ] any? ;
 
 M: input connected?
-    link>> output? ;
+    link>> f = not ;
 
 : connected ( seq -- seq )  [ connected? ] filter ;
 : unconnected ( seq -- seq )  [ connected? ] reject ;
 
 : unevaluated? ( connector -- ? )
     name>> "quot" swap subseq? ;
-
-M: input connect
-    link<< ;
 
 :: unlink ( node -- node )
     node node parent>> contents>>
@@ -190,11 +151,6 @@ GENERIC: disconnect ( connector -- )
 
 M: input disconnect
     f >>link drop ;
-
-: ?connect ( connector connector -- )
-    order-connectors 
-    [ [ output-and-input? ] [ nip connected? not ] [ same-node? not ] 2tri and and ]
-    [ connect ] smart-when* ;
 
 : complete-graph? ( def -- ? )
     contents>> unconnected empty? ;
