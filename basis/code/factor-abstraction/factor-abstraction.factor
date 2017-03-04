@@ -1,6 +1,7 @@
 ! Copyright (C) 2016-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code combinators kernel locals splitting ;
+FROM: code => call ;
 IN: code.factor-abstraction
 
 :: call-from-factor ( factor-word -- call )

@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays classes combinators combinators.smart
 eval io io.directories io.encodings.utf8 io.files io.files.info
-io.pathnames kernel locals math namespaces prettyprint sequences
+io.pathnames kernel locals math namespaces prettyprint prettyprint.config sequences
 code system ui.gadgets code.execution ;
 FROM: code => call ;
 IN: code.import-export

@@ -2,7 +2,6 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors kernel locals sequences code ui.gadgets
 ui.gadgets.borders ui.gadgets.icons ui.gadgets.packs ui.tools.common ;
-FROM: code => inputs outputs ;
 IN: ui.tools.environment.common
 
 TUPLE: environment < tool ;
