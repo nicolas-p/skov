@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: calendar calendar.format images.loader io.directories vocabs regexp accessors combinators.smart
 io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
-ui.images splitting system io.files io.encodings.utf8 ui.tools.environment.common
+ui.images splitting system io.files io.encodings.utf8 
 code.import-export parser help help.markup words debugger ;
 
 ! Setting Skov version in YYYY-MM-DD format

@@ -1,8 +1,7 @@
 ! Copyright (C) 2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code kernel locals sequences ui.gadgets
-ui.gadgets.packs ui.tools.environment.cell
-ui.tools.environment.common ;
+ui.gadgets.packs ui.tools.environment.cell ;
 IN: ui.tools.environment.tree
 
 TUPLE: space < gadget ;
