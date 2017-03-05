@@ -3,15 +3,16 @@
 USING: accessors arrays code code.execution colors combinators
 combinators.smart fry kernel locals math math.order
 math.statistics math.vectors models sequences splitting system
-ui.gadgets ui.gadgets.editors ui.gadgets.labels
-ui.gadgets.worlds ui.gestures ui.pens.solid ui.pens.tile
-ui.tools.environment.actions ui.tools.environment.common
-ui.tools.environment.theme ;
+ui.gadgets ui.gadgets.borders ui.gadgets.editors
+ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
+ui.pens.tile ui.tools.environment.theme namespaces ;
 FROM: code => inputs call ;
 IN: ui.tools.environment.cell
 
 CONSTANT: cell-height 29
 CONSTANT: min-cell-width 35
+
+TUPLE: cell < border ;
 
 : cell-colors ( cell -- img-name bg-color text-color )
     control-value
@@ -37,6 +38,15 @@ CONSTANT: min-cell-width 35
 : right-edge ( cell -- x )  [ left-edge ] [ width ] bi + ;
 : top-edge ( cell -- y )  loc>> second ;
 
+: set-name-and-target ( target name cell -- )
+    [ control-value swap >>name swap [ >>target ] when* ] keep set-control-value ;
+
+:: enter-name ( name cell -- )
+    cell control-value call?
+    [ cell control-value name >>name find-target first name cell set-name-and-target ]
+    [ f name cell set-name-and-target ] if
+    cell control-value [ word? ] find-parent ?define ;
+
 :: add-name-field ( cell -- cell )
     cell dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
     cell cell-colors :> text-color :> cell-color drop
@@ -57,12 +67,11 @@ CONSTANT: min-cell-width 35
     cell dup control-value name>> make-spaces-visible <label> set-font 
     [ cell cell-colors nip nip >>foreground ] change-font add-gadget ;
 
-: add-name ( cell -- cell )
-    [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if ;
-
 : <cell> ( value -- node )
-    <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim 
-    swap >>model add-name ;
+    <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim swap >>model ;
+
+M: cell model-changed ( model gadget -- )
+    nip dup clear-gadget [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if drop ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
@@ -87,6 +96,16 @@ M: cell graft*
     [ node-type ] [ control-value ] bi
     path "." " > " replace [ " defined in " swap append append ] when*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
+
+: find-cell ( gadget -- node )  [ cell? ] find-parent ;
+
+: make-keyboard-safe ( env quot -- )
+    [ world-focus editor? not ] swap smart-when* ; inline
+
+: edit-cell ( env -- )
+    [ hand-gadget get-global find-cell
+      [ dup f f rot set-name-and-target request-focus ] when* drop
+    ] make-keyboard-safe ;
 
 cell H{
     { T{ button-up f f 1 }  [ edit-cell ] }
