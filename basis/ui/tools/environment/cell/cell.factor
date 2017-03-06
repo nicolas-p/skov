@@ -38,23 +38,16 @@ TUPLE: cell < border ;
 : right-edge ( cell -- x )  [ left-edge ] [ width ] bi + ;
 : top-edge ( cell -- y )  loc>> second ;
 
-: set-name-and-target ( target name cell -- )
-    [ control-value swap >>name swap [ >>target ] when* ] keep set-control-value ;
-
 :: enter-name ( name cell -- )
-    cell control-value call?
-    [ cell control-value name >>name find-target first name cell set-name-and-target ]
-    [ f name cell set-name-and-target ] if
+    cell control-value
+    { { [ name empty? ] [ ] }
+      { [ cell control-value call? not ] [ name >>name ] }
+      { [ cell control-value clone name >>name find-target empty? not ]
+        [ name >>name dup find-target first >>target ] }
+      [ ]
+    } cond
+    cell set-control-value
     cell control-value [ word? ] find-parent ?define ;
-
-:: add-name-field ( cell -- cell )
-    cell dup '[ _ [ drop empty? not ] [ enter-name ] smart-when* ] <action-field>
-    cell cell-colors :> text-color :> cell-color drop
-    cell-color <solid> >>boundary
-    cell-color <solid> >>interior
-    { 0 0 } >>size
-    [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
-    add-gadget ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
@@ -63,21 +56,29 @@ TUPLE: cell < border ;
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-:: add-name-label ( cell -- cell )
-    cell dup control-value name>> make-spaces-visible <label> set-font 
-    [ cell cell-colors nip nip >>foreground ] change-font add-gadget ;
+:: edit-cell ( cell -- )
+    cell clear-gadget
+    cell [ cell enter-name ] <action-field>
+    cell cell-colors :> text-color :> cell-color drop
+    cell-color <solid> >>boundary
+    cell-color <solid> >>interior
+    { 0 0 } >>size
+    [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
+    add-gadget request-focus ;
 
 : <cell> ( value -- node )
     <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim swap >>model ;
 
-M: cell model-changed ( model gadget -- )
-    nip dup clear-gadget [ control-value name>> ] [ add-name-label ] [ add-name-field ] smart-if drop ;
+M:: cell model-changed ( model cell -- )
+    cell clear-gadget
+    cell model value>> name>> make-spaces-visible <label> set-font 
+    [ cell cell-colors nip nip >>foreground ] change-font add-gadget drop ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
 
 M: cell graft*
-   cell-theme [ gadget-child field? ] [ request-focus ] smart-when* ;
+   cell-theme drop ;
 
 : node-type ( cell -- str )
     control-value {
@@ -97,18 +98,9 @@ M: cell graft*
     path "." " > " replace [ " defined in " swap append append ] when*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
-: find-cell ( gadget -- node )  [ cell? ] find-parent ;
-
-: make-keyboard-safe ( env quot -- )
-    [ world-focus editor? not ] swap smart-when* ; inline
-
-: edit-cell ( env -- )
-    [ hand-gadget get-global find-cell
-      [ dup f f rot set-name-and-target request-focus ] when* drop
-    ] make-keyboard-safe ;
-
 cell H{
     { T{ button-up f f 1 }  [ edit-cell ] }
     { mouse-enter           [ [ node-status-text ] keep show-status ] }
     { mouse-leave           [ hide-status ] }
+    { lose-focus            [ f swap enter-name ] }
 } set-gestures
