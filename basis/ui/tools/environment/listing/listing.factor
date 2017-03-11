@@ -7,7 +7,7 @@ IN: ui.tools.environment.listing
 TUPLE: listing < pack ;
 
 : <listing> ( model -- navigation )
-     listing new swap >>model vertical >>orientation { 0 40 } >>gap 1/2 >>align ;
+     listing new swap >>model vertical >>orientation 1/2 >>align 1 >>fill ;
 
 M: listing model-changed ( model gadget -- )
     dup clear-gadget swap value>> contents>> [ <model> <item> ] map add-gadgets drop ;
