@@ -1,8 +1,8 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code colors combinators.smart kernel locals
-models sequences ui.gadgets ui.gadgets.borders ui.gadgets.labels
-ui.gadgets.packs ui.gestures ui.pens.tile
+models sequences ui.gadgets ui.gadgets.borders ui.gadgets.icons
+ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
 ui.tools.environment.theme ui.tools.environment.tree ;
 IN: ui.tools.environment.navigation
 
@@ -26,15 +26,19 @@ TUPLE: space < gadget ;
 : <space> ( -- gadget ) space new ;
 M: space pref-dim*  drop { 0 40 } ;
 
+: <separator> ( -- img )
+    "separator" theme-image <icon> ;
+
 M:: navigation model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> parents [ vocab? ] filter reverse
     dup last :> voc
     [ <name-bar> ] map add-gadgets
-    voc contents>> [ vocab? ] filter 
-    dup [ drop [ <space> add-gadget ] dip ] unless-empty
+    <separator> { 10 20 } <border> add-gadget
+    voc contents>> [ vocab? ] filter
+    dup empty? not :> space?
     [ <name-bar> ] map add-gadgets
-    <space> add-gadget
+    space? [ <space> add-gadget ] when
     voc contents>> [ word? ] filter [ 
         [ <name-bar> add-gadget ] 
         [ [ model value>> eq? ] [ <inside-tree> { 10 40 } <border> add-gadget ] smart-when* ] bi
