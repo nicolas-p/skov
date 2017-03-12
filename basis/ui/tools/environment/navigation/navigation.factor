@@ -34,7 +34,7 @@ M:: navigation model-changed ( model gadget -- )
     model value>> parents [ vocab? ] filter reverse
     dup last :> voc
     [ <name-bar> ] map add-gadgets
-    <separator> { 10 20 } <border> add-gadget
+    <separator> { 0 18 } <border> add-gadget
     voc contents>> [ vocab? ] filter
     dup empty? not :> space?
     [ <name-bar> ] map add-gadgets
