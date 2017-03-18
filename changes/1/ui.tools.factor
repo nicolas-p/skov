@@ -1,4 +1,6 @@
-USING: ui.tools.environment ;
+USING: namespaces ui.backend ui.tools.environment ;
 IN: ui.tools
 
-MAIN: environment-window
+: ui-tools-main ( -- )
+    f ui-stop-after-last-window? set-global
+    environment-window ;
