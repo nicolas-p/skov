@@ -1,7 +1,8 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors kernel locals sequences ui.tools.environment.theme
-ui.gadgets ui.gadgets.buttons ui.pens ui.pens.image ;
+USING: accessors colors kernel locals sequences ui.gadgets
+ui.gadgets.buttons ui.pens ui.pens.image ui.theme
+ui.tools.environment.theme ;
 IN: ui.gadgets.buttons.round
 
 TUPLE: round-button < button ;
@@ -9,16 +10,16 @@ TUPLE: round-button < button ;
 M: round-button pref-dim*
     dup interior>> pen-pref-dim ;
 
-: <round-button> ( quot -- button )
-    "" swap round-button new-button ;
+:: <round-button-pen> ( str -- pen )
+    str "button" 2-theme-image-pen dup dup dup dup
+  !  "pressed" "button" 2-theme-image-pen dup
+  !  str "-selected" append "button" 2-theme-image-pen swap 
+    <button-pen> ;
 
-: <plus-button-pen> ( str -- pen )
-    "plus-button" 2-theme-image-pen
-    "dot" "button" 2-theme-image-pen swap
-    "pressed" "button" 2-theme-image-pen dup dup <button-pen> ;
-
-: <plus-button> ( str quot -- button )
-    <round-button> swap <plus-button-pen> >>interior ;
+: <round-button> ( color label quot -- button )
+    round-button new-button swap <round-button-pen> >>interior
+    dup gadget-child
+    [ dark-text-colour >>foreground transparent >>background ] change-font drop ;
 
 :: <word-button-pen> ( str -- pen )
     str "button" 2-theme-image-pen dup
@@ -26,4 +27,4 @@ M: round-button pref-dim*
     str "-selected" append "button" 2-theme-image-pen swap <button-pen> ;
 
 : <word-button> ( quot str -- button )
-    [ <round-button> ] dip <word-button-pen> >>interior ;
+    [ "" swap round-button new-button ] dip <word-button-pen> >>interior ;
