@@ -16,10 +16,13 @@ M: round-button pref-dim*
   !  str "-selected" append "button" 2-theme-image-pen swap 
     <button-pen> ;
 
-: <round-button> ( color label quot -- button )
-    round-button new-button swap <round-button-pen> >>interior
+:: <round-button> ( color label quot -- button )
+    label quot round-button new-button
+    color <round-button-pen> >>interior
     dup gadget-child
-    [ dark-text-colour >>foreground transparent >>background ] change-font drop ;
+    [ t >>bold? 13 >>size 
+      color "dark" = [ light-text-colour ] [ dark-text-colour ] if >>foreground
+      transparent >>background ] change-font drop ;
 
 :: <word-button-pen> ( str -- pen )
     str "button" 2-theme-image-pen dup
