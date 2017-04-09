@@ -12,7 +12,7 @@ IN: ui.tools.environment.cell
 CONSTANT: cell-height 29
 CONSTANT: min-cell-width 35
 
-TUPLE: cell < border ;
+TUPLE: cell < border  selection ;
 
 : cell-colors ( cell -- img-name bg-color text-color )
     control-value
@@ -66,8 +66,9 @@ TUPLE: cell < border ;
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
     add-gadget request-focus ;
 
-: <cell> ( value -- node )
-    <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim swap >>model ;
+: <cell> ( selection value -- node )
+    <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
+    swap >>model swap >>selection ;
 
 M:: cell model-changed ( model cell -- )
     cell clear-gadget
@@ -98,9 +99,14 @@ M: cell graft*
     path "." " > " replace [ " defined in " swap append append ] when*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
+: find-cell ( gadget -- node )  [ cell? ] find-parent ;
+    
+: select-cell ( cell -- )
+    [ control-value ] [ selection>> set-model ] bi ;
+
 cell H{
-    { T{ button-up f f 1 }  [ edit-cell ] }
-    { mouse-enter           [ [ node-status-text ] keep show-status ] }
-    { mouse-leave           [ hide-status ] }
-    { lose-focus            [ f swap enter-name ] }
+    { T{ button-down }  [ select-cell ] }
+    { mouse-enter       [ [ node-status-text ] keep show-status ] }
+    { mouse-leave       [ hide-status ] }
+    { lose-focus        [ f swap enter-name ] }
 } set-gestures

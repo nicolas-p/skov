@@ -48,7 +48,7 @@ M:: navigation model-changed ( model gadget -- )
     "Words" <category> { 0 10 } <border> add-gadget
     voc contents>> [ word? ] filter word new suffix [ 
         [ <name-bar> add-gadget ] 
-        [ [ model value>> eq? ] [ <inside-tree> { 10 40 } <border> add-gadget ] smart-when* ] bi
+        [ [ model value>> eq? ] [ <tree-editor> { 10 15 } <border> add-gadget ] smart-when* ] bi
     ] each drop ;
 
 : select ( name-bar -- )
