@@ -64,7 +64,7 @@ TUPLE: cell < border  selection ;
     cell-color <solid> >>interior
     { 0 0 } >>size
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
-    add-gadget request-focus ;
+    add-gadget drop ;
 
 : <cell> ( selection value -- node )
     <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
@@ -100,13 +100,20 @@ M: cell graft*
     "     ( R  remove )     ( E  edit )     ( H  help )" append ;
 
 : find-cell ( gadget -- node )  [ cell? ] find-parent ;
-    
-: select-cell ( cell -- )
-    [ control-value ] [ selection>> set-model ] bi ;
+
+:: select-cell ( cell -- )
+    cell control-value cell selection>> value>> eq?
+    [ cell edit-cell ]
+    [ cell control-value cell selection>> set-model ] if
+    cell request-focus ;
+   
+:: ?deselect-cell ( cell -- )
+    cell control-value cell selection>> value>> eq? not
+    [ f cell enter-name ] when ;
 
 cell H{
     { T{ button-down }  [ select-cell ] }
     { mouse-enter       [ [ node-status-text ] keep show-status ] }
     { mouse-leave       [ hide-status ] }
-    { lose-focus        [ f swap enter-name ] }
+    { lose-focus        [ ?deselect-cell ] }
 } set-gestures
