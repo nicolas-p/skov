@@ -61,6 +61,25 @@ M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
+:: insert-node ( elt -- )
+    elt parent>> contents>> :> nodes
+    elt nodes index :> n
+    call new "" >>name elt add-element elt parent>> >>parent :> new-node
+    new-node n nodes set-nth ;
+
+:: remove-node ( elt -- )
+    elt parent>> contents>> :> nodes
+    elt nodes index :> n
+    elt contents>> first elt parent>> >>parent :> child
+    child n nodes set-nth ;
+
+:: change-node-type ( elt class -- )
+    elt parent>> contents>> :> nodes
+    elt nodes index :> n
+    elt contents>> first :> child
+    class new elt name>> >>name elt contents>> [ add-element ] each elt parent>> >>parent
+    n nodes set-nth ;
+
 GENERIC: factor-name ( obj -- str )
 
 M: element factor-name

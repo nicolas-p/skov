@@ -3,6 +3,7 @@
 USING: accessors arrays code kernel locals math.order models
 sequences splitting ui.gadgets ui.gadgets.buttons.round
 ui.gadgets.labels ui.gadgets.packs ui.tools.environment.cell ;
+FROM: code => call ;
 IN: ui.tools.environment.tree
 
 : <space> ( -- gadget )
@@ -17,8 +18,14 @@ IN: ui.tools.environment.tree
     add-gadget
     selection node <cell> add-gadget ;
 
-:: <inside-tree> ( selection word -- pile )
-    <shelf> word contents>> [ selection build-tree ] map add-gadgets ;
+TUPLE: tree < pack  selection ;
+
+: <inside-tree> ( selection word -- pile )
+    <model> tree new horizontal >>orientation swap >>model swap >>selection ;
+
+M:: tree model-changed ( model tree -- )
+    tree clear-gadget
+    tree model value>> contents>> [ tree selection>> build-tree ] map add-gadgets drop ;
 
 :: <outside-tree> ( word -- shelf )
     <pile> 1 >>fill 1/2 >>align
@@ -32,31 +39,34 @@ TUPLE: path-display < tree-control ;
 
 M: tree-control pref-dim*
     call-next-method first2 20 max 2array ;
-    
+
 : <tree-toolbar> ( model -- gadget )
     tree-toolbar new horizontal >>orientation { 5 0 } >>gap swap >>model ;
+
+: update-tree ( button -- )
+    parent>> parent>> children>> second dup model>> swap model-changed ;
 
 M:: tree-toolbar model-changed ( model tree-toolbar -- )
     tree-toolbar dup clear-gadget
     model value>> [ 
-        "dark" "I" [ drop model value>> drop ] <round-button>
+        "dark" "I" [ model value>> introduce change-node-type update-tree ] <round-button>
             "Turn cell into an input cell" >>tooltip add-gadget
-        "green" "W" [ drop model value>> drop ] <round-button>
+        "green" "W" [ model value>> call change-node-type update-tree ] <round-button>
             "Turn cell into a word cell" >>tooltip add-gadget
-        "green" "C" [ drop model value>> drop ] <round-button>
+        "green" "C" [ model value>> constructor change-node-type update-tree ] <round-button>
             "Turn cell into a constructor cell" >>tooltip add-gadget
-        "green" "A" [ drop model value>> drop ] <round-button>
+        "green" "A" [ model value>> accessor change-node-type update-tree ] <round-button>
             "Turn cell into an accessor cell" >>tooltip add-gadget
-        "green" "M" [ drop model value>> drop ] <round-button>
+        "green" "M" [ model value>> mutator change-node-type update-tree ] <round-button>
             "Turn cell into a mutator cell" >>tooltip add-gadget
-        "light" "T" [ drop model value>> drop ] <round-button>
+        "light" "T" [ model value>> text change-node-type update-tree ] <round-button>
             "Turn cell into a text cell" >>tooltip add-gadget
-        "dark" "O" [ drop model value>> drop ] <round-button>
+        "dark" "O" [ model value>> return change-node-type update-tree ] <round-button>
             "Turn cell into an output cell" >>tooltip add-gadget 
         <gadget> { 20 0 } >>dim add-gadget
-        "blue" "↓" [ drop model value>> drop ] <round-button>
+        "blue" "↓" [ model value>> insert-node update-tree ] <round-button>
             "Insert new cell below" >>tooltip add-gadget 
-        "red" "✕" [ drop model value>> drop ] <round-button>
+        "red" "✕" [ model value>> remove-node update-tree ] <round-button>
             "Delete cell" >>tooltip add-gadget
     ] when drop ;
 
@@ -66,7 +76,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
 M:: path-display model-changed ( model path-display -- )
     path-display dup clear-gadget
     model value>> [ 
-        model value>> path "." " ⟩ " replace <label> [ t >>bold? ] change-font add-gadget
+        model value>> path [ "." " ⟩ " replace <label> [ t >>bold? ] change-font add-gadget ] when*
     ] when drop ;
 
 :: <tree-editor> ( word -- gadget )
