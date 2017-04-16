@@ -19,7 +19,7 @@ CONSTANT: light-text-colour HEXCOLOR: C4DCDE
 CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
 
 : set-font ( label -- label )
-    [ 17 >>size t >>bold? ] change-font ;
+    [ 16 >>size t >>bold? ] change-font ;
 
 : set-light-font ( label -- label )
     set-font [ content-text-colour >>foreground ] change-font ;

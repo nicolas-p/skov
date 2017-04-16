@@ -9,8 +9,8 @@ ui.pens.tile ui.tools.environment.theme namespaces ;
 FROM: code => inputs call ;
 IN: ui.tools.environment.cell
 
-CONSTANT: cell-height 29
-CONSTANT: min-cell-width 35
+CONSTANT: cell-height 26
+CONSTANT: min-cell-width 29
 
 TUPLE: cell < border  selection ;
 

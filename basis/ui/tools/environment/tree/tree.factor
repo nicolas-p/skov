@@ -7,7 +7,7 @@ FROM: code => call ;
 IN: ui.tools.environment.tree
 
 : <space> ( -- gadget )
-    <gadget> { 5 0 } >>dim ;
+    <gadget> { 2 0 } >>dim ;
 
 :: build-tree ( node selection -- shelf )
     <pile> 1 >>fill 1/2 >>align
