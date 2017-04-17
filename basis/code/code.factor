@@ -64,7 +64,7 @@ M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
 :: insert-node ( elt -- )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
-    call new "" >>name elt add-element elt parent>> >>parent :> new-node
+    call new "" >>name elt parent>> >>parent elt add-element :> new-node
     new-node n nodes set-nth ;
 
 :: remove-node ( elt -- )
