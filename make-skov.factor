@@ -16,6 +16,7 @@ image-path parent-directory set-current-directory
   "vocab:ui/tools/environment/theme/"
   "vocab:definitions/icons/"
   "vocab:ui/theme/images"
+  "vocab:ui/tools/error-list/icons"
 } [ 
   dup directory-files
   [ first CHAR: . = ] reject
