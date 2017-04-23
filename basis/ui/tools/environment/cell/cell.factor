@@ -67,7 +67,7 @@ TUPLE: cell < border  selection ;
 
 M:: cell model-changed ( model cell -- )
     cell clear-gadget
-    cell model value>> name>> make-spaces-visible <label> set-font 
+    cell model value>> name>> >string make-spaces-visible <label> set-font 
     [ cell cell-colors nip nip >>foreground ] change-font add-gadget drop ;
 
 M: cell focusable-child*
