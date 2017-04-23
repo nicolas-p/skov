@@ -29,6 +29,9 @@ TUPLE: navigation < pack ;
 : find-navigation ( gadget -- navigation )
     [ navigation? ] find-parent ;
 
+: set-children-font ( gadget -- gadget )
+    dup children>> [ [ label? ] [ set-result-font drop ] [ set-children-font drop ] smart-if ] each ;
+
 M:: navigation model-changed ( model gadget -- )
     gadget dup clear-gadget
     model value>> parents [ vocab? ] filter reverse
@@ -41,5 +44,8 @@ M:: navigation model-changed ( model gadget -- )
     "Words" <category> { 0 10 } <border> add-gadget
     voc contents>> [ word? ] filter word new "⨁" >>name suffix [ 
         [ model <name-bar> add-gadget ] 
-        [ [ model value>> eq? ] [ <tree-editor> { 10 15 } <border> add-gadget ] smart-when* ] bi
+        [ [ model value>> eq? ]
+          [ <tree-editor> { 10 15 } <border> add-gadget ] smart-when* ]
+        [ [ model value>> parent>> eq? model value>> result? and ]
+          [ result>> contents>> set-children-font { 10 45 } <border> add-gadget ] smart-when* ] tri
     ] each drop ;
