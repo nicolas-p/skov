@@ -102,13 +102,14 @@ M: cell graft*
         cell parent>> control-value [ vocab? ] find-parent
         cell control-value "" >>name add-element drop
     ] when
-    cell control-value cell selection>> set-model ;
+    cell control-value cell selection>> set-model
+    cell cell-theme drop ;
 
 : cell-clicked ( cell -- )
     dup dup selected? [ edit-cell ] [ select-cell ] if request-focus ;
 
 :: ?deselect-cell ( cell -- )
-    cell selected? not [ f cell enter-name ] when ;
+    cell selected? not [ f cell enter-name cell cell-theme drop ] when ;
 
 cell H{
     { mouse-enter       [ [ node-status-text ] keep show-status ] }
