@@ -61,6 +61,14 @@ M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
+:: change-nodes-above ( elt n -- )
+    elt contents>> length :> old-n
+    elt { 
+      { [ n old-n > ] [ n old-n - [ call add-from-class ] times drop ] }
+!     { [ n old-n < ] [ contents>> n swap shorten ] }
+      [ drop ]
+    } cond ;
+
 :: insert-node ( elt -- )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
@@ -80,7 +88,7 @@ M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
     class new elt name>> >>name elt contents>> [ add-element ] each elt parent>> >>parent
     n nodes set-nth ;
 
-GENERIC: factor-name ( obj -- str )
+GENERIC: factor-name ( elt -- str )
 
 M: element factor-name
     name>> ;
@@ -102,7 +110,7 @@ M: accessor factor-name
 M: mutator factor-name
     name>> " (mutator)" append ;
 
-GENERIC: path ( obj -- str )
+GENERIC: path ( elt -- str )
 
 M: vocab path
     parents reverse rest [ factor-name ] map "." join [ "scratchpad" ] when-empty ;
@@ -130,7 +138,18 @@ M: node path
 
 SINGLETON: recursion
 
-:: in-out ( call -- seq seq )
+GENERIC: in-out ( elt -- seq seq )
+
+M: introduce in-out
+    drop f { "out" } ;
+
+M: return in-out
+    drop { "in" } f ;
+
+M: text in-out
+    drop f { "text" } ;
+
+M:: call in-out ( call -- seq seq )
     call target>>
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "number" } ] }
@@ -147,6 +166,19 @@ SINGLETON: recursion
       { [ name string>number ] [ name string>number 1array ] }
       [ name matching-words-exact ]
     } cond ;
+
+:: ?add-words-above ( elt -- )
+    elt elt in-out drop length change-nodes-above
+      elt contents>> [ ?add-words-above ] each ;
+
+:: ?add-word-below ( elt -- )
+    elt in-out nip [ drop elt insert-node ] unless-empty ;
+
+:: ?add-words ( word -- word )
+    word contents>>
+    [ word call add-from-class drop ]
+    [ [ dup ?add-word-below ?add-words-above ] each ]
+    if-empty word ;
 
 GENERIC: connected? ( connector -- ? )
 

@@ -25,7 +25,8 @@ TUPLE: tree < pack  selection ;
 
 M:: tree model-changed ( model tree -- )
     tree clear-gadget
-    tree model value>> contents>> [ tree selection>> build-tree ] map add-gadgets drop ;
+    tree model value>> ?add-words
+    contents>> [ tree selection>> build-tree ] map add-gadgets drop ;
 
 :: <outside-tree> ( word -- shelf )
     <pile> 1 >>fill 1/2 >>align
