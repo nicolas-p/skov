@@ -134,7 +134,7 @@ M: node path
     dup parent>> [ name>> ] bi@ = ;
 
 : input-output-names ( call -- seq seq )
-    [ introduces ] [ returns ] bi [ [ name>> ] map ] bi@ ;
+    [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
 SINGLETON: recursion
 

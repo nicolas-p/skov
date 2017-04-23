@@ -11,7 +11,7 @@ QUALIFIED: vocabs
 IN: code.execution
 
 : effect ( def -- effect )
-    [ introduces ] [ returns ] bi [ [ factor-name ] map >array ] bi@ <effect> ;
+    [ introduces ] [ returns ] bi [ [ factor-name ] map members >array ] bi@ <effect> ;
 
 : set-input-ids ( word -- word )
     dup introduces [ dup name>> <local> >>id ] map drop ;
