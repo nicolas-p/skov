@@ -23,11 +23,12 @@ TUPLE: constructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
 
-TUPLE: input < element  link ;
-
-UNION: input/output  introduce return input ;
-
 TUPLE: result < element ;
+
+UNION: input/output  introduce return ;
+
+SYMBOL: skov-root
+vocab new "●" >>name skov-root set-global
 
 : walk ( node -- seq )
     [ contents>> [ walk ] map ] [ ] bi 2array ;
@@ -40,11 +41,6 @@ TUPLE: result < element ;
 : calls ( elt -- seq )  sort-tree [ call? ] filter ;
 : introduces ( elt -- seq )  sort-tree [ introduce? ] filter ;
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
-
-GENERIC: connectors ( elt -- seq )
-GENERIC: inputs ( elt -- seq )
-M: element connectors ( elt -- seq )  contents>> [ input/output? ] filter ;
-M: element inputs ( elt -- seq )  contents>> [ input? ] filter ;
 
 :: add-element ( parent child -- parent )
      child parent >>parent parent [ ?push ] change-contents ;
@@ -141,18 +137,18 @@ SINGLETON: recursion
 GENERIC: in-out ( elt -- seq seq )
 
 M: introduce in-out
-    drop f { "out" } ;
+    drop f { "..." } ;
 
 M: return in-out
-    drop { "in" } f ;
+    drop { "..." } f ;
 
 M: text in-out
-    drop f { "text" } ;
+    drop f { "..." } ;
 
 M:: call in-out ( call -- seq seq )
     call target>>
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
-      { [ dup number? ] [ drop { } { "number" } ] }
+      { [ dup number? ] [ drop { } { "..." } ] }
       { [ dup not ] [ drop { } { } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
@@ -180,38 +176,11 @@ M:: call in-out ( call -- seq seq )
     [ [ dup ?add-word-below ?add-words-above ] each ]
     if-empty word ;
 
-GENERIC: connected? ( connector -- ? )
-
-M: node connected?
-    connectors [ connected? ] any? ;
-
-M: input connected?
-    link>> f = not ;
-
-: connected ( seq -- seq )  [ connected? ] filter ;
-: unconnected ( seq -- seq )  [ connected? ] reject ;
-
-: unevaluated? ( connector -- ? )
-    name>> "quot" swap subseq? ;
-
-:: unlink ( node -- node )
-    node node parent>> contents>>
-    [ inputs connected [ [ link>> parent>> node eq? ] [ f >>link ] smart-when ] map drop ] each ;
-
-GENERIC: disconnect ( connector -- )
-
-M: input disconnect
-    f >>link drop ;
-
-: complete-graph? ( def -- ? )
-    contents>> unconnected empty? ;
-
 : any-empty-name? ( def -- ? )
     contents>> [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
-   { [ complete-graph? ]
-     [ introduces empty? ]
+   { [ introduces empty? ]
      [ returns empty? ]
      [ calls empty? not ]
      [ defined?>> ]
@@ -219,8 +188,7 @@ M: input disconnect
    } 1&& ;
 
 : error? ( def -- ? )
-    { [ complete-graph? not ]
-      [ defined?>> not ]
+    { [ defined?>> not ]
       [ any-empty-name? ] 
       [ contents>> empty? ]
     } 1|| ;
@@ -240,26 +208,8 @@ CONSTANT: special-variadic-words { "1array" "1sequence" "each" "map" "append" "p
 : save-result ( str word  -- )
     swap dupd result new swap >>contents swap >>parent >>result drop ;
 
-SYMBOL: skov-root
-vocab new "●" >>name skov-root set-global
-
 : forget-alt ( vocab/def -- )
     { { [ dup vocab? ] [ path [ vocabs:forget-vocab ] with-compilation-unit ] }
       { [ dup word? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]
     } cond ;
-
-: neighbors ( node -- seq )
-    inputs connected [ link>> parent>> ] map ;
-
-: connected-nodes ( node -- seq )
-    dup neighbors [ connected-nodes ] map 2array flatten members ;
-
-:: gather-graphs ( seq graph -- seq )
-    seq [ graph subset? ] reject dup [ graph swap subset? ] any? [ graph suffix ] unless ;
-
-: remove-partial-graphs ( seq -- seq ) 
-    f [ gather-graphs ] reduce ;
-
-: group-connected-nodes ( word -- seq )
-    contents>> connected [ connected-nodes ] map remove-partial-graphs ;
