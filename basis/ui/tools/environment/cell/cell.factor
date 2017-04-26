@@ -3,10 +3,10 @@
 USING: accessors arrays code code.execution colors combinators
 combinators.smart fry kernel locals math math.order
 math.statistics math.vectors models sequences splitting system
-ui.gadgets ui.gadgets.borders ui.gadgets.editors
+ui.gadgets ui.gadgets.borders ui.gadgets.editors strings
 ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ui.tools.environment.theme namespaces ;
-FROM: code => inputs call ;
+FROM: code => call ;
 IN: ui.tools.environment.cell
 
 CONSTANT: cell-height 26
@@ -42,7 +42,7 @@ TUPLE: cell < border  selection ;
       [ ]
     } cond
     cell set-control-value
-    cell control-value [ word? ] find-parent [ ?define ] when* ;
+    cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when* ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
@@ -74,7 +74,7 @@ M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
 
 M: cell graft*
-   cell-theme drop ;
+    cell-theme drop ;
 
 : node-type ( cell -- str )
     control-value {
