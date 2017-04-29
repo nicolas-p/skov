@@ -89,8 +89,8 @@ all-words [ [
     [ "-" = ] [ drop "sub" ] smart-when
     [ "*" = ] [ drop "mul" ] smart-when
     [ "/" = ] [ drop "div" ] smart-when
-    [ "." = ] [ drop "display" ] smart-when
-    [ "gadget." = ] [ drop "display gadget" ] smart-when
+    [ "." = ] [ drop "disp" ] smart-when
+    [ "gadget." = ] [ drop "disp gadget" ] smart-when
     [ "e^" = ] [ drop "exp" ] smart-when
     [ "^" = ] [ drop "pow" ] smart-when
     [ "2^" = ] [ drop "pow 2" ] smart-when
