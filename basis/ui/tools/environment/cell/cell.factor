@@ -33,7 +33,7 @@ TUPLE: cell < border  selection tree ;
     <tile-pen> >>interior
     horizontal >>orientation ;
 
-:: enter-name ( name cell -- )
+:: enter-name ( name cell -- cell )
     cell control-value
     { { [ name empty? ] [ ] }
       { [ cell control-value call? not ] [ name >>name ] }
@@ -43,7 +43,7 @@ TUPLE: cell < border  selection tree ;
     } cond
     cell set-control-value
     cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
-    cell tree>> [ notify-connections ] when* ;
+    cell tree>> [ notify-connections ] when* cell ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
@@ -54,7 +54,7 @@ TUPLE: cell < border  selection tree ;
 
 :: edit-cell ( cell -- cell )
     cell clear-gadget
-    cell [ cell enter-name ] <action-field>
+    cell [ cell enter-name drop ] <action-field>
     cell cell-colors :> text-color :> cell-color drop
     cell-color <solid> >>boundary
     cell-color <solid> >>interior
@@ -110,8 +110,12 @@ M: cell graft*
     [ [ selected? not ] [ control-value name>> empty? ] bi and ] [ select-cell ] smart-when
     [ selected? ] [ edit-cell ] [ select-cell ] smart-if request-focus ;
 
-:: ?deselect-cell ( cell -- )
-    cell selected? not [ cell model>> notify-connections cell cell-theme drop ] when ;
+: ?enter-name ( cell -- cell )
+    [ gadget-child action-field? ]
+    [ dup gadget-child gadget-child control-value first swap enter-name ] smart-when ;
+
+: ?deselect-cell ( cell -- )
+    [ selected? not ] [ ?enter-name cell-theme ] smart-when drop ;
 
 cell H{
     { mouse-enter       [ [ node-status-text ] keep show-status ] }
