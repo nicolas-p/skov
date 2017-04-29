@@ -1,10 +1,11 @@
 ! Copyright (C) 2015-2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays classes.parser classes.tuple code
+USING: accessors arrays assocs classes.parser classes.tuple code
 combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
-splitting ui.gadgets.panes vocabs.parser ui.gadgets.buttons.activate ;
+splitting ui.gadgets.buttons.activate ui.gadgets.panes
+vocabs.parser ;
 FROM: code => call ;
 QUALIFIED: words
 QUALIFIED: vocabs
@@ -14,7 +15,8 @@ IN: code.execution
     [ introduces ] [ returns ] bi [ [ factor-name ] map members >array ] bi@ <effect> ;
 
 : set-input-ids ( word -- word )
-    dup introduces [ dup name>> <local> >>id ] map drop ;
+    dup introduces [ name>> ] collect-by
+    [ [ <local> ] dip [ id<< ] with each ] assoc-each ;
 
 GENERIC: transform ( node -- compiler-node )
 
@@ -29,7 +31,7 @@ M: call transform
 
 M: word transform
     set-input-ids
-    [ introduces [ transform ] map ]
+    [ introduces [ transform ] map members ]
     [ sort-tree [ return? ] reject [ transform ] map >quotation ] bi <lambda> ;
 
 :: set-recursion ( word lambda -- lambda )
