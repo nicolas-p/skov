@@ -9,14 +9,14 @@ IN: ui.tools.environment.tree
 : <space> ( -- gadget )
     <gadget> { 2 0 } >>dim ;
 
-:: build-tree ( node selection -- shelf )
+:: build-tree ( node tree selection -- shelf )
     <pile> 1 >>fill 1/2 >>align
     <shelf> { 3 0 } >>gap 1 >>align
         <space> add-gadget
-        node contents>> [ selection build-tree ] map add-gadgets
+        node contents>> [ tree selection build-tree ] map add-gadgets
         <space> add-gadget
     add-gadget
-    selection node <cell> add-gadget ;
+    tree selection node <cell> add-gadget ;
 
 TUPLE: tree < pack  selection ;
 
@@ -26,7 +26,7 @@ TUPLE: tree < pack  selection ;
 M:: tree model-changed ( model tree -- )
     tree clear-gadget
     tree model value>> ?add-words
-    contents>> [ tree selection>> build-tree ] map add-gadgets drop ;
+    contents>> [ model tree selection>> build-tree ] map add-gadgets drop ;
 
 :: <outside-tree> ( word -- shelf )
     <pile> 1 >>fill 1/2 >>align

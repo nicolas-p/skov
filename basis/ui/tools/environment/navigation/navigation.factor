@@ -17,7 +17,7 @@ TUPLE: navigation < pack ;
     <tile-pen> >>interior { 0 22 } >>min-dim horizontal >>orientation ;
 
 : <name-bar> ( vocab/word selection -- gadget )
-    swap <cell> { 0 30 } >>min-dim ;
+    swap f -rot <cell> { 0 30 } >>min-dim ;
 
 : <navigation> ( model -- navigation )
      navigation new swap >>model vertical >>orientation 1/2 >>align 1 >>fill ;

@@ -12,7 +12,7 @@ IN: ui.tools.environment.cell
 CONSTANT: cell-height 26
 CONSTANT: min-cell-width 29
 
-TUPLE: cell < border  selection ;
+TUPLE: cell < border  selection tree ;
 
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> ] bi eq? ;
@@ -42,7 +42,8 @@ TUPLE: cell < border  selection ;
       [ ]
     } cond
     cell set-control-value
-    cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when* ;
+    cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
+    cell tree>> [ notify-connections ] when* ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
@@ -61,9 +62,9 @@ TUPLE: cell < border  selection ;
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
     add-gadget drop ;
 
-: <cell> ( selection value -- node )
+: <cell> ( tree selection value -- node )
     <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
-    swap >>model swap >>selection ;
+    swap >>model swap >>selection swap >>tree ;
 
 M:: cell model-changed ( model cell -- )
     cell clear-gadget
@@ -106,10 +107,11 @@ M: cell graft*
     cell cell-theme drop ;
 
 : cell-clicked ( cell -- )
-    dup dup selected? [ edit-cell ] [ select-cell ] if request-focus ;
+    dup [ [ selected? ] [ control-value name>> empty? ] bi or ]
+    [ edit-cell ] [ select-cell ] smart-if request-focus ;
 
 :: ?deselect-cell ( cell -- )
-    cell selected? not [ f cell enter-name cell cell-theme drop ] when ;
+    cell selected? not [ cell model>> notify-connections cell cell-theme drop ] when ;
 
 cell H{
     { mouse-enter       [ [ node-status-text ] keep show-status ] }
