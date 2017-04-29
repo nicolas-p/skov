@@ -52,7 +52,7 @@ TUPLE: cell < border  selection tree ;
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-:: edit-cell ( cell -- )
+:: edit-cell ( cell -- cell )
     cell clear-gadget
     cell [ cell enter-name ] <action-field>
     cell cell-colors :> text-color :> cell-color drop
@@ -60,7 +60,7 @@ TUPLE: cell < border  selection tree ;
     cell-color <solid> >>interior
     { 0 0 } >>size
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
-    add-gadget drop ;
+    add-gadget ;
 
 : <cell> ( tree selection value -- node )
     <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
@@ -98,17 +98,17 @@ M: cell graft*
 : find-cell ( gadget -- node )
     [ cell? ] find-parent ;
 
-:: select-cell ( cell -- )
+:: select-cell ( cell -- cell  )
     cell control-value name>> "⨁" = [ 
         cell parent>> control-value [ vocab? ] find-parent
         cell control-value "" >>name add-element drop
     ] when
     cell control-value cell selection>> set-model
-    cell cell-theme drop ;
+    cell cell-theme ;
 
 : cell-clicked ( cell -- )
-    dup [ [ selected? ] [ control-value name>> empty? ] bi or ]
-    [ edit-cell ] [ select-cell ] smart-if request-focus ;
+    [ [ selected? not ] [ control-value name>> empty? ] bi and ] [ select-cell ] smart-when
+    [ selected? ] [ edit-cell ] [ select-cell ] smart-if request-focus ;
 
 :: ?deselect-cell ( cell -- )
     cell selected? not [ cell model>> notify-connections cell cell-theme drop ] when ;
