@@ -22,6 +22,7 @@ TUPLE: text < node ;
 TUPLE: constructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
+TUPLE: subtree < node ;
 
 TUPLE: result < element ;
 
@@ -129,7 +130,7 @@ M: node path
 : same-name-as-parent? ( call -- ? )
     dup parent>> [ name>> ] bi@ = ;
 
-: input-output-names ( call -- seq seq )
+: input-output-names ( word -- seq seq )
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
 SINGLETON: recursion
@@ -144,6 +145,9 @@ M: return in-out
 
 M: text in-out
     drop f { "..." } ;
+
+M: subtree in-out
+    drop { "..." } { "..." } ;
 
 M:: call in-out ( call -- seq seq )
     call target>>

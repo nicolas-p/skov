@@ -24,6 +24,7 @@ TUPLE: cell < border  selection tree ;
       { [ dup call? ] [ drop "word" green-background dark-text-colour ] }
       { [ dup vocab? ] [ drop "title" dark-background light-text-colour ] }
       { [ dup word? ] [ drop "title" dark-background light-text-colour ] }
+      { [ dup subtree? ] [ drop "io" dark-background light-text-colour ] }
     } cond 
     [ os windows? not [ drop transparent ] when ] dip ;
 
@@ -62,13 +63,22 @@ TUPLE: cell < border  selection tree ;
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
     add-gadget ;
 
+:: collapsed? ( cell -- ? )
+    cell control-value :> value
+    value subtree?
+    value introduce?
+    value name>> empty?
+    value [ subtree? ] find-parent
+    cell selected? not
+    and and and or ;
+
 : <cell> ( tree selection value -- node )
     <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
     swap >>model swap >>selection swap >>tree ;
 
 M:: cell model-changed ( model cell -- )
     cell clear-gadget
-    cell model value>> name>> >string make-spaces-visible <label> set-font 
+    cell model value>> name>> >string make-spaces-visible <label> set-font
     [ cell cell-colors nip nip >>foreground ] change-font add-gadget drop ;
 
 M: cell focusable-child*
@@ -76,6 +86,9 @@ M: cell focusable-child*
 
 M: cell graft*
     cell-theme drop ;
+
+M:: cell pref-dim* ( cell -- dim )
+    cell call-next-method cell collapsed? [ 5 over set-second ] when ;
 
 : node-type ( cell -- str )
     control-value {

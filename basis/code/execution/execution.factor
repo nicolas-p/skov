@@ -12,7 +12,8 @@ QUALIFIED: vocabs
 IN: code.execution
 
 : effect ( def -- effect )
-    [ introduces ] [ returns ] bi [ [ factor-name ] map members >array ] bi@ <effect> ;
+    [ introduces [ name>> empty? ] reject ] [ returns ] bi
+    [ [ factor-name ] map members >array ] bi@ <effect> ;
 
 : set-input-ids ( word -- word )
     dup introduces [ name>> ] collect-by
@@ -27,12 +28,19 @@ M: text transform
     name>> ;
 
 M: call transform
-    target>> ;
+    [ contents>> [ transform ] map ] [ target>> ] bi 2array ;
+
+M: subtree transform
+    [ introduces [ name>> empty? ] filter [ transform ] map ]
+    [ contents>> first transform flatten >quotation <lambda> ] bi ;
+
+M: return transform
+    contents>> [ transform ] map ;
 
 M: word transform
     set-input-ids
-    [ introduces [ transform ] map members ]
-    [ sort-tree [ return? ] reject [ transform ] map >quotation ] bi <lambda> ;
+    [ introduces [ name>> empty? ] reject [ transform ] map members ]
+    [ contents>> [ transform ] map flatten >quotation ] bi <lambda> ;
 
 :: set-recursion ( word lambda -- lambda )
     lambda [ recursion 1array word 1array replace 
