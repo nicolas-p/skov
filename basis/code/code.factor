@@ -82,7 +82,7 @@ vocab new "●" >>name skov-root set-global
 :: remove-node ( elt -- )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
-    elt contents>> first elt parent>> >>parent :> child
+    elt contents>> [ call new ] [ first ] if-empty elt parent>> >>parent :> child
     child n nodes set-nth ;
 
 :: change-node-type ( elt class -- )
