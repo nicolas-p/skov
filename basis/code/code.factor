@@ -72,6 +72,13 @@ vocab new "●" >>name skov-root set-global
     call new "" >>name elt parent>> >>parent elt add-element :> new-node
     new-node n nodes set-nth ;
 
+:: ?insert-subtree ( elt -- )
+    elt subtree? [
+    elt parent>> contents>> :> nodes
+    elt nodes index :> n
+    subtree new "" >>name elt parent>> >>parent elt add-element :> new-node
+    new-node n nodes set-nth ] unless ;
+
 :: remove-node ( elt -- )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
@@ -167,9 +174,14 @@ M:: call in-out ( call -- seq seq )
       [ name matching-words-exact ]
     } cond ;
 
+:: ?add-subtrees ( elt -- )
+    elt contents>> elt in-out drop
+    [ "quot" swap subseq? [ ?insert-subtree ] [ drop ] if ] 2each ;
+
 :: ?add-words-above ( elt -- )
     elt elt in-out drop length change-nodes-above
-      elt contents>> [ ?add-words-above ] each ;
+    elt ?add-subtrees
+    elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
     elt in-out nip [ drop elt insert-node ] unless-empty ;
