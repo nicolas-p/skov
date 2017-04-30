@@ -54,12 +54,12 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Turn cell into an input cell" >>tooltip add-gadget
         "green" "W" [ model value>> call change-node-type update-tree ] <round-button>
             "Turn cell into a word cell" >>tooltip add-gadget
-        "green" "C" [ model value>> constructor change-node-type update-tree ] <round-button>
-            "Turn cell into a constructor cell" >>tooltip add-gadget
-        "green" "A" [ model value>> accessor change-node-type update-tree ] <round-button>
-            "Turn cell into an accessor cell" >>tooltip add-gadget
-        "green" "M" [ model value>> mutator change-node-type update-tree ] <round-button>
-            "Turn cell into a mutator cell" >>tooltip add-gadget
+ !       "green" "C" [ model value>> constructor change-node-type update-tree ] <round-button>
+ !           "Turn cell into a constructor cell" >>tooltip add-gadget
+ !       "green" "A" [ model value>> accessor change-node-type update-tree ] <round-button>
+ !           "Turn cell into an accessor cell" >>tooltip add-gadget
+ !       "green" "M" [ model value>> mutator change-node-type update-tree ] <round-button>
+ !           "Turn cell into a mutator cell" >>tooltip add-gadget
         "light" "T" [ model value>> text change-node-type update-tree ] <round-button>
             "Turn cell into a text cell" >>tooltip add-gadget
         "dark" "O" [ model value>> return change-node-type update-tree ] <round-button>
