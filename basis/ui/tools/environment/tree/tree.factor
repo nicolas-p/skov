@@ -77,7 +77,8 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
 M:: path-display model-changed ( model path-display -- )
     path-display dup clear-gadget
     model value>> [ 
-        model value>> path [ "." " ⟩ " replace <label> [ t >>bold? ] change-font add-gadget ] when*
+        model value>> path [ "." " ⟩ " replace " ⟩ " append
+            model value>> name>> append <label> [ t >>bold? ] change-font add-gadget ] when*
     ] when drop ;
 
 :: <tree-editor> ( word -- gadget )
