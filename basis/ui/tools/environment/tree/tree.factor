@@ -20,19 +20,13 @@ IN: ui.tools.environment.tree
 
 TUPLE: tree < pack  selection ;
 
-: <inside-tree> ( selection word -- pile )
+: <tree> ( selection word -- pile )
     <model> tree new horizontal >>orientation swap >>model swap >>selection ;
 
 M:: tree model-changed ( model tree -- )
     tree clear-gadget
     tree model value>> ?add-words
     contents>> [ model tree selection>> build-tree ] map add-gadgets drop ;
-
-:: <outside-tree> ( word -- shelf )
-    <pile> 1 >>fill 1/2 >>align
-    <shelf> { 3 0 } >>gap 1 >>align word introduces [ <cell> ] map add-gadgets add-gadget
-    word <cell> add-gadget
-    word returns [ first <cell> add-gadget ] unless-empty ;
 
 TUPLE: tree-control < pack ;
 TUPLE: tree-toolbar < tree-control ;
@@ -85,5 +79,5 @@ M:: path-display model-changed ( model path-display -- )
     <pile> { 0 15 } >>gap 1/2 >>align
     f <model>
     [ <tree-toolbar> add-gadget ]
-    [ word <inside-tree> add-gadget ]
+    [ word <tree> add-gadget ]
     [ <path-display> add-gadget ] tri ;
