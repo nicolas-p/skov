@@ -130,9 +130,36 @@ M:: cell pref-dim* ( cell -- dim )
 : ?deselect-cell ( cell -- )
     [ selected? not ] [ ?enter-name cell-theme ] smart-when drop ;
 
+:: convert-cell ( cell class -- )
+    cell gadget-child action-field?
+    [ cell control-value class change-node-type
+      cell tree>> notify-connections ] unless ;
+
+:: remove-cell ( cell -- )
+    cell gadget-child action-field?
+    [ cell control-value remove-node
+      cell tree>> notify-connections ] unless ;
+
+:: insert-cell ( cell -- )
+    cell gadget-child action-field?
+    [ cell control-value insert-node
+      cell tree>> notify-connections ] unless ;
+
 cell H{
-    { mouse-enter       [ [ node-status-text ] keep show-status ] }
-    { mouse-leave       [ hide-status ] }
-    { T{ button-down }  [ cell-clicked ] }
-    { lose-focus        [ ?deselect-cell ] }
+    { T{ button-down }    [ cell-clicked ] }
+    { lose-focus          [ ?deselect-cell ] }
+    { T{ key-up f f "w" } [ call convert-cell ] }
+    { T{ key-up f f "W" } [ call convert-cell ] }
+    { T{ key-up f f "i" } [ introduce convert-cell ] }
+    { T{ key-up f f "I" } [ introduce convert-cell ] }
+    { T{ key-up f f "o" } [ return convert-cell ] }
+    { T{ key-up f f "O" } [ return convert-cell ] }
+    { T{ key-up f f "t" } [ text convert-cell ] }
+    { T{ key-up f f "T" } [ text convert-cell ] }
+    { T{ key-up f f "r" } [ remove-cell ] }
+    { T{ key-up f f "R" } [ remove-cell ] }
+    { T{ key-up f f "b" } [ insert-cell ] }
+    { T{ key-up f f "B" } [ insert-cell ] }
+  !  { mouse-enter       [ [ node-status-text ] keep show-status ] }
+  !  { mouse-leave       [ hide-status ] }
 } set-gestures
