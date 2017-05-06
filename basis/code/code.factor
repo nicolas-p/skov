@@ -160,7 +160,7 @@ M: node path
     [ in>> ] [ out>> ] bi [ [ replace-quot ] map ] bi@ ;
 
 : same-name-as-parent? ( call -- ? )
-    dup parent>> [ name>> ] bi@ = ;
+    dup [ word? ] find-parent [ name>> ] bi@ = ;
 
 : input-output-names ( word -- seq seq )
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
