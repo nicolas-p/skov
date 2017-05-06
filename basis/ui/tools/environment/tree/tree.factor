@@ -1,8 +1,9 @@
-! Copyright (C) 2017 Nicolas Pénet.
+! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code kernel locals math.order models
 sequences splitting ui.gadgets ui.gadgets.buttons.round
-ui.gadgets.labels ui.gadgets.packs ui.tools.environment.cell ;
+ui.gadgets.labels ui.gadgets.packs ui.gestures
+ui.tools.environment.cell ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.tree
@@ -85,3 +86,10 @@ M:: path-display model-changed ( model path-display -- )
 : <tree-editor> ( word -- gadget )
     <pile> { 0 15 } >>gap 1/2 >>align swap <model>
     [ <tree-toolbar> ] [ <tree> ] [ <path-display> ] tri 3array add-gadgets ;
+
+: select-nothing ( tree -- )
+    model>> [ [ node? not ] find-parent ] change-model ;
+
+tree H{
+    { T{ button-down } [ select-nothing ] }
+} set-gestures
