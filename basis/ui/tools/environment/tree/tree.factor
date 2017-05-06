@@ -64,7 +64,11 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Turn cell into an output cell" >>tooltip add-gadget
         <gadget> { 20 0 } >>dim add-gadget
         model value>> parent>> variadic?
-            [ "blue" "→" [ drop ] ]
+            [ "blue" "←" [ drop model [ insert-node-left ] change-model ] ]
+            [ "inactive" " " [ drop ] ] if <round-button> 
+            "Insert new cell on the left" >>tooltip add-gadget
+        model value>> parent>> variadic?
+            [ "blue" "→" [ drop model [ insert-node-right ] change-model ] ]
             [ "inactive" " " [ drop ] ] if <round-button> 
             "Insert new cell on the right" >>tooltip add-gadget
         "blue" "↓" [ drop model [ insert-node ] change-model ] <round-button>

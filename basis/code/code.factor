@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays combinators combinators.smart
 compiler.units effects fry hashtables.private kernel listener
-locals math math.parser namespaces sequences sequences.deep sets
+locals math math.parser namespaces sequences sequences.deep sequences.extras sets
 splitting ui.gadgets vectors vocabs.parser combinators.short-circuit ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
@@ -52,8 +52,18 @@ vocab new "●" >>name skov-root set-global
 : add-with-name ( parent child-name child-class -- parent )
      new swap >>name add-element ;
 
-: remove-from-parent ( child -- )
-     dup parent>> contents>> remove-eq! drop ;
+: remove-from-parent ( child -- parent )
+     dup parent>> [ contents>> remove-eq! drop ] keep ;
+
+: replace* ( seq old rep -- seq )
+    [ 1array ] bi@ replace ;
+
+:: replace-element ( old rep -- rep )
+     old parent>>
+     [ old rep old parent>> >>parent replace* ] change-contents drop rep ;
+
+: replace-with-new-parent ( old class -- new )
+    dupd new replace-element swap add-element ;
 
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
@@ -91,31 +101,31 @@ vocab new "●" >>name skov-root set-global
       [ drop ]
     } cond ;
 
-:: insert-node ( elt -- new-elt )
-    elt parent>> contents>> :> nodes
-    elt nodes index :> n
-    call new dup "" >>name elt parent>> >>parent elt add-element :> new-node
-    new-node n nodes set-nth ;
+: insert-node ( node -- new-node )
+    call replace-with-new-parent ;
 
-:: ?insert-subtree ( elt -- )
-    elt subtree? [
-    elt parent>> contents>> :> nodes
-    elt nodes index :> n
-    subtree new "" >>name elt parent>> >>parent elt add-element :> new-node
-    new-node n nodes set-nth ] unless ;
+:: insert-node-left ( node -- new-node )
+    node parent>> contents>> :> nodes
+    call new node parent>> >>parent dup :> new-node
+    node nodes index
+    nodes insert-nth! new-node ;
 
-:: remove-node ( elt -- parent )
-    elt parent>> dup contents>> :> nodes
-    elt nodes index :> n
-    elt contents>> [ call new ] [ first ] if-empty elt parent>> >>parent :> child
-    child n nodes set-nth ;
+:: insert-node-right ( node -- new-node )
+    node parent>> contents>> :> nodes
+    call new node parent>> >>parent dup :> new-node
+    node nodes index 1 +
+    nodes insert-nth! new-node ;
+
+: ?insert-subtree ( elt -- )
+    [ subtree? ] [ subtree replace-with-new-parent ] smart-unless drop ;
+
+: remove-node ( elt -- parent/child )
+    [ contents>> empty? ]
+    [ remove-from-parent ]
+    [ dup child-node replace-element ] smart-if ;
 
 :: change-node-type ( elt class -- new-elt )
-    elt parent>> contents>> :> nodes
-    elt nodes index :> n
-    elt contents>> first :> child
-    class new dup elt name>> >>name elt contents>> [ add-element ] each elt parent>> >>parent
-    n nodes set-nth ;
+    elt class new elt name>> >>name elt contents>> [ add-element ] each replace-element ;
 
 GENERIC: factor-name ( elt -- str )
 

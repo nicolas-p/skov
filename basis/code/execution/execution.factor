@@ -19,6 +19,20 @@ IN: code.execution
     dup introduces [ name>> ] collect-by
     [ [ <local> ] dip [ id<< ] with each ] assoc-each ;
 
+:: process-simple-variadic ( call -- seq )
+    call contents>> length 1 - [ call target>> ] replicate ;
+
+:: process-special-variadic ( call -- seq )
+    call contents>> length
+    call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
+    2array ;
+
+: process-variadic ( call -- word/seq )
+    { { [ dup simple-variadic? ] [ process-simple-variadic ] }
+      { [ dup special-variadic? ] [ process-special-variadic ] }
+      [ target>> ]
+    } cond ;
+
 GENERIC: transform ( node -- compiler-node )
 
 M: introduce transform
@@ -28,7 +42,7 @@ M: text transform
     name>> ;
 
 M: call transform
-    [ contents>> [ transform ] map ] [ target>> ] bi 2array ;
+    [ contents>> [ transform ] map ] [ process-variadic ] bi 2array ;
 
 M: subtree transform
     [ introduces [ name>> empty? ] filter [ transform ] map ]
