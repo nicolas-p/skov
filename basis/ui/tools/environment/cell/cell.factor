@@ -24,7 +24,7 @@ TUPLE: cell < border  selection tree ;
       { [ dup call? ] [ drop "word" green-background dark-text-colour ] }
       { [ dup vocab? ] [ drop "title" dark-background light-text-colour ] }
       { [ dup word? ] [ drop "title" dark-background light-text-colour ] }
-      { [ dup subtree? ] [ drop "io" dark-background light-text-colour ] }
+      { [ dup subtree? ] [ drop "subtree" dark-background light-text-colour ] }
     } cond 
     [ os windows? not [ drop transparent ] when ] dip ;
 
@@ -88,7 +88,7 @@ M: cell graft*
     cell-theme drop ;
 
 M:: cell pref-dim* ( cell -- dim )
-    cell call-next-method cell collapsed? [ 5 over set-second ] when ;
+    cell call-next-method cell collapsed? [ 6 over set-second ] when ;
 
 : node-type ( cell -- str )
     control-value {

@@ -11,7 +11,7 @@ IN: ui.tools.environment.tree
 
 :: build-tree ( node tree selection -- shelf )
     <pile> 1 >>fill 1/2 >>align
-    <shelf> { 3 0 } >>gap 1 >>align
+    <shelf> node subtree? [ { 0 0 } ] [ { 3 0 } ] if >>gap 1 >>align
         <space> add-gadget
         node contents>> [ tree selection build-tree ] map add-gadgets
         <space> add-gadget
@@ -43,7 +43,7 @@ M: tree-control pref-dim*
 
 M:: tree-toolbar model-changed ( model tree-toolbar -- )
     tree-toolbar dup clear-gadget
-    model value>> [ 
+    model value>> [
         "dark" "I" [ model value>> introduce change-node-type update-tree ] <round-button>
             "Turn cell into an input cell" >>tooltip add-gadget
         "green" "W" [ model value>> call change-node-type update-tree ] <round-button>
