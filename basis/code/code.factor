@@ -58,6 +58,15 @@ vocab new "●" >>name skov-root set-global
 :: change-name ( str pair -- str )
     str pair first = [ pair second ] [ str ] if ;
 
+: top-node? ( node -- ? )
+    contents>> empty? ;
+
+: bottom-node? ( node -- ? )
+    parent>> node? not ;
+
+: middle-node? ( node -- ? )
+    [ top-node? ] [ bottom-node? ] bi or not ;
+
 :: change-nodes-above ( elt n -- )
     elt contents>> length :> old-n
     elt { 

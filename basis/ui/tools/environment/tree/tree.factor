@@ -41,8 +41,14 @@ M: tree-control pref-dim*
 M:: tree-toolbar model-changed ( model tree-toolbar -- )
     tree-toolbar dup clear-gadget
     model value>> node? [
-        "dark" "I" [ drop model [ introduce change-node-type ] change-model ] <round-button>
+        model value>> top-node?
+            [ "dark" "I" [ drop model [ introduce change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into an input cell" >>tooltip add-gadget
+        model value>> top-node?
+            [ "light" "T" [ drop model [ text change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
+            "Turn cell into a text cell" >>tooltip add-gadget
         "green" "W" [ drop model [ call change-node-type ] change-model ] <round-button>
             "Turn cell into a word cell" >>tooltip add-gadget
  !       "green" "C" [ drop model [ constructor change-node-type ] change-model ] <round-button>
@@ -51,11 +57,15 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
  !           "Turn cell into an accessor cell" >>tooltip add-gadget
  !       "green" "M" [ drop model [ mutator change-node-type ] change-model ] <round-button>
  !           "Turn cell into a mutator cell" >>tooltip add-gadget
-        "light" "T" [ drop model [ text change-node-type ] change-model ] <round-button>
-            "Turn cell into a text cell" >>tooltip add-gadget
-        "dark" "O" [ drop model [ return change-node-type ] change-model ] <round-button>
-            "Turn cell into an output cell" >>tooltip add-gadget 
+        model value>> bottom-node?
+            [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
+            "Turn cell into an output cell" >>tooltip add-gadget
         <gadget> { 20 0 } >>dim add-gadget
+        model value>> parent>> variadic?
+            [ "blue" "→" [ drop ] ]
+            [ "inactive" " " [ drop ] ] if <round-button> 
+            "Insert new cell on the right" >>tooltip add-gadget
         "blue" "↓" [ drop model [ insert-node ] change-model ] <round-button>
             "Insert new cell below" >>tooltip add-gadget 
         "red" "✕" [ drop model [ remove-node ] change-model ] <round-button>
