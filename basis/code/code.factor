@@ -66,10 +66,10 @@ vocab new "●" >>name skov-root set-global
       [ drop ]
     } cond ;
 
-:: insert-node ( elt -- )
+:: insert-node ( elt -- new-elt )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
-    call new "" >>name elt parent>> >>parent elt add-element :> new-node
+    call new dup "" >>name elt parent>> >>parent elt add-element :> new-node
     new-node n nodes set-nth ;
 
 :: ?insert-subtree ( elt -- )
@@ -79,17 +79,17 @@ vocab new "●" >>name skov-root set-global
     subtree new "" >>name elt parent>> >>parent elt add-element :> new-node
     new-node n nodes set-nth ] unless ;
 
-:: remove-node ( elt -- )
-    elt parent>> contents>> :> nodes
+:: remove-node ( elt -- parent )
+    elt parent>> dup contents>> :> nodes
     elt nodes index :> n
     elt contents>> [ call new ] [ first ] if-empty elt parent>> >>parent :> child
     child n nodes set-nth ;
 
-:: change-node-type ( elt class -- )
+:: change-node-type ( elt class -- new-elt )
     elt parent>> contents>> :> nodes
     elt nodes index :> n
     elt contents>> first :> child
-    class new elt name>> >>name elt contents>> [ add-element ] each elt parent>> >>parent
+    class new dup elt name>> >>name elt contents>> [ add-element ] each elt parent>> >>parent
     n nodes set-nth ;
 
 GENERIC: factor-name ( elt -- str )
@@ -184,7 +184,7 @@ M:: call in-out ( call -- seq seq )
     elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
-    elt in-out nip [ drop elt insert-node ] unless-empty ;
+    elt in-out nip [ drop elt insert-node drop ] unless-empty ;
 
 :: ?add-words ( word -- word )
     word contents>>

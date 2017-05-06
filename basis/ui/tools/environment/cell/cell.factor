@@ -7,12 +7,13 @@ ui.gadgets ui.gadgets.borders ui.gadgets.editors strings
 ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ui.tools.environment.theme namespaces ;
 FROM: code => call ;
+FROM: models => change-model ;
 IN: ui.tools.environment.cell
 
 CONSTANT: cell-height 26
 CONSTANT: min-cell-width 29
 
-TUPLE: cell < border  selection tree ;
+TUPLE: cell < border  selection ;
 
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> ] bi eq? ;
@@ -36,16 +37,15 @@ TUPLE: cell < border  selection tree ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
-    name empty? [ cell set-control-value ] [
-        { { [ dup call? not ] [ name >>name ] }
-          { [ dup clone name >>name find-target empty? not ]
-            [ name >>name dup find-target first >>target ] }
-          [ ]
-        } cond
-        cell set-control-value
-        cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
-        cell tree>> [ notify-connections ] when*
-    ] if cell ;
+    { { [ name empty? ] [ ] }
+      { [ cell control-value call? not ] [ name >>name ] }
+      { [ cell control-value clone name >>name find-target empty? not ]
+        [ name >>name dup find-target first >>target ] }
+      [ ]
+    } cond
+    cell set-control-value
+    cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
+    cell selection>> notify-connections cell ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
@@ -62,7 +62,7 @@ TUPLE: cell < border  selection tree ;
     cell-color <solid> >>interior
     { 0 0 } >>size
     [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
-    add-gadget ;
+    add-gadget dup request-focus ;
 
 :: collapsed? ( cell -- ? )
     cell control-value :> value
@@ -73,94 +73,75 @@ TUPLE: cell < border  selection tree ;
     cell selected? not
     and and and or ;
 
-: <cell> ( tree selection value -- node )
-    <model> cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
-    swap >>model swap >>selection swap >>tree ;
+: <cell> ( value selection -- node )
+    cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
+    swap >>selection swap <model> >>model ;
 
 M:: cell model-changed ( model cell -- )
     cell clear-gadget
     cell model value>> name>> >string make-spaces-visible <label> set-font
-    [ cell cell-colors nip nip >>foreground ] change-font add-gadget drop ;
+    [ cell cell-colors nip nip >>foreground ] change-font add-gadget cell-theme drop ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
 
 M: cell graft*
-    cell-theme drop ;
+    [ selected? ] [ request-focus ] smart-when* ;
 
 M:: cell pref-dim* ( cell -- dim )
     cell call-next-method cell collapsed? [ 6 over set-second ] when ;
-
-: node-type ( cell -- str )
-    control-value {
-        { [ dup vocab? ] [ drop "Vocabulary" ] }
-        { [ dup text? ] [ drop "Text" ] }
-        { [ dup constructor? ] [ drop "Object constructor" ] }
-        { [ dup accessor? ] [ drop "Slot accessor" ] }
-        { [ dup mutator? ] [ drop "Slot mutator" ] }
-        { [ dup call? ] [ drop "Word" ] }
-        { [ dup word? ] [ drop "Word" ] }
-        { [ dup introduce? ] [ drop "Input" ] }
-        { [ dup return? ] [ drop "Output" ] }
-    } cond ;
-
-: node-status-text ( cell -- str )
-    [ node-type ] [ control-value ] bi
-    path "." " > " replace [ " defined in " swap append append ] when*
-    "     ( R  remove )     ( E  edit )     ( H  help )" append ;
-
-: find-cell ( gadget -- node )
-    [ cell? ] find-parent ;
 
 :: select-cell ( cell -- cell  )
     cell control-value name>> "⨁" = [ 
         cell parent>> control-value [ vocab? ] find-parent
         cell control-value "" >>name add-element drop
     ] when
-    cell control-value cell selection>> set-model
-    cell cell-theme ;
+    cell control-value cell selection>> set-model cell ;
 
 : cell-clicked ( cell -- )
-    [ [ selected? not ] [ control-value name>> empty? ] bi and ] [ select-cell ] smart-when
-    [ selected? ] [ edit-cell ] [ select-cell ] smart-if request-focus ;
+    [ selected? ] [ edit-cell ] [ select-cell ] smart-if drop ;
 
 : ?enter-name ( cell -- cell )
     [ gadget-child action-field? ]
     [ dup gadget-child gadget-child control-value first swap enter-name ] smart-when ;
 
-: ?deselect-cell ( cell -- )
-    [ selected? not ] [ ?enter-name cell-theme ] smart-when drop ;
+:: change-cell ( cell quot -- )
+    cell selection>> quot change-model ; inline
 
-:: convert-cell ( cell class -- )
+:: change-cell* ( cell quot -- )
     cell gadget-child action-field?
-    [ cell control-value class change-node-type
-      cell tree>> notify-connections ] unless ;
+    [ cell quot change-cell ] unless ; inline
 
-:: remove-cell ( cell -- )
-    cell gadget-child action-field?
-    [ cell control-value remove-node
-      cell tree>> notify-connections ] unless ;
+: convert-cell ( cell class -- )
+    [ change-node-type ] curry change-cell* ;
 
-:: insert-cell ( cell -- )
-    cell gadget-child action-field?
-    [ cell control-value insert-node
-      cell tree>> notify-connections ] unless ;
+: remove-cell ( cell -- )
+    [ remove-node ] change-cell* ;
+
+: insert-cell ( cell -- )
+    [ insert-node ] change-cell* ;
+
+: move-up ( cell -- )
+    [ [ contents>> empty? ] [ contents>> first ] smart-unless ] change-cell ;
+
+: move-down ( cell -- )
+    [ [ parent>> word? ] [ parent>> ] smart-unless ] change-cell ;
 
 cell H{
-    { T{ button-down }    [ cell-clicked ] }
-    { lose-focus          [ ?deselect-cell ] }
-    { T{ key-up f f "w" } [ call convert-cell ] }
-    { T{ key-up f f "W" } [ call convert-cell ] }
-    { T{ key-up f f "i" } [ introduce convert-cell ] }
-    { T{ key-up f f "I" } [ introduce convert-cell ] }
-    { T{ key-up f f "o" } [ return convert-cell ] }
-    { T{ key-up f f "O" } [ return convert-cell ] }
-    { T{ key-up f f "t" } [ text convert-cell ] }
-    { T{ key-up f f "T" } [ text convert-cell ] }
-    { T{ key-up f f "r" } [ remove-cell ] }
-    { T{ key-up f f "R" } [ remove-cell ] }
-    { T{ key-up f f "b" } [ insert-cell ] }
-    { T{ key-up f f "B" } [ insert-cell ] }
-  !  { mouse-enter       [ [ node-status-text ] keep show-status ] }
-  !  { mouse-leave       [ hide-status ] }
+    { T{ button-down }         [ cell-clicked ] }
+    { T{ key-down f f "RET" }  [ cell-clicked ] }
+    { T{ key-down f f "w" }    [ call convert-cell ] }
+    { T{ key-down f f "W" }    [ call convert-cell ] }
+    { T{ key-down f f "i" }    [ introduce convert-cell ] }
+    { T{ key-down f f "I" }    [ introduce convert-cell ] }
+    { T{ key-down f f "o" }    [ return convert-cell ] }
+    { T{ key-down f f "O" }    [ return convert-cell ] }
+    { T{ key-down f f "t" }    [ text convert-cell ] }
+    { T{ key-down f f "T" }    [ text convert-cell ] }
+    { T{ key-down f f "r" }    [ remove-cell ] }
+    { T{ key-down f f "R" }    [ remove-cell ] }
+    { T{ key-down f f "b" }    [ insert-cell ] }
+    { T{ key-down f f "B" }    [ insert-cell ] }
+    { T{ key-down f f "UP" }   [ move-up ] }
+    { T{ key-down f f "DOWN" } [ move-down ] }
 } set-gestures
