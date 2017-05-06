@@ -36,15 +36,16 @@ TUPLE: cell < border  selection tree ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
-    { { [ name empty? ] [ ] }
-      { [ cell control-value call? not ] [ name >>name ] }
-      { [ cell control-value clone name >>name find-target empty? not ]
-        [ name >>name dup find-target first >>target ] }
-      [ ]
-    } cond
-    cell set-control-value
-    cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
-    cell tree>> [ notify-connections ] when* cell ;
+    name empty? [ cell set-control-value ] [
+        { { [ dup call? not ] [ name >>name ] }
+          { [ dup clone name >>name find-target empty? not ]
+            [ name >>name dup find-target first >>target ] }
+          [ ]
+        } cond
+        cell set-control-value
+        cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
+        cell tree>> [ notify-connections ] when*
+    ] if cell ;
 
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
