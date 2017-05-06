@@ -67,6 +67,22 @@ vocab new "●" >>name skov-root set-global
 : middle-node? ( node -- ? )
     [ top-node? ] [ bottom-node? ] bi or not ;
 
+: parent-node ( node -- node )
+    [ parent>> word? ] [ parent>> ] smart-unless ;
+
+: child-node ( node -- node )
+    [ contents>> empty? ] [ contents>> first ] smart-unless ;
+
+:: left-node ( node -- node )
+    node parent>> contents>> :> nodes
+    node nodes index 1 -
+    dup neg? [ drop node ] [ nodes nth ] if ;
+
+:: right-node ( node -- node )
+    node parent>> contents>> :> nodes
+    node nodes index 1 +
+    dup nodes length = [ drop node ] [ nodes nth ] if ;
+
 :: change-nodes-above ( elt n -- )
     elt contents>> length :> old-n
     elt { 
