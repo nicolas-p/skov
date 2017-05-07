@@ -245,7 +245,7 @@ M:: call in-out ( call -- seq seq )
     } 1|| ;
 
 CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
-CONSTANT: special-variadic-words { "1array" "1sequence" "each" "map" "append" "produce" }
+CONSTANT: special-variadic-words { "array" "sequence" } ! "each" "map" "append" "produce" }
 
 : simple-variadic? ( call -- ? )
     name>> simple-variadic-words member? ;
