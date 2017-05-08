@@ -124,8 +124,16 @@ vocab new "●" >>name skov-root set-global
     [ remove-from-parent ]
     [ dup child-node replace-element ] smart-if ;
 
-:: change-node-type ( elt class -- new-elt )
+:: (change-node-type) ( elt class -- new-elt )
     elt class new elt name>> >>name elt contents>> [ add-element ] each replace-element ;
+
+: change-node-type ( elt class -- new-elt )
+    2dup {
+        { introduce [ top-node? ] }
+        { text      [ top-node? ] }
+        { return    [ bottom-node? ] }
+        [ drop drop t ]
+    } case [ (change-node-type) ] [ drop ] if ;
 
 GENERIC: factor-name ( elt -- str )
 
