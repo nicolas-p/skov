@@ -122,22 +122,24 @@ M:: cell pref-dim* ( cell -- dim )
     [ insert-node ] change-cell* ;
 
 cell H{
-    { T{ button-down }          [ cell-clicked ] }
-    { T{ key-down f f "RET" }   [ cell-clicked ] }
-    { T{ key-down f f "w" }     [ call convert-cell ] }
-    { T{ key-down f f "W" }     [ call convert-cell ] }
-    { T{ key-down f f "i" }     [ introduce convert-cell ] }
-    { T{ key-down f f "I" }     [ introduce convert-cell ] }
-    { T{ key-down f f "o" }     [ return convert-cell ] }
-    { T{ key-down f f "O" }     [ return convert-cell ] }
-    { T{ key-down f f "t" }     [ text convert-cell ] }
-    { T{ key-down f f "T" }     [ text convert-cell ] }
-    { T{ key-down f f "r" }     [ remove-cell ] }
-    { T{ key-down f f "R" }     [ remove-cell ] }
-    { T{ key-down f f "b" }     [ insert-cell ] }
-    { T{ key-down f f "B" }     [ insert-cell ] }
-    { T{ key-down f f "UP" }    [ [ child-node ] change-cell ] }
-    { T{ key-down f f "DOWN" }  [ [ parent-node ] change-cell ] }
-    { T{ key-down f f "LEFT" }  [ [ left-node ] change-cell ] }
-    { T{ key-down f f "RIGHT" } [ [ right-node ] change-cell ] }
+    { T{ button-down }               [ cell-clicked ] }
+    { T{ key-down f f "RET" }        [ cell-clicked ] }
+    { T{ key-down f { M+ } "w" }     [ call convert-cell ] }
+    { T{ key-down f { M+ } "W" }     [ call convert-cell ] }
+    { T{ key-down f { M+ } "i" }     [ introduce convert-cell ] }
+    { T{ key-down f { M+ } "I" }     [ introduce convert-cell ] }
+    { T{ key-down f { M+ } "o" }     [ return convert-cell ] }
+    { T{ key-down f { M+ } "O" }     [ return convert-cell ] }
+    { T{ key-down f { M+ } "t" }     [ text convert-cell ] }
+    { T{ key-down f { M+ } "T" }     [ text convert-cell ] }
+    { T{ key-down f { M+ } "r" }     [ remove-cell ] }
+    { T{ key-down f { M+ } "R" }     [ remove-cell ] }
+    { T{ key-down f { M+ } "b" }     [ insert-cell ] }
+    { T{ key-down f { M+ } "B" }     [ insert-cell ] }
+    { T{ key-down f f "UP" }         [ [ child-node ] change-cell ] }
+    { T{ key-down f f "DOWN" }       [ [ parent-node ] change-cell ] }
+    { T{ key-down f f "LEFT" }       [ [ left-node ] change-cell ] }
+    { T{ key-down f f "RIGHT" }      [ [ right-node ] change-cell ] }
+    { T{ key-down f { A+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
+    { T{ key-down f { A+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
 } set-gestures
