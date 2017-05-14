@@ -49,3 +49,10 @@ M:: navigation model-changed ( model gadget -- )
         [ [ model value>> parent>> eq? model value>> result? and ]
           [ result>> contents>> set-children-font { 10 45 } <border> add-gadget ] smart-when* ] tri
     ] each drop ;
+
+navigation H{
+    { T{ key-down f { M+ } "v" }     [ vocab new-item ] }
+    { T{ key-down f { M+ } "V" }     [ vocab new-item ] }
+    { T{ key-down f { M+ } "n" }     [ word new-item ] }
+    { T{ key-down f { M+ } "N" }     [ word new-item ] }
+} set-gestures
