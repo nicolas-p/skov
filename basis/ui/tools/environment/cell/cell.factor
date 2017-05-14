@@ -16,7 +16,7 @@ CONSTANT: min-cell-width 29
 TUPLE: cell < border  selection ;
 
 : selected? ( cell -- ? )
-    [ control-value ] [ selection>> value>> ] bi eq? ;
+    [ control-value ] [ selection>> value>> [ result? ] [ parent>> ] smart-when ] bi eq? ;
 
 : cell-colors ( cell -- img-name bg-color text-color )
     control-value
