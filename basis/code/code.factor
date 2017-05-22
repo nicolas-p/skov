@@ -236,7 +236,7 @@ M:: call in-out ( call -- seq seq )
     if-empty word ;
 
 : any-empty-name? ( def -- ? )
-    contents>> [ name>> empty? ] any? ;
+    sort-tree [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
    { [ introduces empty? ]
