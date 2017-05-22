@@ -2,10 +2,11 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code code.execution colors combinators
 combinators.smart fry kernel locals math math.order
-math.statistics math.vectors models sequences splitting system
-ui.gadgets ui.gadgets.borders ui.gadgets.editors strings
-ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
-ui.pens.tile ui.tools.environment.theme namespaces ;
+math.statistics math.vectors models namespaces sequences
+splitting strings system ui.gadgets ui.gadgets.borders
+ui.gadgets.buttons.round ui.gadgets.editors ui.gadgets.frames
+ui.gadgets.grids ui.gadgets.labels ui.gadgets.worlds ui.gestures
+ui.pens.solid ui.pens.tile ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
@@ -78,9 +79,27 @@ TUPLE: cell < border  selection ;
     swap >>selection swap <model> >>model ;
 
 M:: cell model-changed ( model cell -- )
-    cell clear-gadget
-    cell model value>> name>> >string make-spaces-visible <label> set-font
-    [ cell cell-colors nip nip >>foreground ] change-font add-gadget cell-theme drop ;
+    cell dup clear-gadget
+    model value>> name>> >string make-spaces-visible <label> set-font
+    [ cell cell-colors nip nip >>foreground ] change-font add-gadget
+    model value>> node? [ 
+        cell selected? model value>> parent>> and [
+            "inactive" "✕"
+            [ drop model [ remove-from-parent ] change-model ] <round-button>
+            model value>> vocab? "Delete vocabulary" "Delete word" ?
+            >>tooltip add-gadget ] when
+        model value>> executable? [
+            "inactive" "➤"
+            [ drop model [ dup run-word result>> ] change-model ] <round-button>
+            "Display result" >>tooltip add-gadget ] when
+    ] unless cell-theme drop ;
+
+M:: cell layout* ( cell -- )
+    cell call-next-method 
+    cell children>> rest [ 
+        dup tooltip>> "Display result" = cell dim>> first 35 - 15 ? 5 2array >>loc 
+        dup pref-dim >>dim drop
+     ] each ;
 
 M: cell focusable-child*
     gadget-child dup action-field? [ ] [ drop t ] if ;
