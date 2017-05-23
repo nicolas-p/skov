@@ -239,11 +239,12 @@ M:: call in-out ( call -- seq seq )
     sort-tree [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
-   { [ introduces empty? ]
+   { [ word? ]
+     [ introduces empty? ]
      [ returns empty? ]
      [ calls empty? not ]
-     [ defined?>> ]
      [ any-empty-name? not ]
+     [ defined?>> ]
    } 1&& ;
 
 : error? ( def -- ? )
