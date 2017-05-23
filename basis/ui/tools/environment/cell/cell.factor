@@ -85,12 +85,12 @@ M:: cell model-changed ( model cell -- )
     model value>> node? [ 
         cell selected? model value>> parent>> and [
             "inactive" "✕"
-            [ drop model [ remove-from-parent ] change-model ] <round-button>
+            [ drop model value>> remove-from-parent cell selection>> set-model ] <round-button>
             model value>> vocab? "Delete vocabulary" "Delete word" ?
             >>tooltip add-gadget ] when
         model value>> executable? [
             "inactive" "➤"
-            [ drop model [ dup run-word result>> ] change-model ] <round-button>
+            [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
             "Display result" >>tooltip add-gadget ] when
     ] unless cell-theme drop ;
 
