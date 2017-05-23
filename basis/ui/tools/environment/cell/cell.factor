@@ -89,15 +89,21 @@ M:: cell model-changed ( model cell -- )
             model value>> vocab? "Delete vocabulary" "Delete word" ?
             >>tooltip add-gadget ] when
         model value>> executable? [
-            "inactive" "➤"
-            [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
-            "Display result" >>tooltip add-gadget ] when
+            cell selection>> value>> result? [
+                "inactive" "⬅︎"
+                [ drop model value>> cell selection>> set-model ] <round-button>
+                "Show word" >>tooltip
+            ] [
+                "inactive" "➤"
+                [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
+                "Show result" >>tooltip 
+            ] if add-gadget ] when
     ] unless cell-theme drop ;
 
 M:: cell layout* ( cell -- )
     cell call-next-method 
     cell children>> rest [ 
-        dup tooltip>> "Display result" = cell dim>> first 35 - 15 ? 5 2array >>loc 
+        dup tooltip>> "Show" swap subseq? cell dim>> first 35 - 15 ? 5 2array >>loc 
         dup pref-dim >>dim drop
      ] each ;
 
