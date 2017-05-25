@@ -6,6 +6,7 @@ ui.gadgets.buttons ui.gadgets.buttons.round ui.gadgets.icons
 ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
 ui.tools.environment.theme ui.tools.environment.tree
 ui.tools.environment.cell ;
+FROM: models => change-model ;
 IN: ui.tools.environment.navigation
 
 TUPLE: navigation < pack ;
@@ -51,8 +52,10 @@ M:: navigation model-changed ( model gadget -- )
     ] each drop ;
 
 navigation H{
-    { T{ key-down f { M+ } "v" }     [ vocab new-item ] }
-    { T{ key-down f { M+ } "V" }     [ vocab new-item ] }
-    { T{ key-down f { M+ } "n" }     [ word new-item ] }
-    { T{ key-down f { M+ } "N" }     [ word new-item ] }
+    { T{ key-down f { C+ } "v" }    [ vocab new-item ] }
+    { T{ key-down f { C+ } "V" }    [ vocab new-item ] }
+    { T{ key-down f { C+ } "n" }    [ word new-item ] }
+    { T{ key-down f { C+ } "N" }    [ word new-item ] }
+    { T{ key-down f { M+ } "UP" }   [ model>> [ left-node ] change-model ] }
+    { T{ key-down f { M+ } "DOWN" } [ model>> [ right-node ] change-model ] }
 } set-gestures
