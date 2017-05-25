@@ -92,8 +92,8 @@ M:: cell model-changed ( model cell -- )
             model value>> vocab? "Delete vocabulary" "Delete word" ?
             >>tooltip add-gadget ] when
         model value>> executable? [
-            cell selection>> value>> result? [
-                "inactive" "⬅︎"
+            cell selection>> value>> parent>> cell control-value eq? [
+                "blue" "➤"
                 [ drop model value>> cell selection>> set-model ] <round-button>
                 "Show word" >>tooltip
             ] [
