@@ -1,12 +1,14 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays code code.execution colors combinators
-combinators.smart fry kernel locals math math.order
-math.statistics math.vectors models namespaces sequences
-splitting strings system ui.gadgets ui.gadgets.borders
-ui.gadgets.buttons.round ui.gadgets.editors ui.gadgets.frames
-ui.gadgets.grids ui.gadgets.labels ui.gadgets.worlds ui.gestures
-ui.pens.solid ui.pens.tile ui.tools.environment.theme ;
+combinators.short-circuit combinators.smart fry kernel locals
+math math.order math.statistics math.vectors models namespaces
+sequences splitting strings system ui.commands ui.gadgets
+ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
+ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
+ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
+ui.pens.tile ui.render ui.text ui.tools.environment.theme
+ui.tools.inspector ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
@@ -15,6 +17,10 @@ CONSTANT: cell-height 26
 CONSTANT: min-cell-width 29
 
 TUPLE: cell < border  selection ;
+TUPLE: cell-editor < editor ;
+
+: <cell-editor> ( -- editor )
+    cell-editor new-editor ;
 
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> [ result? ] [ parent>> ] smart-when ] bi eq? ;
@@ -48,22 +54,16 @@ TUPLE: cell < border  selection ;
     cell control-value [ [ word? ] [ vocab? ] bi or ] find-parent [ ?define ] when*
     cell selection>> notify-connections cell ;
 
+:: ?enter-name ( cell -- cell )
+    cell children>> [ editor? ] filter first editor-string dup empty?
+    [ drop cell ] [ cell enter-name ] if ;
+
 : replace-space ( char -- char )
     [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
 
 : make-spaces-visible ( str -- str )
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
-
-:: edit-cell ( cell -- cell )
-    cell clear-gadget
-    cell [ cell enter-name drop ] <action-field>
-    cell cell-colors :> text-color :> cell-color drop
-    cell-color <solid> >>boundary
-    cell-color <solid> >>interior
-    { 0 0 } >>size
-    [ set-font [ text-color >>foreground cell-color >>background ] change-font ] change-editor
-    add-gadget dup request-focus ;
 
 :: collapsed? ( cell -- ? )
     cell control-value :> value
@@ -81,7 +81,10 @@ TUPLE: cell < border  selection ;
 M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
     model value>> name>> >string make-spaces-visible <label> set-font
-    [ cell cell-colors nip nip >>foreground ] change-font add-gadget
+        [ cell cell-colors nip nip >>foreground ] change-font add-gadget
+    <cell-editor> f >>visible? 
+        cell cell-colors :> text-color :> cell-color drop
+        set-font [ text-color >>foreground cell-color >>background ] change-font add-gadget
     model value>> node? [ 
         cell selected? model value>> parent>> and [
             "inactive" "✕"
@@ -101,14 +104,19 @@ M:: cell model-changed ( model cell -- )
     ] unless cell-theme drop ;
 
 M:: cell layout* ( cell -- )
-    cell call-next-method 
-    cell children>> rest [ 
+    cell children>> first { [ editor? ] [ editor-string empty? ] } 1&&
+    cell children>> second { [ editor? ] [ editor-string empty? not ] } 1&& or
+    [ 0 1 cell children>> exchange ] when
+    cell children>> first t >>visible? drop
+    cell children>> second f >>visible? drop
+    cell call-next-method
+    cell children>> rest rest [ 
         dup tooltip>> "Show" swap subseq? cell dim>> first 35 - 15 ? 5 2array >>loc 
         dup pref-dim >>dim drop
      ] each ;
 
 M: cell focusable-child*
-    gadget-child dup action-field? [ ] [ drop t ] if ;
+    children>> [ editor? ] filter first ;
 
 M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
@@ -123,48 +131,53 @@ M:: cell pref-dim* ( cell -- dim )
     ] when
     cell control-value cell selection>> set-model cell ;
 
-: cell-clicked ( cell -- )
-    [ selected? ] [ edit-cell ] [ select-cell ] smart-if drop ;
-
-: ?enter-name ( cell -- cell )
-    [ gadget-child action-field? ]
-    [ dup gadget-child gadget-child control-value first swap enter-name ] smart-when ;
-
 :: change-cell ( cell quot -- )
     cell selection>> quot change-model ; inline
 
-:: change-cell* ( cell quot -- )
-    cell gadget-child action-field?
-    [ cell quot change-cell ] unless ; inline
-
 : convert-cell ( cell class -- )
-    [ change-node-type ] curry change-cell* ;
+    [ change-node-type ] curry change-cell ;
 
 : remove-cell ( cell -- )
-    [ remove-node ] change-cell* ;
+    [ remove-node ] change-cell ;
 
 : insert-cell ( cell -- )
-    [ insert-node ] change-cell* ;
+    [ insert-node ] change-cell ;
 
 cell H{
-    { T{ button-down }               [ cell-clicked ] }
-    { T{ key-down f f "RET" }        [ cell-clicked ] }
-    { T{ key-down f { M+ } "w" }     [ call convert-cell ] }
-    { T{ key-down f { M+ } "W" }     [ call convert-cell ] }
-    { T{ key-down f { M+ } "i" }     [ introduce convert-cell ] }
-    { T{ key-down f { M+ } "I" }     [ introduce convert-cell ] }
-    { T{ key-down f { M+ } "o" }     [ return convert-cell ] }
-    { T{ key-down f { M+ } "O" }     [ return convert-cell ] }
-    { T{ key-down f { M+ } "t" }     [ text convert-cell ] }
-    { T{ key-down f { M+ } "T" }     [ text convert-cell ] }
-    { T{ key-down f { M+ } "r" }     [ remove-cell ] }
-    { T{ key-down f { M+ } "R" }     [ remove-cell ] }
-    { T{ key-down f { M+ } "b" }     [ insert-cell ] }
-    { T{ key-down f { M+ } "B" }     [ insert-cell ] }
-    { T{ key-down f f "UP" }         [ [ child-node ] change-cell ] }
-    { T{ key-down f f "DOWN" }       [ [ parent-node ] change-cell ] }
-    { T{ key-down f f "LEFT" }       [ [ left-node ] change-cell ] }
-    { T{ key-down f f "RIGHT" }      [ [ right-node ] change-cell ] }
-    { T{ key-down f { A+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
-    { T{ key-down f { A+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
+    { T{ button-down }               [ select-cell drop ] }
+    { lose-focus                     [ ?enter-name drop ] }
+    { T{ key-down f f "RET" }        [ ?enter-name drop ] }
+    { T{ key-down f { C+ } "w" }     [ ?enter-name call convert-cell ] }
+    { T{ key-down f { C+ } "W" }     [ ?enter-name call convert-cell ] }
+    { T{ key-down f { C+ } "i" }     [ ?enter-name introduce convert-cell ] }
+    { T{ key-down f { C+ } "I" }     [ ?enter-name introduce convert-cell ] }
+    { T{ key-down f { C+ } "o" }     [ ?enter-name return convert-cell ] }
+    { T{ key-down f { C+ } "O" }     [ ?enter-name return convert-cell ] }
+    { T{ key-down f { C+ } "t" }     [ ?enter-name text convert-cell ] }
+    { T{ key-down f { C+ } "T" }     [ ?enter-name text convert-cell ] }
+    { T{ key-down f { C+ } "r" }     [ remove-cell ] }
+    { T{ key-down f { C+ } "R" }     [ remove-cell ] }
+    { T{ key-down f { C+ } "b" }     [ ?enter-name insert-cell ] }
+    { T{ key-down f { C+ } "B" }     [ ?enter-name insert-cell ] }
+    { T{ key-down f f "UP" }         [ ?enter-name [ child-node ] change-cell ] }
+    { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
+    { T{ key-down f f "LEFT" }       [ ?enter-name [ left-node ] change-cell ] }
+    { T{ key-down f f "RIGHT" }      [ ?enter-name [ right-node ] change-cell ] }
+    { T{ key-down f { M+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
+    { T{ key-down f { M+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
 } set-gestures
+
+: previous-character* ( editor -- )
+    [ editor-caret second 0 = ]
+    [ parent>> ?enter-name [ left-node ] change-cell ]
+    [ previous-character ] smart-if ;
+
+: next-character* ( editor -- )
+    [ [ editor-caret second ] [ editor-string length ] bi = ]
+    [ parent>> ?enter-name [ right-node ] change-cell ]
+    [ next-character ] smart-if ;
+
+cell-editor "caret-motion" f {
+    { T{ key-down f f "LEFT" } previous-character* }
+    { T{ key-down f f "RIGHT" } next-character* }
+} define-command-map
