@@ -45,11 +45,11 @@ environment { 700 600 } set-tool-dim
       [  ]
     } cond ] change-model ;
 
-environment "general" f {
-    { T{ key-down f { C+ } "h" } show-help-browser }
-    { T{ key-down f { C+ } "H" } show-help-browser }
-    { T{ key-down f { C+ } "s" } save-skov-image }
-    { T{ key-down f { C+ } "S" } save-skov-image }
-    { T{ key-down f { C+ } "l" } load-vocabs }
-    { T{ key-down f { C+ } "L" } load-vocabs }
-} define-command-map
+environment H{
+    { T{ key-down f { C+ } "h" } [ show-help-browser ] }
+    { T{ key-down f { C+ } "H" } [ show-help-browser ] }
+    { T{ key-down f { C+ } "s" } [ save-skov-image ] }
+    { T{ key-down f { C+ } "S" } [ save-skov-image ] }
+    { T{ key-up f { C+ } "l" } [ load-vocabs ] }
+    { T{ key-up f { C+ } "L" } [ load-vocabs ] }
+} set-gestures
