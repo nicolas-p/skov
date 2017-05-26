@@ -26,7 +26,7 @@ TUPLE: path-display < tree-control ;
     node selection <cell> add-gadget ;
 
 : <tree> ( word -- pile )
-    tree new horizontal >>orientation swap >>model ;
+    tree new horizontal >>orientation swap >>model { 15 0 } >>gap 1 >>align ;
 
 M:: tree model-changed ( model tree -- )
     tree clear-gadget
@@ -47,6 +47,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into an input cell" >>tooltip add-gadget
         model value>> top-node?
+            [ "yellow" "F" [ drop model [ from change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
+            "Turn cell into a 'from' cell" >>tooltip add-gadget
+        model value>> top-node?
             [ "light" "T" [ drop model [ text change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into a text cell" >>tooltip add-gadget
@@ -59,15 +63,19 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
  !       "green" "M" [ drop model [ mutator change-node-type ] change-model ] <round-button>
  !           "Turn cell into a mutator cell" >>tooltip add-gadget
         model value>> bottom-node?
+            [ "yellow" "T" [ drop model [ to change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
+            "Turn cell into a 'to' cell" >>tooltip add-gadget
+        model value>> bottom-node?
             [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into an output cell" >>tooltip add-gadget
         <gadget> { 20 0 } >>dim add-gadget
-        model value>> parent>> variadic?
+        model value>> parent>> [ variadic? ] [ word? ] bi or
             [ "blue" "←" [ drop model [ insert-node-left ] change-model ] ]
             [ "inactive" " " [ drop ] ] if <round-button> 
             "Insert new cell on the left" >>tooltip add-gadget
-        model value>> parent>> variadic?
+        model value>> parent>> [ variadic? ] [ word? ] bi or
             [ "blue" "→" [ drop model [ insert-node-right ] change-model ] ]
             [ "inactive" " " [ drop ] ] if <round-button> 
             "Insert new cell on the right" >>tooltip add-gadget

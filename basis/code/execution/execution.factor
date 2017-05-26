@@ -6,7 +6,7 @@ io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
 splitting ui.gadgets.buttons.activate ui.gadgets.panes
 vocabs.parser ;
-FROM: code => call ;
+FROM: code => call from ;
 QUALIFIED: words
 QUALIFIED: vocabs
 IN: code.execution
@@ -15,9 +15,14 @@ IN: code.execution
     [ introduces [ name>> empty? ] reject ] [ returns ] bi
     [ [ factor-name ] map members >array ] bi@ <effect> ;
 
+: set-ids ( seq -- )
+    [ name>> ] collect-by [ [ <local> ] dip [ id<< ] with each ] assoc-each ;
+
 : set-input-ids ( word -- word )
-    dup introduces [ name>> ] collect-by
-    [ [ <local> ] dip [ id<< ] with each ] assoc-each ;
+    dup introduces set-ids ;
+
+: set-link-ids ( word -- word )
+    dup links set-ids ;
 
 :: process-simple-variadic ( call -- seq )
     call contents>> length 1 - [ call target>> ] replicate ;
@@ -41,6 +46,12 @@ M: introduce transform
 M: text transform
     name>> ;
 
+M: from transform
+    id>> ;
+
+M: to transform
+    [ contents>> [ transform ] map ] [ id>> <def> ] bi 2array ;
+
 M: call transform
     [ contents>> [ transform ] map ] [ process-variadic ] bi 2array ;
 
@@ -52,7 +63,7 @@ M: return transform
     contents>> [ transform ] map ;
 
 M: word transform
-    set-input-ids
+    set-input-ids set-link-ids
     [ introduces [ name>> empty? ] reject [ transform ] map members ]
     [ contents>> [ transform ] map flatten >quotation ] bi <lambda> ;
 

@@ -15,7 +15,7 @@ TUPLE: vocab < element ;
 TUPLE: word < element  defined? alt result ;
 
 TUPLE: node < element ;
-TUPLE: introduce < node id ;
+TUPLE: introduce < node  id ;
 TUPLE: return < node ;
 TUPLE: call < node  target ;
 TUPLE: text < node ;
@@ -23,10 +23,13 @@ TUPLE: constructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
 TUPLE: subtree < node ;
+TUPLE: to < node  id ;
+TUPLE: from < node  id ;
 
 TUPLE: result < element ;
 
 UNION: input/output  introduce return ;
+UNION: link  to from ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -42,6 +45,7 @@ vocab new "●" >>name skov-root set-global
 : calls ( elt -- seq )  sort-tree [ call? ] filter ;
 : introduces ( elt -- seq )  sort-tree [ introduce? ] filter ;
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
+: links ( elt -- seq )  sort-tree [ link? ] filter ;
 
 :: add-element ( parent child -- parent )
      child parent >>parent parent [ ?push ] change-contents ;
@@ -198,6 +202,12 @@ M: text in-out
 
 M: subtree in-out
     drop { "..." } { "..." } ;
+
+M: to in-out
+    drop { "..." } f ;
+
+M: from in-out
+    drop f { "..." } ;
 
 M:: call in-out ( call -- seq seq )
     call target>>

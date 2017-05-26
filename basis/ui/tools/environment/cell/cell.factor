@@ -33,6 +33,8 @@ TUPLE: cell-editor < editor ;
       { [ dup vocab? ] [ drop "title" dark-background light-text-colour ] }
       { [ dup word? ] [ drop "title" dark-background light-text-colour ] }
       { [ dup subtree? ] [ drop "subtree" dark-background light-text-colour ] }
+      { [ dup to? ] [ drop "link" yellow-background dark-text-colour ] }
+      { [ dup from? ] [ drop "link" yellow-background dark-text-colour ] }
     } cond 
     [ os windows? not [ drop transparent ] when ] dip ;
 
