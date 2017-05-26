@@ -3,7 +3,7 @@
 USING: accessors arrays code code.execution colors combinators
 combinators.short-circuit combinators.smart fry kernel locals
 math math.order math.statistics math.vectors models namespaces
-sequences splitting strings system ui.commands ui.gadgets
+sequences splitting system ui.commands ui.gadgets
 ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
 ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
@@ -38,9 +38,10 @@ TUPLE: cell-editor < editor ;
     } cond 
     [ os windows? not [ drop transparent ] when ] dip ;
 
-: cell-theme ( cell -- cell )
-    dup [ cell-colors ] [ selected? ] bi [ [ "-selected" append ] 2dip ] when
+:: cell-theme ( cell -- cell )
+    cell dup [ cell-colors ] [ selected? ] bi [ [ "-selected" append ] 2dip ] when
     [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
+    cell control-value [ name>> empty? ] [ node? ] bi and [ faded-color ] when
     <tile-pen> >>interior
     horizontal >>orientation ;
 
@@ -82,8 +83,7 @@ TUPLE: cell-editor < editor ;
 
 M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
-    model value>> name>> >string make-spaces-visible <label> set-font
-        [ cell cell-colors nip nip >>foreground ] change-font add-gadget
+    model value>> name-or-default make-spaces-visible <label> set-font add-gadget
     <cell-editor> f >>visible? 
         cell cell-colors :> text-color :> cell-color drop
         set-font [ text-color >>foreground cell-color >>background ] change-font add-gadget

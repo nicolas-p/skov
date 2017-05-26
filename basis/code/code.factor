@@ -1,15 +1,16 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.smart
-compiler.units effects fry hashtables.private kernel listener
-locals math math.parser namespaces sequences sequences.deep sequences.extras sets
-splitting ui.gadgets vectors vocabs.parser combinators.short-circuit ;
+USING: accessors arrays combinators combinators.short-circuit
+combinators.smart compiler.units effects fry hashtables.private
+kernel listener locals math math.parser namespaces sequences
+sequences.deep sequences.extras sets splitting strings
+ui.gadgets vectors vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
 IN: code
 
-TUPLE: element < identity-tuple  name parent contents ;
+TUPLE: element < identity-tuple  name parent contents default-name ;
 
 TUPLE: vocab < element ;
 TUPLE: word < element  defined? alt result ;
@@ -99,13 +100,15 @@ vocab new "●" >>name skov-root set-global
     node nodes index 1 +
     dup nodes length = [ drop node ] [ nodes nth ] if ;
 
-:: change-nodes-above ( elt n -- )
+:: change-nodes-above ( elt names -- )
     elt contents>> length :> old-n
-    elt { 
+    names length :> n
+    elt {
       { [ n old-n > ] [ n old-n - [ call add-from-class ] times drop ] }
 !     { [ n old-n < ] [ contents>> n swap shorten ] }
       [ drop ]
-    } cond ;
+    } cond
+    names elt contents>> [ default-name<< ] 2each ;
 
 : insert-node ( node -- new-node )
     call replace-with-new-parent ;
@@ -140,6 +143,10 @@ vocab new "●" >>name skov-root set-global
         { return    [ bottom-node? ] }
         [ drop drop t ]
     } case [ (change-node-type) ] [ drop ] if ;
+
+: name-or-default ( elt -- str )
+    [ [ name>> empty? ] [ subtree? not ] bi and ]
+    [ default-name>> ] [ name>> ] smart-if >string ;
 
 GENERIC: factor-name ( elt -- str )
 
@@ -225,12 +232,12 @@ M:: call in-out ( call -- seq seq )
     [ "quot" swap subseq? [ ?insert-subtree ] [ drop ] if ] 2each ;
 
 :: ?add-words-above ( elt -- )
-    elt elt in-out drop length change-nodes-above
+    elt elt in-out drop change-nodes-above
     elt ?add-subtrees
     elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
-    elt in-out nip [ drop elt insert-node drop ] unless-empty ;
+    elt in-out nip [ first elt insert-node default-name<< ] unless-empty ;
 
 :: ?add-words ( word -- word )
     word contents>>
