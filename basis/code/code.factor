@@ -201,13 +201,13 @@ SINGLETON: recursion
 GENERIC: in-out ( elt -- seq seq )
 
 M: source in-out
-    drop f { "..." } ;
+    drop f { "" } ;
 
 M: sink in-out
-    drop { "..." } f ;
+    drop { "" } f ;
 
 M: subtree in-out
-    drop { "..." } { "..." } ;
+    drop { "" } { "" } ;
 
 M:: call in-out ( call -- seq seq )
     call target>>
