@@ -30,6 +30,8 @@ TUPLE: result < element ;
 
 UNION: input/output  introduce return ;
 UNION: link  to from ;
+UNION: source  introduce text from ;
+UNION: sink  return to ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -191,23 +193,14 @@ SINGLETON: recursion
 
 GENERIC: in-out ( elt -- seq seq )
 
-M: introduce in-out
+M: source in-out
     drop f { "..." } ;
 
-M: return in-out
+M: sink in-out
     drop { "..." } f ;
-
-M: text in-out
-    drop f { "..." } ;
 
 M: subtree in-out
     drop { "..." } { "..." } ;
-
-M: to in-out
-    drop { "..." } f ;
-
-M: from in-out
-    drop f { "..." } ;
 
 M:: call in-out ( call -- seq seq )
     call target>>
