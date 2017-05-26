@@ -7,4 +7,4 @@ IN: ui.tools.environment.tree.help-tree
 
 :: <help-tree> ( factor-word -- gadget )
     word new factor-word call-from-factor add-element
-    f <model> swap <tree> { 20 10 } <filled-border> with-background ;
+    <model> <tree> { 20 10 } <filled-border> with-background ;
