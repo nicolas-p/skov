@@ -220,7 +220,7 @@ M: subtree in-out
 M:: call in-out ( call -- seq seq )
     call target>>
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
-      { [ dup number? ] [ drop { } { "..." } ] }
+      { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
