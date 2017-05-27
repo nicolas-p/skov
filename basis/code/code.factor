@@ -25,15 +25,15 @@ TUPLE: constructor < call ;
 TUPLE: accessor < call ;
 TUPLE: mutator < call ;
 TUPLE: subtree < node ;
-TUPLE: to < node  id ;
-TUPLE: from < node  id ;
+TUPLE: setter < node  id ;
+TUPLE: getter < node  id ;
 
 TUPLE: result < element ;
 
 UNION: input/output  introduce return ;
-UNION: link  to from ;
-UNION: source  introduce text from ;
-UNION: sink  return to ;
+UNION: link  setter getter ;
+UNION: source  introduce text getter ;
+UNION: sink  return setter ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -152,6 +152,8 @@ vocab new "●" >>name skov-root set-global
       { [ dup introduce? ] [ drop "input" ] }
       { [ dup return? ] [ drop "output" ] }
       { [ dup call? ] [ drop "word" ] }
+      { [ dup getter? ] [ drop "get" ] }
+      { [ dup setter? ] [ drop "set" ] }
       [ class-of unparse ] } cond >string ;
 
 GENERIC: factor-name ( elt -- str )

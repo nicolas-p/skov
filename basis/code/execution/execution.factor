@@ -6,7 +6,7 @@ io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math quotations sequences sequences.deep sets
 splitting ui.gadgets.buttons.activate ui.gadgets.panes
 vocabs.parser ;
-FROM: code => call from ;
+FROM: code => call ;
 QUALIFIED: words
 QUALIFIED: vocabs
 IN: code.execution
@@ -46,10 +46,10 @@ M: introduce transform
 M: text transform
     name>> ;
 
-M: from transform
+M: getter transform
     id>> ;
 
-M: to transform
+M: setter transform
     [ contents>> [ transform ] map ] [ id>> <def> ] bi 2array ;
 
 M: call transform

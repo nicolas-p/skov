@@ -47,13 +47,14 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into an input cell" >>tooltip add-gadget
         model value>> top-node?
-            [ "yellow" "F" [ drop model [ from change-node-type ] change-model ] ]
+            [ "yellow" "G" [ drop model [ getter change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into a 'from' cell" >>tooltip add-gadget
+            "Turn cell into a get cell" >>tooltip add-gadget
         model value>> top-node?
             [ "light" "T" [ drop model [ text change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into a text cell" >>tooltip add-gadget
+        <gadget> add-gadget
         "green" "W" [ drop model [ call change-node-type ] change-model ] <round-button>
             "Turn cell into a word cell" >>tooltip add-gadget
  !       "green" "C" [ drop model [ constructor change-node-type ] change-model ] <round-button>
@@ -62,10 +63,11 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
  !           "Turn cell into an accessor cell" >>tooltip add-gadget
  !       "green" "M" [ drop model [ mutator change-node-type ] change-model ] <round-button>
  !           "Turn cell into a mutator cell" >>tooltip add-gadget
+        <gadget> add-gadget
         model value>> bottom-node?
-            [ "yellow" "T" [ drop model [ to change-node-type ] change-model ] ]
+            [ "yellow" "S" [ drop model [ setter change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into a 'to' cell" >>tooltip add-gadget
+            "Turn cell into a set cell" >>tooltip add-gadget
         model value>> bottom-node?
             [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
