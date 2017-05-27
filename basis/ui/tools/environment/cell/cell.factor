@@ -41,7 +41,7 @@ TUPLE: cell-editor < editor ;
 :: cell-theme ( cell -- cell )
     cell dup [ cell-colors ] [ selected? ] bi [ [ "-selected" append ] 2dip ] when
     [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
-    cell control-value [ name>> empty? ] [ node? ] bi and [ faded-color ] when
+    cell control-value name>> empty? [ faded-color ] when
     <tile-pen> >>interior
     horizontal >>orientation ;
 

@@ -1,10 +1,11 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays combinators combinators.short-circuit
-combinators.smart compiler.units effects fry hashtables.private
-kernel listener locals math math.parser namespaces sequences
-sequences.deep sequences.extras sets splitting strings
-ui.gadgets vectors vocabs.parser ;
+USING: accessors arrays classes combinators
+combinators.short-circuit combinators.smart compiler.units
+effects fry hashtables.private kernel listener locals math
+math.parser namespaces prettyprint sequences sequences.deep
+sequences.extras sets splitting strings ui.gadgets vectors
+vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
@@ -145,8 +146,13 @@ vocab new "●" >>name skov-root set-global
     } case [ (change-node-type) ] [ drop ] if ;
 
 : name-or-default ( elt -- str )
-    [ [ name>> empty? ] [ subtree? not ] bi and ]
-    [ default-name>> ] [ name>> ] smart-if >string ;
+    { { [ dup subtree? ] [ drop "" ] }
+      { [ dup name>> empty? not ] [ name>> ] }
+      { [ dup default-name>> empty? not ] [ default-name>> ] }
+      { [ dup introduce? ] [ drop "input" ] }
+      { [ dup return? ] [ drop "output" ] }
+      { [ dup call? ] [ drop "word" ] }
+      [ class-of unparse ] } cond >string ;
 
 GENERIC: factor-name ( elt -- str )
 
