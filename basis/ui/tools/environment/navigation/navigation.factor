@@ -24,7 +24,7 @@ TUPLE: navigation < pack ;
      navigation new swap >>model vertical >>orientation 1/2 >>align 1 >>fill ;
 
 :: new-item ( navigation class -- )
-    navigation control-value [ vocab? not ] [ parent>> ] smart-when
+    navigation control-value [ vocab? ] find-parent
     class add-from-class navigation set-control-value ;
 
 : find-navigation ( gadget -- navigation )
