@@ -81,7 +81,8 @@ TUPLE: cell-editor < editor ;
 
 M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
-    model value>> name-or-default make-spaces-visible <label> set-font add-gadget
+    cell collapsed? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
+    <label> set-font add-gadget
     <cell-editor> f >>visible? 
         cell cell-colors :> text-color :> cell-color drop
         set-font [ text-color >>foreground cell-color >>background ] change-font add-gadget
