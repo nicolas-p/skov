@@ -141,7 +141,9 @@ vocab new "●" >>name skov-root set-global
     2dup {
         { introduce [ top-node? ] }
         { text      [ top-node? ] }
+        { getter    [ top-node? ] }
         { return    [ bottom-node? ] }
+        { setter    [ bottom-node? ] }
         [ drop drop t ]
     } case [ (change-node-type) ] [ drop ] if ;
 
