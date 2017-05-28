@@ -56,6 +56,6 @@ navigation H{
     { T{ key-down f { C+ } "V" }    [ vocab new-item ] }
     { T{ key-down f { C+ } "n" }    [ word new-item ] }
     { T{ key-down f { C+ } "N" }    [ word new-item ] }
-    { T{ key-down f { M+ } "UP" }   [ model>> [ left-node ] change-model ] }
-    { T{ key-down f { M+ } "DOWN" } [ model>> [ right-node ] change-model ] }
+    { T{ key-down f { S+ } "UP" }   [ model>> [ left-node ] change-model ] }
+    { T{ key-down f { S+ } "DOWN" } [ model>> [ right-node ] change-model ] }
 } set-gestures
