@@ -69,12 +69,11 @@ TUPLE: cell-editor < editor ;
 
 :: collapsed? ( cell -- ? )
     cell control-value :> value
-    value subtree?
     value introduce?
-    value name>> empty?
-    value [ subtree? ] find-parent
-    cell selected? not
-    and and and or ;
+    value name>> empty? and
+    value [ subtree? ] find-parent and
+    cell selected? not and
+    value subtree? or ;
 
 : <cell> ( value selection -- node )
     cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
