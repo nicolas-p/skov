@@ -24,6 +24,8 @@ interactive-vocabs [ {
   "math.statistics"
   "math.parser"
   "sequences.deep"
+  "sequences.extras"
+  "sequences.generalizations"
   "binary-search"
   "vectors"
   "quotations"
@@ -40,4 +42,5 @@ interactive-vocabs [ {
   "timers"
   "sets"
   "globs"
+  "scratchpad"
 } append ] change-global
