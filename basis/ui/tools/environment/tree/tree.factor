@@ -78,7 +78,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ "yellow" "S" [ drop model [ setter change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into a set cell" >>tooltip add-gadget
-        model value>> bottom-node?
+        model value>> [ bottom-node? ] [ no-return? ] [ return? ] tri or and
             [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
             "Turn cell into an output cell" >>tooltip add-gadget

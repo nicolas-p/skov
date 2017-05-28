@@ -137,12 +137,15 @@ vocab new "●" >>name skov-root set-global
 :: (change-node-type) ( elt class -- new-elt )
     elt class new elt name>> >>name elt contents>> [ add-element ] each replace-element ;
 
+: no-return? ( elt -- ? )
+    [ word? ] find-parent returns empty? ;
+
 : change-node-type ( elt class -- new-elt )
     2dup {
         { introduce [ top-node? ] }
         { text      [ top-node? ] }
         { getter    [ top-node? ] }
-        { return    [ bottom-node? ] }
+        { return    [ [ bottom-node? ] [ no-return? ] bi and ] }
         { setter    [ bottom-node? ] }
         [ drop drop t ]
     } case [ (change-node-type) ] [ drop ] if ;
