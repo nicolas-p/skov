@@ -21,7 +21,7 @@ TUPLE: navigation < pack ;
     <cell> { 0 30 } >>min-dim ;
 
 : <navigation> ( model -- navigation )
-     navigation new swap >>model vertical >>orientation 1/2 >>align 1 >>fill ;
+     navigation new swap >>model vertical >>orientation 1 >>fill ;
 
 :: new-item ( navigation class -- )
     navigation control-value [ vocab? ] find-parent

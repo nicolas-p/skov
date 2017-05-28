@@ -1,8 +1,9 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays code kernel locals math.order models
-sequences splitting ui.gadgets ui.gadgets.buttons.round
-ui.gadgets.labels ui.gadgets.packs ui.gestures
+USING: accessors arrays code kernel locals math math.order
+math.vectors models sequences splitting ui.gadgets
+ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.labels
+ui.gadgets.packs ui.gadgets.packs.private ui.gestures
 ui.tools.environment.cell ;
 FROM: code => call ;
 FROM: models => change-model ;
@@ -12,18 +13,26 @@ TUPLE: tree < pack ;
 TUPLE: tree-control < pack ;
 TUPLE: tree-toolbar < tree-control ;
 TUPLE: path-display < tree-control ;
+TUPLE: elastic-shelf < pack ;
 
-: <space> ( -- gadget )
-    <gadget> { 2 0 } >>dim ;
+: <elastic-shelf> ( -- pack )
+    elastic-shelf new horizontal >>orientation ;
+
+: elastic-layout ( pack -- sizes )
+    [ children>> pref-dims dup [ first ] map sum ]
+    [ dim>> first ]
+    [ gap-dim first ] tri
+    - / 1 2array [ v/ ] curry map ;
+
+M: elastic-shelf layout*
+    dup elastic-layout pack-layout ;
 
 :: build-tree ( node selection -- shelf )
-    <pile> 1 >>fill 1/2 >>align
-    <shelf> node subtree? [ { 0 0 } ] [ { 3 0 } ] if >>gap 1 >>align
-        <space> add-gadget
-        node contents>> [ selection build-tree ] map add-gadgets
-        <space> add-gadget
-    add-gadget
-    node selection <cell> add-gadget ;
+    <pile> 1 >>fill
+        <elastic-shelf> { 3 0 } >>gap 1 >>align
+            node contents>> [ selection build-tree ] map add-gadgets
+            node subtree? { 2 0 } { 5 0 } ? <filled-border> add-gadget
+        node selection <cell> add-gadget ;
 
 : <tree> ( word -- pile )
     tree new horizontal >>orientation swap >>model { 15 0 } >>gap 1 >>align ;
