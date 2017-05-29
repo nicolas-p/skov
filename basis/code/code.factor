@@ -260,11 +260,14 @@ M:: call in-out ( call -- seq seq )
     if-empty word ;
 
 : any-empty-name? ( def -- ? )
-    sort-tree [ name>> empty? ] any? ;
+    sort-tree
+    [ subtree? ] reject
+    [ [ introduce? ] [ [ subtree? ] find-parent ] bi and ] reject
+    [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
    { [ word? ]
-     [ introduces empty? ]
+     [ introduces [ [ subtree? ] find-parent ] reject empty? ]
      [ returns empty? ]
      [ calls empty? not ]
      [ any-empty-name? not ]
