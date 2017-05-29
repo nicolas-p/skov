@@ -172,6 +172,7 @@ M: call factor-name
         { "until" "special until" }
         { "if" "special if" }
         { "times" "special times" }
+        { "produce" "special produce" }
     } [ change-name ] each ;
 
 M: constructor factor-name
