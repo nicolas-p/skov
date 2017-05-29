@@ -13,7 +13,7 @@ FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
 
-CONSTANT: cell-height 26
+CONSTANT: cell-height 25
 CONSTANT: min-cell-width 29
 
 TUPLE: cell < border  selection ;
@@ -123,7 +123,7 @@ M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
 
 M:: cell pref-dim* ( cell -- dim )
-    cell call-next-method cell collapsed? [ 6 over set-second ] when ;
+    cell call-next-method cell collapsed? [ 5 over set-second ] when ;
 
 :: select-cell ( cell -- cell  )
     cell control-value name>> "⨁" = [ 

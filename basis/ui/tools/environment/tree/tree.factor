@@ -28,7 +28,7 @@ M: elastic-shelf layout*
     dup elastic-layout pack-layout ;
 
 :: build-tree ( node selection -- shelf )
-    <pile> 1 >>fill
+    <pile> 1 >>fill { 0 1 } >>gap
         <elastic-shelf> { 3 0 } >>gap 1 >>align
             node contents>> [ selection build-tree ] map add-gadgets
             node subtree? { 2 0 } { 5 0 } ? <filled-border> add-gadget
