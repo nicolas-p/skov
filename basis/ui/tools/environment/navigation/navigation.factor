@@ -51,6 +51,13 @@ M:: navigation model-changed ( model gadget -- )
           [ result>> contents>> set-children-font { 10 45 } <border> add-gadget ] smart-when* ] tri
     ] each drop ;
 
+: toggle-result ( nav -- )
+    model>> [ {
+      { [ dup executable? ] [ dup run-word result>> ] }
+      { [ dup result? ] [ parent>> ] }
+      [  ]
+    } cond ] change-model ;
+
 navigation H{
     { T{ key-down f { C+ } "v" }    [ vocab new-item ] }
     { T{ key-down f { C+ } "V" }    [ vocab new-item ] }
@@ -58,4 +65,5 @@ navigation H{
     { T{ key-down f { C+ } "N" }    [ word new-item ] }
     { T{ key-down f { S+ } "UP" }   [ model>> [ left-node ] change-model ] }
     { T{ key-down f { S+ } "DOWN" } [ model>> [ right-node ] change-model ] }
+    { T{ key-down f { S+ } "RET" }  [ toggle-result ] }
 } set-gestures

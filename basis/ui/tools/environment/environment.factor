@@ -38,13 +38,6 @@ environment { 700 600 } set-tool-dim
     [ [ control-value target/alt (browser-window) ] with-interactive-vocabs ]
     [ show-browser ] if* drop ;
 
-: toggle-result ( env -- )
-    model>> [ {
-      { [ dup executable? ] [ dup run-word result>> ] }
-      { [ dup result? ] [ parent>> ] }
-      [  ]
-    } cond ] change-model ;
-
 environment H{
     { T{ key-down f { C+ } "h" } [ show-help-browser ] }
     { T{ key-down f { C+ } "H" } [ show-help-browser ] }
