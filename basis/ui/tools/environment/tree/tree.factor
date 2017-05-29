@@ -39,7 +39,7 @@ M: elastic-shelf layout*
 
 M:: tree model-changed ( model tree -- )
     tree clear-gadget
-    tree model value>> [ word? ] find-parent
+    tree model value>> [ word? ] find-parent ?add-words
     contents>> [ model build-tree ] map add-gadgets drop ;
 
 M: tree-control pref-dim*
