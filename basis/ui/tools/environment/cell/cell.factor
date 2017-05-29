@@ -156,6 +156,10 @@ cell H{
     { T{ key-down f { C+ } "O" }     [ ?enter-name return convert-cell ] }
     { T{ key-down f { C+ } "t" }     [ ?enter-name text convert-cell ] }
     { T{ key-down f { C+ } "T" }     [ ?enter-name text convert-cell ] }
+    { T{ key-down f { C+ } "s" }     [ ?enter-name setter convert-cell ] }
+    { T{ key-down f { C+ } "S" }     [ ?enter-name setter convert-cell ] }
+    { T{ key-down f { C+ } "g" }     [ ?enter-name getter convert-cell ] }
+    { T{ key-down f { C+ } "G" }     [ ?enter-name getter convert-cell ] }
     { T{ key-down f { C+ } "r" }     [ remove-cell ] }
     { T{ key-down f { C+ } "R" }     [ remove-cell ] }
     { T{ key-down f { C+ } "b" }     [ ?enter-name insert-cell ] }
