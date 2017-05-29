@@ -65,8 +65,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ "inactive" "" [ drop ] ] if <round-button>
             "Convert cell into a text cell    ( Ctrl T )" >>tooltip add-gadget
         <gadget> add-gadget
-        "green" "W" [ drop model [ call change-node-type ] change-model ] <round-button>
-            "Turn cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
+        model value>> subtree? not
+            [ "green" "W" [ drop model [ call change-node-type ] change-model ] ]
+            [ "inactive" "" [ drop ] ] if <round-button>
+            "Convert cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
  !       "green" "C" [ drop model [ constructor change-node-type ] change-model ] <round-button>
  !           "Turn cell into a constructor cell" >>tooltip add-gadget
  !       "green" "A" [ drop model [ accessor change-node-type ] change-model ] <round-button>
