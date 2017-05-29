@@ -133,7 +133,7 @@ M:: cell pref-dim* ( cell -- dim )
     cell control-value cell selection>> set-model cell ;
 
 :: change-cell ( cell quot -- )
-    cell selection>> quot change-model ; inline
+    cell control-value node? [ cell selection>> quot change-model ] when ; inline
 
 : convert-cell ( cell class -- )
     [ change-node-type ] curry change-cell ;
