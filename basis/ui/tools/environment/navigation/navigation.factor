@@ -1,7 +1,7 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code colors combinators.smart kernel locals
-models sequences ui.gadgets ui.gadgets.borders
+models sequences ui.gadgets ui.gadgets.borders code.execution combinators
 ui.gadgets.buttons ui.gadgets.buttons.round ui.gadgets.icons
 ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
 ui.tools.environment.theme ui.tools.environment.tree
