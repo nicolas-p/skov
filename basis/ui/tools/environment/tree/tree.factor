@@ -55,18 +55,18 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
         model value>> top-node?
             [ "dark" "I" [ drop model [ introduce change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into an input cell" >>tooltip add-gadget
+            "Convert cell into an input cell    ( Ctrl I )" >>tooltip add-gadget
         model value>> top-node?
             [ "yellow" "G" [ drop model [ getter change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into a get cell" >>tooltip add-gadget
+            "Convert cell into a get cell    ( Ctrl G )" >>tooltip add-gadget
         model value>> top-node?
             [ "light" "T" [ drop model [ text change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into a text cell" >>tooltip add-gadget
+            "Convert cell into a text cell    ( Ctrl T )" >>tooltip add-gadget
         <gadget> add-gadget
         "green" "W" [ drop model [ call change-node-type ] change-model ] <round-button>
-            "Turn cell into a word cell" >>tooltip add-gadget
+            "Turn cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
  !       "green" "C" [ drop model [ constructor change-node-type ] change-model ] <round-button>
  !           "Turn cell into a constructor cell" >>tooltip add-gadget
  !       "green" "A" [ drop model [ accessor change-node-type ] change-model ] <round-button>
@@ -77,24 +77,24 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
         model value>> bottom-node?
             [ "yellow" "S" [ drop model [ setter change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into a set cell" >>tooltip add-gadget
+            "Convert cell into a set cell    ( Ctrl S )" >>tooltip add-gadget
         model value>> [ bottom-node? ] [ no-return? ] [ return? ] tri or and
             [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
             [ "inactive" "" [ drop ] ] if <round-button>
-            "Turn cell into an output cell" >>tooltip add-gadget
+            "Convert cell into an output cell    ( Ctrl O )" >>tooltip add-gadget
         <gadget> { 20 0 } >>dim add-gadget
         model value>> parent>> [ variadic? ] [ word? ] bi or
             [ "blue" "←" [ drop model [ insert-node-left ] change-model ] ]
             [ "inactive" " " [ drop ] ] if <round-button> 
-            "Insert new cell on the left" >>tooltip add-gadget
+            "Insert new cell on the left    ( Alt ← )" >>tooltip add-gadget
         model value>> parent>> [ variadic? ] [ word? ] bi or
             [ "blue" "→" [ drop model [ insert-node-right ] change-model ] ]
             [ "inactive" " " [ drop ] ] if <round-button> 
-            "Insert new cell on the right" >>tooltip add-gadget
+            "Insert new cell on the right    ( Alt → )" >>tooltip add-gadget
         "blue" "↓" [ drop model [ insert-node ] change-model ] <round-button>
-            "Insert new cell below" >>tooltip add-gadget 
+            "Insert new cell below    ( Alt ↓ )" >>tooltip add-gadget 
         "red" "✕" [ drop model [ remove-node ] change-model ] <round-button>
-            "Delete cell" >>tooltip add-gadget
+            "Delete cell    ( Ctrl R )" >>tooltip add-gadget
     ] when drop ;
 
 : <path-display> ( model -- gadget )

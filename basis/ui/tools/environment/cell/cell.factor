@@ -90,17 +90,17 @@ M:: cell model-changed ( model cell -- )
         cell selected? model value>> parent>> and [
             "inactive" "✕"
             [ drop model value>> remove-from-parent cell selection>> set-model ] <round-button>
-            model value>> vocab? "Delete vocabulary" "Delete word" ?
+            model value>> vocab? "Delete vocabulary" "Delete word" ? "    ( Ctrl R )" append
             >>tooltip add-gadget ] when
         model value>> executable? [
             cell selection>> value>> parent>> cell control-value eq? [
                 "blue" "➤"
                 [ drop model value>> cell selection>> set-model ] <round-button>
-                "Show word" >>tooltip
+                "Show word    ( Shift Enter )" >>tooltip
             ] [
                 "inactive" "➤"
                 [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
-                "Show result" >>tooltip 
+                "Show result    ( Shift Enter )" >>tooltip 
             ] if add-gadget ] when
     ] unless cell-theme drop ;
 
@@ -162,14 +162,13 @@ cell H{
     { T{ key-down f { C+ } "G" }     [ ?enter-name getter convert-cell ] }
     { T{ key-down f { C+ } "r" }     [ remove-cell ] }
     { T{ key-down f { C+ } "R" }     [ remove-cell ] }
-    { T{ key-down f { C+ } "b" }     [ ?enter-name insert-cell ] }
-    { T{ key-down f { C+ } "B" }     [ ?enter-name insert-cell ] }
     { T{ key-down f f "UP" }         [ ?enter-name [ child-node ] change-cell ] }
     { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
     { T{ key-down f f "LEFT" }       [ ?enter-name [ left-node ] change-cell ] }
     { T{ key-down f f "RIGHT" }      [ ?enter-name [ right-node ] change-cell ] }
     { T{ key-down f { M+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
     { T{ key-down f { M+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
+    { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
 } set-gestures
 
 : previous-character* ( editor -- )
