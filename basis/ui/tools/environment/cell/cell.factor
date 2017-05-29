@@ -144,6 +144,11 @@ M:: cell pref-dim* ( cell -- dim )
 : insert-cell ( cell -- )
     [ insert-node ] change-cell ;
 
+: show-help-on-word ( cell -- )
+    [ control-value target/alt
+        [ (browser-window) ] [ show-browser ] if*
+    ] with-interactive-vocabs ;
+
 cell H{
     { T{ button-down }               [ select-cell drop ] }
     { lose-focus                     [ ?enter-name drop ] }
@@ -169,6 +174,8 @@ cell H{
     { T{ key-down f { M+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
     { T{ key-down f { M+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
     { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
+    { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
+    { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
 } set-gestures
 
 : previous-character* ( editor -- )

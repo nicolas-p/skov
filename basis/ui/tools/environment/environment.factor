@@ -28,19 +28,9 @@ environment { 700 600 } set-tool-dim
 : load-vocabs ( env -- )
     update-skov-root skov-root get-global swap set-control-value ;
 
-: target/alt ( elt -- factor-word )
-    { { [ dup call? ] [ target>> ] }
-      { [ dup word? ] [ alt>> [ f ] [ first ] if-empty ] }
-      [ drop f ] } cond ;
-
-: show-help-browser ( env -- )
-    hand-gadget get-global [ cell? ] find-parent
-    [ [ control-value target/alt (browser-window) ] with-interactive-vocabs ]
-    [ show-browser ] if* drop ;
-
 environment H{
-    { T{ key-down f { C+ } "h" } [ show-help-browser ] }
-    { T{ key-down f { C+ } "H" } [ show-help-browser ] }
+    { T{ key-down f { C+ } "h" } [ drop show-browser ] }
+    { T{ key-down f { C+ } "H" } [ drop show-browser ] }
     { T{ key-down f { C+ } "e" } [ save-skov-image ] }
     { T{ key-down f { C+ } "E" } [ save-skov-image ] }
     { T{ key-up f { C+ } "l" } [ load-vocabs ] }

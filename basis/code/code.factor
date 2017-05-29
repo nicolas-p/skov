@@ -300,3 +300,8 @@ CONSTANT: special-variadic-words { "array" "sequence" } ! "each" "map" "append" 
       { [ dup word? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]
     } cond ;
+
+: target/alt ( elt -- factor-word )
+    { { [ dup call? ] [ target>> ] }
+      { [ dup word? ] [ alt>> [ f ] [ first ] if-empty ] }
+      [ drop f ] } cond ;
