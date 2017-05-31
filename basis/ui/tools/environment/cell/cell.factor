@@ -8,7 +8,7 @@ ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
 ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
 ui.pens.tile ui.render ui.text ui.tools.environment.theme
-ui.tools.inspector ;
+ui.tools.inspector ui.tools.browser listener ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
