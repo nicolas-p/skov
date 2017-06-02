@@ -69,6 +69,9 @@ M: call (import)
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
 
+: any-vocab-files? ( path -- ? )
+    directory-files [ file-extension "skov" = ] filter empty? not ;
+
 : skov-file ( path -- path )
     dup directory-files [ file-extension "skov" = ] filter first append-path ;
 
@@ -77,4 +80,5 @@ M: call (import)
     path sub-directories [ read-vocab-files add-element ] each ;
 
 : update-skov-root ( -- )
-    skov-root work-directory read-vocab-files dup define-all-words swap set-global ;
+    skov-root work-directory [ any-vocab-files? ]
+    [ read-vocab-files dup define-all-words swap set-global ] [ drop ] smart-if* ;
