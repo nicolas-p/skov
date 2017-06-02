@@ -210,6 +210,18 @@ M: node path
 : input-output-names ( word -- seq seq )
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
+CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
+CONSTANT: special-variadic-words { "array" } ! "sequence" "each" "map" "append" "produce" }
+
+: simple-variadic? ( call -- ? )
+    name>> simple-variadic-words member? ;
+
+: special-variadic? ( call -- ? )
+    name>> special-variadic-words member? ;
+
+: variadic? ( call -- ? )
+    [ simple-variadic? ] [ special-variadic? ] bi or ;
+
 SINGLETON: recursion
 
 GENERIC: in-out ( elt -- seq seq )
@@ -228,6 +240,7 @@ M:: call in-out ( call -- seq seq )
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
+      { [ dup special-variadic? ] [ drop { "" "" } { "seq" } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
 
@@ -279,18 +292,6 @@ M:: call in-out ( call -- seq seq )
       [ any-empty-name? ] 
       [ contents>> empty? ]
     } 1|| ;
-
-CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
-CONSTANT: special-variadic-words { "array" "sequence" } ! "each" "map" "append" "produce" }
-
-: simple-variadic? ( call -- ? )
-    name>> simple-variadic-words member? ;
-
-: special-variadic? ( call -- ? )
-    name>> special-variadic-words member? ;
-
-: variadic? ( call -- ? )
-    [ simple-variadic? ] [ special-variadic? ] bi or ;
 
 : save-result ( str word  -- )
     swap dupd result new swap >>contents swap >>parent >>result drop ;
