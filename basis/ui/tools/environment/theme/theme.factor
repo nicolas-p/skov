@@ -26,7 +26,7 @@ CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
     [ 17 >>size t >>bold? content-text-colour >>foreground ] change-font ;
 
 : faded-color ( rgba -- rgba )
-    >rgba-components drop 0.4 <rgba> ;
+    os windows? [ drop COLOR: gray50 ] [ >rgba-components drop 0.4 <rgba> ] if ;
 
 : with-background ( gadget -- gadget )
     content-background-colour <solid> >>interior ;

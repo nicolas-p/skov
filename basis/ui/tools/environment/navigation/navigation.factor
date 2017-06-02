@@ -5,7 +5,7 @@ models sequences ui.gadgets ui.gadgets.borders code.execution combinators
 ui.gadgets.buttons ui.gadgets.buttons.round ui.gadgets.icons
 ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
 ui.tools.environment.theme ui.tools.environment.tree
-ui.tools.environment.cell ;
+ui.tools.environment.cell system ;
 FROM: models => change-model ;
 IN: ui.tools.environment.navigation
 
@@ -14,7 +14,7 @@ TUPLE: navigation < pack ;
 : <category> ( name -- gadget )
     <label> [ t >>bold? ] change-font { 20 0 } <border> "category"
     "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri
-    transparent dark-text-colour
+    os windows? [ blue-background ] [ transparent ] if dark-text-colour
     <tile-pen> >>interior { 0 22 } >>min-dim horizontal >>orientation ;
 
 : <name-bar> ( vocab/word selection -- gadget )
