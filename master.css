@@ -135,3 +135,6 @@ io {
   display: inline-block;
   text-align: center;
 }
+.button.blue {
+    background-image: url(images/button-blue.png);
+}
