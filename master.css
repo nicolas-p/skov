@@ -124,3 +124,14 @@ io {
   font-weight: bold;
   background-image: linear-gradient(to bottom, #82A6A5, #002B36, #82A6A5);
 }
+.button {
+  margin-top: 20px;
+  width: 181px;
+  color: white;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-weight: bold;
+  background-image: url(images/button-inactive.png);
+  display: inline-block;
+  text-align: center;
+}

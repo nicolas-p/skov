@@ -19,225 +19,30 @@
 
 <div id="site">
 
-<div class="centred" style="width:265px;margin:auto;">
-<img src="../images/skov-logo.png" height="120" style="margin:20px;">
+<div class="centred">
+<a href='../en/'>  
+  <img src="../images/skov-logo.png" height="100" style="margin:15px;">
+</a>
 <br>
-<span style="font-size:60px;font-weight:bold;">Skov</span>
-<hr class="title-sep">
-<span style="font-size:18px;">A visual programming environment</span>
+<span style="font-size:55px;font-weight:bold;">Skov</span>
+
+<div>
+<a href="https://github.com/nicolas-p/skov/releases/tag/2017-06-03">
+    <span class="button">Download</span>
+</a>
+<a href="presentation.html">
+    <span class="button">Presentation</span>
+</a>
+<a href="examples.html">
+    <span class="button">Examples</span>
+</a>
+<a href="tutorial.html">
+    <span class="button">Tutorial</span>
+</a>
+</div>
 </div>
 
-<p>&nbsp;</p>
-
-<p>Skov is a visual programming environment based on <a href="http://factorcode.org">Factor</a>.</p>
-
-<hr>
-<p>Download the version of Skov adapted for your platform:</p>
-<div class="centred">
-<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-11-25/skov-macos-2016-11-25.dmg">Download Skov for Mac | 2016-11-25</a></p>
-<p><a class="download-link" href="https://github.com/nicolas-p/skov/releases/download/2016-11-25/skov-windows-2016-11-25.zip">Download Skov for Windows | 2016-11-25</a></p>
-</div>
-<p>There is no installation process. Just extract the Skov folder from the <em>zip</em> or <em>dmg</em> archive and run the program.</p>
-<p><b>Warning:</b> There is currently a problem with the Mac version. To be able to run Skov, you will first have to open a Terminal, go to the Skov folder and run:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:monospace;text-indent:5em;">xattr -rc Skov.app</span>
-<br>You might also need to <a href="https://support.apple.com/en-us/HT202491">disable Gatekeeper</a>.</p>
-
-<hr>
-<p>You will see this window.</p>
-<img class="bloc" src="../images/screenshot-initial.png" height="587">
-<p>The thing on the right is used to navigate the Skov environment. Each dot is actually a plus button in disguise. Click the bottom one or press <key>N</key> to create a new <em>word</em>. (A word is a reusable part of a program, it is generally called a function in other programming languages.)</p>
-<p>You can now enter the name of your word. Type <word>hello</word> and press <key></key>.</p>
-<img class="bloc" src="../images/screenshot-first-word.png" height="587">
-<p>The red cross indicates that there is a problem with this word, it cannot be executed. Of course there's nothing in it! One of the dots on the left hides a plus button that allows you to add a word to the definition of your <word>hello</word> word. Click it or press <key>W</key>, type <word>print</word> and press <key></key>. The last button on the left allows you to add some text. Click it or press <key>T</key>, type "Hello world!" and press <key></key>.</p>
-<img class="bloc" src="../images/screenshot-unconnected-hello.png" height="587">
-<p>The two nodes just beg to be connected together. <text>Hello world!</text> has a connector on the bottom, which indicates that it outputs some data (the "hello world" string of characters), while <word>print</word> has a connector on the top, which indicates that it takes some data as input. Inputs are always on the top, outputs are always on the bottom. Use your mouse or trackpad to connect the two nodes together.</p>
-<img class="bloc" src="../images/screenshot-hello.png" height="587">
-<p>The arrow next to the <word>hello</word> word is the result button. Click it or press <key></key> to see the result.
-<img class="bloc" src="../images/screenshot-result-hello.png" height="587">
-You have just created a program that writes "Hello world!" to the screen.
-
-<hr>
-<p>Now press <key>N</key> to create a new word and call it <word>addition</word>.</p>
-<p>Press <key>W</key> to enter the <word>add</word> word. Press <key>W</key> again to enter the <word>1</word> word and then again to enter the <word>2</word> word. Connect them together. Now enter the <word>display</word> word and connect it to <word>add</word>.</p>
-<img class="bloc" src="../images/screenshot-addition.png" height="222">
-<p>Click the result button and you should see the number 3.</p>
-<p>Why did we use <word>display</word> and not <word>print</word>? Because <word>print</word> is used to print text, while <word>display</word> is used to display any object (including text, try it on the above example to see the difference).</p>
-
-<hr>
-<p>Press <key>N</key> to create a new word and call it <word>process text</word>. Press <key>I</key> to enter an input and call it <io>text</io>. Press <key>O</key> to enter an output and call it <io>text</io> also. You should be able to reproduce the rest of the code easily.</p>
-<img class="bloc" src="../images/screenshot-process-text.png" height="348">
-<p>To enter Skov code, you don't actually have to first enter all the nodes and then connect them together. You can do it in one step. If you place your cursor on a connector and press <key>W</key>, the new word will be linked to this connector automatically. This allows you to enter Skov code almost as fast as in conventional programming languages.</p>
-<p><word>reverse</word> simply reverses a sequence (including text, which is a sequence of characters).</p>
-<p><word>append</word> takes two sequences and sticks them together in one sequence.</p>
-<p>This is the first word you define that has inputs and outputs, which means you can use it to process data. The previous words you defined just displayed something on the screen. This one doesn't display anything, but you can use it in another word. Let's do it.</p>
-<p>Define a new word called <word>text test</word> and enter this code.</p>
-<img class="bloc" src="../images/screenshot-text-test.png" height="218">
-<p>Click the result button and you should see "((voks))" because the input text <text>skov</text> was reversed and double parentheses were added on either side, as requested.</p>
-
-<hr>
-<p>Look back at <word>process text</word> and see how easily you can chain operations. When you look at Skov code, you can imagine data flowing from top to bottom through a chain of operations, as if data was attracted by gravity.</p>
-
-<hr>
-<p>The next example is going to introduce an extremely important concept.</p>
-<p>Let's say we have some text and we want to keep only the letters that are represented by an even number (every letter is actually represented by a number behind the scenes). We do it like this:</p>
-<img class="bloc" src="../images/screenshot-filter-text.png" height="205">
-<p>Notice that the connection between <word>even?</word> and <word>filter</word> is different. This is because <word>filter</word> works in a special way. The first input to <word>filter</word> is a sequence (a sequence of characters in this case) but the second input is a word. <word>filter</word> takes a sequence and a word and uses this word to filter the sequence.</p>
-<p>You can imagine the unconnected input of <word>even?</word> being connected to each individual letter of the text successively.</p>
-
-<hr>
-<p>Now we want to remove every letter that comes after "m" in the alphabet. Because every letter is represented by a number, we can do (if we know that "m" is number 109):</p>
-<img class="bloc" src="../images/screenshot-reject-text.png" height="279">
-<p><word>reject</word> works like <word>filter</word> except that it uses the given condition to discard certain elements of the sequence, instead of keeping them. What you can see here is that the condition doesn't have to be a single word (like <word>even?</word> in the previous example) but can be more complex code (in this example, "more than 109").</p>
-
-<hr>
-<p>We can now use this principle to process some text files.</p>
-<p>We want to reverse the order of the lines of text in a file. The last line will become the first and the first will become the last. That's easy:</p>
-<img class="bloc" src="../images/screenshot-reverse-file.png" width="395" height="130">
-<p>(Of course, use the path to a real text file on your computer.)</p>
-<p><word>change file lines</word> is a word that takes three inputs: the path to a text file, the character encoding (UTF-8 in this case; it is the standard that tells you which letter is represented by which number), and a word (or some more complex code) that is going to take the sequence of lines of text and do something to it.</p>
-<p>If your text editor is intelligent enough to reload files automatically, you will see that every time you click the result button, the file is reversed.</p>
-
-<hr>
-<p>We can also easily remove all empty lines in a file</p>
-<img class="bloc" src="../images/screenshot-harvest-file.png" width="395" height="132">
-<p><word>harvest</word> is a word that removes every empty sub-sequence in a sequence.</p>
-
-<hr>
-<p>How do we remove all the lines of a file that contain "hello"?</p>
-<img class="bloc" src="../images/screenshot-hello-file.png" width="414" height="276">
-<p>This one is great! We've seen that <word>change file lines</word> is one of these special words that can take a piece of code as an input, and <word>reject</word> is also one of them. And now they're used together.</p>
-
-<hr>
-<p>I really need to emphasize the power of this.</p>
-<p><word>change file lines</word> is a word that can process a text file, but it doesn't do any specific thing to a file. It's a configurable word, it can do many different things depending on the code you give to it.</p>
-<p><word>filter</word> and <word>reject</word> can filter a sequence in many different ways, depending on the code you give to them.</p>
-<p>When you want to remove all empty lines in a file, if you know that there is already a word called <word>harvest</word> that removes empty sub-sequences in a sequence and that there is already a word called <word>change file lines</word> that modifies a file by treating its lines as a sequence, the solution is just a matter of combining these two words together. The system is very modular. For many problems that you will need to solve, you will find that the necessary parts already exist and you just have to combine them in a certain way.</p>
-
-<hr>
-<p>Now some math...</p>
-<p>These are the hyperbolic sine and cosine functions.</p>
-<div class="centred">
-  <img style="display:inline-bloc;" src="../images/screenshot-sinh.png" height="439">
-  <img style="display:inline-bloc;" src="../images/screenshot-cosh.png" height="431">
-</div>
-<p>Go to Wikipedia to see these functions written in traditional mathematical notation and compare them to the Skov code. Do you agree that this code is a more beautiful representation of these functions than mathematical notation?</p>
-
-<hr>
-<p>And the inevitable factorial function...</p>
-<img class="bloc" src="../images/screenshot-factorial.png" height="435">
-<p>This one is interesting for two reasons.</p>
-<p>The first is the <word>if</word> word. It is again a word that can take some code as input. The first input is normal, it just takes a boolean value (true or false), but the two other inputs take pieces of code. The value given to the first input determines which of these two pieces of code is going to be executed.</p>
-<p>The second reason is the <word>fac</word> that you see in the middle of the definition. This is the factorial function whose code you're looking at. It means that <word>fac</word> uses <word>fac</word> in its definition. This is called a <em>recursive</em> definition. <word>fac</word> is going to be called recursively as many times as necessary to compute the result.</p>
-
-<hr>
-<p>It's now time to talk about <em>objects</em>. An object is a container for several pieces of data. For example, an object can contain two numbers, or one number and a sequence, or three other objects. An object belongs to a certain class. You can create a new class of objects by clicking the second dot on the right or by pressing <key>K</key>. Call it <class>point</class>.</p>
-<p>By clicking the only dot on the left or pressing <key>S</key> you can add what we call <em>slots</em> to this class. A slot can contain a piece of data. Let's create two slots called <slot>x</slot> and <slot>y</slot>.</p>
-<img class="bloc" src="../images/screenshot-point-class.png" height="587">
-<p>We can now create point objects that we can use to represent coordinates on a screen. When you define a class, the following words are defined automatically for you:</p>
-<img class="bloc" src="../images/screenshot-constructor-etc.png" height="369">
-<p>The first is a <em>constructor</em>, it takes two numbers and gives you a point object. The second is a <em>destructor</em>, it takes a point object and gives you the value of every slot. Next we have two <em>accessors</em> for the <slot>x</slot> and <slot>y</slot> slots. They take a point object and give you the value of the slot. And the last two are <em>mutators</em>, they take a point object and a number and they give you a point object with the value inserted in the corresponding slot.</p>
-
-<hr>
-<p>We want to compute the distance between two points. Define a new word called <word>distance</word>.</p>
-<p>You will see that there are four dots on the left that let you insert a constructor, a destructor, an accessor or a mutator. Or you can insert them by pressing <key>C</key>, <key>D</key>, <key>A</key> and <key>M</key>, respectively. You should be able to reproduce this code:</p>
-<div class="centred"><img class="bloc" src="../images/screenshot-distance.png" width="222" height="502"></div>
-<p><word>sq</word> is the square function and <word>sqrt</word> is the square root function.</p>
-<p>Look at this code carefully. Do you recognize the Pythagorean theorem that you learnt at school? Do you agree it looks better now?</p>
-
-<hr>
-<p>To test our <word>distance</word> word, let's make a new word called <word>distance test</word>. You will notice that when you try to insert <word>distance</word> inside, this happens:</p>
-<img class="bloc" src="../images/screenshot-choice.png" height="587">
-<p>Skov tells you that there are two words called <word>distance</word> in the system and it asks you to choose one. Having several words with the same name is not a problem in Skov because words are sorted in <em>vocabularies</em>. A vocabulary contains words, classes, and sub-vocabularies, they allow you to organize your code neatly instead of defining every word in the same big bag of words. All the words you have defined until now have been defined in the vocabulary called <vocab>scratchpad</vocab>.<p>
-<p>Select the second <word>distance</word> by pressing <key>↓</key> and <key></key>.</p>
-<p>Now you can test this code:</p>
-<img class="bloc" src="../images/screenshot-distance-test.png" height="281">
-<p>See how we use two constructors to create two point objects that we pass to <word>distance</word>.
-
-<hr>
-<p>By now we have encountered the three types of nodes that you can create on the right-hand side of the window:</p>
-<ul>
-    <li>Words are a code abstraction. A word has inputs and outputs and it can process data. It can also perform an action like displaying something on the screen and modifying files. Most of the time, an input takes a piece of data, but sometimes, an input can take a piece of code instead. This allows a word to use an external piece of code to process the data. A word can be used in the definition of another word and this is how you build programs: words calling other words, calling other words, etc.</li>
-    <li>Classes are a data abstraction. A class describes a type of object by specifying the name of the slots that this object has. An object is just a way of combining several pieces of data together. An object doesn't do anything, or compute anything or process anything, it's just data. You can put objects inside objects inside objects, this is how you handle complex data.</li>
-    <li>Vocabularies are used to organize your code like folders let your organize your files. Vocabularies can contain words, classes and other vocabularies.</li>
-</ul>
-
-<hr>
-<p>Vocabularies can be created by clicking the first dot on the left or by pressing <key>V</key>. The following example shows one class and several words grouped inside a vocabulary called <vocab>simulator</vocab>.</p>
-<img class="bloc" src="../images/screenshot-simulator.png" height="701">
-
-<hr>
-<p>If you know some other programming languages, I would like to take the time to highlight some differences with Skov.</p>
-
-<p>I have just explained that words, classes and vocabularies do three different things: describing computation, describing data and organizing code. In other languages the distinction is not so easy. In object-oriented languages like Smalltalk and Java, the class is a concept used to describe data <em>and</em> organize code. You have to define your "words" (called "methods") <em>inside</em> classes. Classes take the role of vocabularies. The Scheme language relies on the concept of lexical closure, which is used to describe computation, hold data and organize code. Words take the role of classes and vocabularies. I believe having three separate concepts to describe computation, describe data and organize code makes things easier.</p>
-
-<p>Most programming languages have a lot of syntax that you have to learn. They have parentheses, curly brakets, square brakets, semicolons all over the place. There is a syntax to call a function, another one to use a method of an object, another one to access an element of a list, etc. Skov does have some syntax (there is a special syntax for constructors, accessors, etc.) but much less than traditional languages.</p>
-
-<p>Traditional textual languages force you to read the code from left to right, which, depending on the language, either means from the last function executed to the first ("the result is the sum of the squares of the even numbers in the list") or from the first function executed to the last ("take a list, find the even numbers, square them, compute the sum, return the result"). Python even forces you to mix the two approaches, which is horrible. You should be able to read code both ways because both approaches are useful in different circumstances. In Skov it is as easy to read code from top to bottom (from inputs to outputs) as from bottom to top (from outputs to inputs). Even better, it is as easy to <em>write</em> code starting from the inputs as from the outputs and only a visual language can do that.</p>
-
-<p>Now we reach something even more fundamental. Traditional textual languages are one-dimensional. A program is just a long chain of characters. It means that you can easily compute something and pass the result to <em>one</em> other computation (you can chain functions together) but if you want to pass the result to <em>several</em> other computations it's more difficult. You have to give a name to your result and then use this name in several places to refer to your result. Skov is two-dimensional and this is why a result can be passed to several words directly (look at hyperbolic sine, hyperbolic cosine and factorial above).</p>
-
-<p>In languages that have a module system (a module being the same as a Skov vocabulary, a thing that groups related functions together), imports are always a problem. The most common functions don't need to be imported because they are in a "base" module that is always active. If you want to use other functions, you have to write an import statement at the top of the file. You either import a whole module and you can use every function in it, or maybe you have to call your functions by module.function(), or you can choose to import just one function from a module. If a module name is too long, you can choose an abbreviation and write md.function(). This get tiresome <em>very</em> quickly! Having a module system is great because functions (words) are neatly organized into separate drawers instead of being in one big bag. Skov lets you use every word without asking you to tell it from which vocabulary you want to take it, as long as there is no ambiguity. It is only when two words have the same name that Skov will ask you to choose the one you want.</p>
-
-<p>In traditional languages, the code is just one long chain of characters and every time the compiler or interpreter reads it, it has to find that "cos" (for example) means the cosine function that is defined in the "math" module. The code just contains the three letters "cos". In Skov (and I'm speaking of the code that resides in the image file here, not the code exported as text), every word that you see on the screen inside a word definition contains a direct link to the word that it represents. The compiler doesn't have to find the word you want to use every time, the information is stored permanently inside your code.</p>
-
-<p>Another very fundamental thing. In a textual language, the programmmer and the system (compiler or interpreter) work with the same file but they don't have the same needs. The compiler would like to have a lot of information about everything: the module of every function, the type of every input and output. If all this information was present in the text file, the programmer would find it extremely hard to read. The programmer needs concise, compact code, with short names, even if it means there is a lot of implicit stuff going on. Actually, the programmer would be interested in having access to the same extensive information as the compiler (the module for each function, the type of each input and output), but on demand, not displayed all the time. Textual languages have to find a compromise to be readable so a lot of the information about the program is implicit and has to be reconstructed by the programmer and the compiler. In a visual language, the program can contain all the necessary information so everything is explicit. Only part of that information is displayed at a time to keep things simple but the programmer can have access to all the information on demand.</p>
-
-<hr>
-<p>I don't want to say that visual programming is always better than programming in text files (the code for Skov is written in text files after all), but I want to show that textual languages have a lot of limitations that they will never overcome because of these fundamental constraints:</p>
-<ul>
-    <li>A text file forces you to read code in a certain direction.</li>
-    <li>A text file is one-dimensional so you can't do direct links from one place to another.</li>
-    <li>The programmer and the compiler/interpreter work with the same file so they see the same thing.</li>
-</ul>
-<p>When you go, or go back, to programming in textual languages, I want you to be aware of these limitations and why they are here: because of the text file paradigm.</p>
-<p>Every now and then, someone comes up with a new programming language with a slightly different syntax so that a particular type of operation is easier to express. But there are always compromises so inevitably other types of operations will be harder to express and there is no way to solve the problem while staying inside the text file paradigm.</p>
-
-<hr>
-<p class="question">Where does the name come from?</p>
-<p>Skov means <i>forest</i> in Danish because Skov contains a lot of trees.</p>
-
-<hr>
-<p class="question">What is the goal of the Skov project?</p>
-<p>Imagine that you don't know any programming language and that you don't have any programming tools on your computer, but you want to write a program to do a relatively simple task. Then Skov will be the easiest tool to use. It's going to be the easiest to install, the easiest to learn, the easiest to understand and the easiest to get working. This is the goal of the project.</p>
-
-<hr>
-<p class="question">How is Skov implemented?</p>
-<p>Skov is based on Factor, which is a concatenative programming language (or stack language). Factor is not just a programming language, it's also a dynamic environment where you can see and modify everything on the fly. (It's inspired by Smalltalk.) There is a virtual machine written in C++ that executes the Factor code that makes the environment. The compiler that converts Factor code to machine instructions is itself written in Factor and is part of the dynamic environment. All the user interface is programmed in Factor except the low-level OpenGL primitives. It's really a fantastic system!</p>
-<p>Skov is entirely coded in Factor. Most of the code is for the user interface. The rest is quite simple.</p>
-
-<hr>
-<p class="question">How is my Skov code compiled?</p>
-<p>Skov code (by that I mean the hierarchy of objects that describe the tree that you see on the screen) is sort of converted into Factor code but not how you think. Skov does not generate code as a string of characters. The initial hierarchy of objects is converted into another hierarchy of objects that the Factor compiler can understand. The compiler then converts that to different hierarchies of objects to perform its successive optimizations. It's objects all the way down and there's never any text involved. It's a true visual system and there's no cheating.</p>
-
-<hr>
-<p class="question">Why did you choose this strange language, Factor, or whatever, to implement Skov? Woudn't it be better to recode everything in Jav...</p>
-<p>Stop it! Stop it immediately!</p>
-<p>I promise Factor was the best language to implement Skov, by far. It's a standalone system with useful libraries, it has its own virtual machine, it has an efficient compiler, it's very well designed, and it's very modular.</p>
-<p>Factor really is a great system but nobody uses it because nobody likes the language. I hope Skov will make this great system useful to a much wider audience.</p>
-
-<hr>
-<p class="question">But couldn't Skov be coded in Skov?</p>
-<p>In theory, yes! Maybe in the future it will be, but it's not a priority.</p>
-
-<hr>
-<p class="question">How can I run Skov in my web browser?</p>
-<p>Why does everything have to run in a web browser these days?</p>
-
-<hr>
-<p class="question">Can the user interface, the documentation and the language itself be translated into other languages than English?</p>
-<p>I think making the user interface multilingual but keeping English words in the programming language makes no sense, so everything would have to be made multilingual at once, but that would be an absolute nightmare to implement. Making Skov multilingual would be absolutely fantastic but there would be so much work to do that I doubt it will ever happen. Using a <em>lingua franca</em> is so much easier.</p>
-
-<hr>
-<p class="question">How can I contribute?</p>
-<p>The project is hosted on <a href="https://github.com/nicolas-p/skov">GitHub</a>. There you can report bugs and contribute to the development.</p>
-
-<hr>
-<p class="question">How mature is this project?</p>
-<p>The Skov project started on 7 August 2015 so it's not very mature. But Skov is based on Factor, which has been developed since 2003 and is a mature system.</p>
-
-<hr>
-<p class="question">How can I share my Skov code with other people?</p>
-<p>If you press <key>S</key>, Skov will export all you code as text files in the "work" folder. There will be a file for each vocabulary. If you send theses files to someone, he can import them in Skov by placing them in his own "work" folder and pressing <key>L</key>.</p>
+<img class="bloc" src="../images/screenshot-main.png" height="814">
 
 </div>
 
