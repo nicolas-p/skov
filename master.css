@@ -54,11 +54,11 @@ a.download-link {
   padding: 5px 10px;
   color: black;
   font-weight: bold;
-  background-image: linear-gradient(to bottom, #69AA00, #BFE950, #69AA00);
+  background-image: linear-gradient(to bottom, #9FD422, #79B900);
 }
 a.download-link:hover {
   text-decoration: none;
-  background-image: linear-gradient(to bottom, #A2D434, #D0F07D, #A2D434);
+  background-image: linear-gradient(to bottom, #D0F07D, #A2D434);
 }
 .bloc {
   display: block;
