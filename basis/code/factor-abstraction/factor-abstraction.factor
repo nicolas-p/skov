@@ -1,7 +1,8 @@
 ! Copyright (C) 2016-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors code combinators combinators.smart effects
-kernel locals math math.parser sequences splitting strings words vectors ;
+kernel locals math math.parser quotations sequences splitting
+stack-checker strings vectors words ;
 FROM: code => call word ;
 IN: code.factor-abstraction
 
@@ -14,14 +15,19 @@ IN: code.factor-abstraction
     } cond new swap >>name
     factor-word >>target ;
 
+DEFER: make-tree
+
 : node-from-factor ( factor-word -- node )
     { { [ dup words:word? ] [ call-from-factor ] }
       { [ dup string? ] [ text new >>name ] }
-      { [ dup number? ] [ call new swap [ number>string >>name ] keep >>target ] } 
+      { [ dup number? ] [ call new swap [ number>string >>name ] keep >>target ] }
+      { [ dup quotation? ] [ subtree new swap [ node-from-factor ] map
+                             >vector make-tree add-element ] } 
     } cond ;
 
 : make-tree ( nodes -- tree )
-    dup pop dup in-out drop length
+    dup [ introduce new ] [ pop ] if-empty dup
+    [ subtree? ] [ drop 0 ] [ in-out drop length ] smart-if
     swapd [ dup make-tree ] replicate reverse nip [ add-element ] each ;
 
 :: word-from-factor ( factor-word -- word )
