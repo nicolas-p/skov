@@ -93,8 +93,8 @@ all-words [ [
     [ "gadget." = ] [ drop "disp gadget" ] smart-when
     [ "e^" = ] [ drop "exp" ] smart-when
     [ "^" = ] [ drop "pow" ] smart-when
-    [ "2^" = ] [ drop "pow 2" ] smart-when
-    [ "10^" = ] [ drop "pow 10" ] smart-when
+    [ "2^" = ] [ drop "pow2" ] smart-when
+    [ "10^" = ] [ drop "pow10" ] smart-when
   ] change-name
 ] each
 
