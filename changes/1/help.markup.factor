@@ -5,6 +5,9 @@ IN: help.markup
 : $graph ( element -- )
     check-first <help-tree> nl nl output-stream get write-gadget ;
 
+: $see ( element -- )
+    check-first <definition-tree> nl output-stream get write-gadget ;
+
 : $inputs ( element -- )
     "Inputs" $heading
     [ [ "none" print ] ($block) ]
