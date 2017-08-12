@@ -3,10 +3,10 @@ math.functions math.ranges math.vectors opengl.gl sequences
 ui.pens ui.pens.caching ui.pens.gradient ;
 IN: ui.pens.gradient-rounded
 
-TUPLE: gradient-rounded < caching-pen  colors last-vertices last-colors ;
+TUPLE: gradient-rounded < caching-pen  colors foreground last-vertices last-colors ;
 
-: <gradient-rounded> ( colors -- gradient )
-    gradient-rounded new swap >>colors ;
+: <gradient-rounded> ( colors foreground -- gradient )
+    gradient-rounded new swap >>foreground swap >>colors ;
 
 <PRIVATE
 
@@ -46,3 +46,9 @@ M: gradient-rounded draw-interior
     [ compute-pen ]
     [ last-vertices>> ]
     [ last-colors>> draw-triangle-fan ] tri ;
+
+M: gradient-rounded pen-background
+     2drop transparent ;
+
+M: gradient-rounded pen-foreground
+    nip foreground>> ;
