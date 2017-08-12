@@ -4,7 +4,8 @@ USING: accessors arrays code kernel locals math math.order
 math.vectors models sequences splitting ui.gadgets
 ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.labels
 ui.gadgets.packs ui.gadgets.packs.private ui.gestures
-ui.tools.environment.cell ;
+ui.pens.solid ui.tools.environment.cell
+ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.tree
@@ -28,8 +29,8 @@ M: elastic-shelf layout*
     dup elastic-layout pack-layout ;
 
 :: build-tree ( node selection -- shelf )
-    <pile> 1 >>fill { 0 1 } >>gap
-        <elastic-shelf> { 3 0 } >>gap 1 >>align
+    <pile> 1 >>fill { 0 9 } >>gap
+        <elastic-shelf> { 9 0 } >>gap 1 >>align
             node contents>> [ selection build-tree ] map add-gadgets
             node subtree? { 2 0 } { 5 0 } ? <filled-border> add-gadget
         node selection <cell> add-gadget ;
@@ -53,49 +54,35 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
     model value>> [ word? ] find-parent ?add-words drop
     model value>> node? [
         model value>> top-node?
-            [ "dark" "I" [ drop model [ introduce change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
+            [ dark-background "I" [ drop model [ introduce change-node-type ] change-model ] ]
+            [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into an input cell    ( Ctrl I )" >>tooltip add-gadget
         model value>> top-node?
-            [ "yellow" "G" [ drop model [ getter change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
-            "Convert cell into a get cell    ( Ctrl G )" >>tooltip add-gadget
-        model value>> top-node?
-            [ "light" "T" [ drop model [ text change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
+            [ white-background "T" [ drop model [ text change-node-type ] change-model ] ]
+            [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into a text cell    ( Ctrl T )" >>tooltip add-gadget
         <gadget> add-gadget
         model value>> subtree? not
-            [ "green" "W" [ drop model [ call change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
+            [ green-background "W" [ drop model [ call change-node-type ] change-model ] ]
+            [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
- !       "green" "C" [ drop model [ constructor change-node-type ] change-model ] <round-button>
- !           "Turn cell into a constructor cell" >>tooltip add-gadget
- !       "green" "A" [ drop model [ accessor change-node-type ] change-model ] <round-button>
- !           "Turn cell into an accessor cell" >>tooltip add-gadget
- !       "green" "M" [ drop model [ mutator change-node-type ] change-model ] <round-button>
- !           "Turn cell into a mutator cell" >>tooltip add-gadget
         <gadget> add-gadget
-        model value>> bottom-node?
-            [ "yellow" "S" [ drop model [ setter change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
-            "Convert cell into a set cell    ( Ctrl S )" >>tooltip add-gadget
         model value>> [ bottom-node? ] [ no-return? ] [ return? ] tri or and
-            [ "dark" "O" [ drop model [ return change-node-type ] change-model ] ]
-            [ "inactive" "" [ drop ] ] if <round-button>
+            [ dark-background "O" [ drop model [ return change-node-type ] change-model ] ]
+            [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into an output cell    ( Ctrl O )" >>tooltip add-gadget
         <gadget> { 20 0 } >>dim add-gadget
         model value>> parent>> [ variadic? ] [ word? ] bi or
-            [ "blue" "←" [ drop model [ insert-node-left ] change-model ] ]
-            [ "inactive" " " [ drop ] ] if <round-button> 
+            [ blue-background "←" [ drop model [ insert-node-left ] change-model ] ]
+            [ inactive-background " " [ drop ] ] if <round-button>
             "Insert new cell on the left    ( Alt ← )" >>tooltip add-gadget
         model value>> parent>> [ variadic? ] [ word? ] bi or
-            [ "blue" "→" [ drop model [ insert-node-right ] change-model ] ]
-            [ "inactive" " " [ drop ] ] if <round-button> 
+            [ blue-background "→" [ drop model [ insert-node-right ] change-model ] ]
+            [ inactive-background " " [ drop ] ] if <round-button>
             "Insert new cell on the right    ( Alt → )" >>tooltip add-gadget
-        "blue" "↓" [ drop model [ insert-node ] change-model ] <round-button>
-            "Insert new cell below    ( Alt ↓ )" >>tooltip add-gadget 
-        "red" "✕" [ drop model [ remove-node ] change-model ] <round-button>
+        blue-background "↓" [ drop model [ insert-node ] change-model ] <round-button>
+            "Insert new cell below    ( Alt ↓ )" >>tooltip add-gadget
+        red-background "✕" [ drop model [ remove-node ] change-model ] <round-button>
             "Delete cell    ( Ctrl R )" >>tooltip add-gadget
     ] when drop ;
 

@@ -6,13 +6,13 @@ IN: ui.tools.environment.theme
 
 CONSTANT: content-background-colour HEXCOLOR: 002b36
 
-CONSTANT: faded-background HEXCOLOR: 0E4153
-CONSTANT: dark-background HEXCOLOR: 355E67
-CONSTANT: orange-background HEXCOLOR: E95813
-CONSTANT: green-background HEXCOLOR: 7CBB00
-CONSTANT: white-background HEXCOLOR: D0D0D0
-CONSTANT: blue-background HEXCOLOR: 1096FD
-CONSTANT: yellow-background HEXCOLOR: C7AD10
+CONSTANT: dark-background { HEXCOLOR: 587E82 HEXCOLOR: 26515A }
+CONSTANT: green-background { HEXCOLOR: B2E234 HEXCOLOR: 79B900 }
+CONSTANT: white-background { HEXCOLOR: D4DFDF HEXCOLOR: A3BEBD }
+CONSTANT: blue-background { HEXCOLOR: 3BB3F8 HEXCOLOR: 0A88E9 }
+CONSTANT: red-background { HEXCOLOR: FF6B50 HEXCOLOR: FF2E17 }
+CONSTANT: inactive-background { HEXCOLOR: 004457 HEXCOLOR: 002B36 }
+CONSTANT: active-background { HEXCOLOR: 006581 HEXCOLOR: 004153 }
 
 CONSTANT: content-text-colour HEXCOLOR: E5E5E5
 CONSTANT: dark-text-colour COLOR: black

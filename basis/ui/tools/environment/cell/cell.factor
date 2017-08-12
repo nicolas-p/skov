@@ -1,19 +1,20 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays code code.execution colors combinators
-combinators.short-circuit combinators.smart fry kernel locals
-math math.order math.statistics math.vectors models namespaces
-sequences splitting system ui.commands ui.gadgets
-ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.editors
+USING: accessors arrays code code.execution colors colors.hex
+combinators combinators.short-circuit combinators.smart fry
+kernel listener locals math math.order math.statistics
+math.vectors models namespaces sequences splitting system
+ui.commands ui.gadgets ui.gadgets.borders
+ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
-ui.gadgets.labels ui.gadgets.worlds ui.gestures ui.pens.solid
-ui.pens.tile ui.render ui.text ui.tools.environment.theme
-ui.tools.inspector ui.tools.browser listener ;
+ui.gadgets.labels ui.gadgets.worlds ui.gestures
+ui.pens.gradient-rounded ui.pens.solid ui.pens.tile ui.render
+ui.text ui.tools.browser ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
 
-CONSTANT: cell-height 25
+CONSTANT: cell-height 26
 CONSTANT: min-cell-width 29
 
 TUPLE: cell < border  selection ;
@@ -25,24 +26,17 @@ TUPLE: cell-editor < editor ;
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> [ result? ] [ parent>> ] smart-when ] bi eq? ;
 
-: cell-colors ( cell -- img-name bg-color text-color )
+: cell-colors ( cell -- bg-color text-color )
     control-value
-    { { [ dup input/output? ] [ drop "io" dark-background light-text-colour ] }
-      { [ dup text? ] [ drop "text" white-background dark-text-colour ] }
-      { [ dup call? ] [ drop "word" green-background dark-text-colour ] }
-      { [ dup vocab? ] [ drop "title" dark-background light-text-colour ] }
-      { [ dup word? ] [ drop "title" dark-background light-text-colour ] }
-      { [ dup subtree? ] [ drop "subtree" dark-background light-text-colour ] }
-      { [ dup link? ] [ drop "link" yellow-background dark-text-colour ] }
-    } cond 
-    [ os windows? not [ drop transparent ] when ] dip ;
+    { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
+      { [ dup text? ] [ drop white-background dark-text-colour ] }
+      { [ dup call? ] [ drop green-background dark-text-colour ] }
+      { [ dup vocab? ] [ drop inactive-background light-text-colour ] }
+      { [ dup word? ] [ drop inactive-background light-text-colour ] }
+    } cond ;
 
 :: cell-theme ( cell -- cell )
-    cell dup [ cell-colors ] [ selected? ] bi [ [ "-selected" append ] 2dip ] when
-    [ "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri ] 2dip
-    cell control-value name>> empty? [ faded-color ] when
-    <tile-pen> >>interior
-    horizontal >>orientation ;
+    cell dup cell-colors <gradient-rounded> >>interior ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
@@ -77,28 +71,28 @@ TUPLE: cell-editor < editor ;
 
 : <cell> ( value selection -- node )
     cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
-    swap >>selection swap <model> >>model ;
+    swap >>selection swap <model> >>model horizontal >>orientation ;
 
 M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
     cell collapsed? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
     <label> set-font add-gadget
-    <cell-editor> f >>visible? 
-        cell cell-colors :> text-color :> cell-color drop
-        set-font [ text-color >>foreground cell-color >>background ] change-font add-gadget
-    model value>> node? [ 
+    <cell-editor> f >>visible?
+        cell cell-colors :> text-color drop
+        set-font [ text-color >>foreground transparent >>background ] change-font add-gadget
+    model value>> node? [
         cell selected? model value>> parent>> and [
-            "inactive" "✕"
+            inactive-background "✕"
             [ drop model value>> remove-from-parent cell selection>> set-model ] <round-button>
             model value>> vocab? "Delete vocabulary" "Delete word" ? "    ( Ctrl R )" append
             >>tooltip add-gadget ] when
         model value>> executable? [
             cell selection>> value>> parent>> cell control-value eq? [
-                "blue" "➤"
+                blue-background "➤"
                 [ drop model value>> cell selection>> set-model ] <round-button>
                 "Show word    ( Shift Enter )" >>tooltip
             ] [
-                "inactive" "➤"
+                inactive-background "➤"
                 [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
                 "Show result    ( Shift Enter )" >>tooltip 
             ] if add-gadget ] when
