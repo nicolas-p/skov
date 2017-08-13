@@ -26,13 +26,12 @@ TUPLE: cell-editor < editor ;
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> [ result? ] [ parent>> ] smart-when ] bi eq? ;
 
-: cell-colors ( cell -- bg-color text-color )
-    control-value
+:: cell-colors ( cell -- bg-color text-color )
+    cell control-value
     { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
-      { [ dup vocab? ] [ drop inactive-background light-text-colour ] }
-      { [ dup word? ] [ drop inactive-background light-text-colour ] }
+      [ drop cell selected? active-background inactive-background ? light-text-colour ]
     } cond ;
 
 :: cell-theme ( cell -- cell )
