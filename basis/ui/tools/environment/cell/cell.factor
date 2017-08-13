@@ -35,7 +35,9 @@ TUPLE: cell-editor < editor ;
     } cond ;
 
 :: cell-theme ( cell -- cell )
-    cell dup cell-colors <gradient-rounded> >>interior ;
+    cell dup cell-colors
+    cell control-value name>> empty? [ faded-color ] when
+    <gradient-rounded> >>interior ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
