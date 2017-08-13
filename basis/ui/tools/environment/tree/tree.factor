@@ -14,25 +14,30 @@ TUPLE: tree < pack ;
 TUPLE: tree-control < pack ;
 TUPLE: tree-toolbar < tree-control ;
 TUPLE: path-display < tree-control ;
-TUPLE: elastic-shelf < pack ;
+TUPLE: special-pile < pack ;
 
-: <elastic-shelf> ( -- pack )
-    elastic-shelf new horizontal >>orientation ;
+: <special-pile> ( -- pack )
+    special-pile new vertical >>orientation ;
 
-: elastic-layout ( pack -- sizes )
-    [ children>> pref-dims dup [ first ] map sum ]
-    [ dim>> first ]
-    [ gap-dim first ] tri
-    - / 1 2array [ v/ ] curry map ;
+: center-point ( gadget -- x )
+    [ [ parent>> loc>> ] [ loc>> ] bi v+ ] [ dim>> ] bi [ first ] bi@ 2 /i + ;
 
-M: elastic-shelf layout*
-    dup elastic-layout pack-layout ;
+M:: special-pile layout* ( pack -- )
+    pack call-next-method
+    pack children>> first2 :> ( shelf cell )
+    shelf layout
+    shelf children>> empty? [ 
+        shelf children>> [ first ] [ last ] bi [ children>> last center-point ] bi@ :> ( a b )
+        cell pref-dim first2 [ b a - 20 + max ] dip 2array cell dim<<
+        a b + 2 /i cell dim>> first 2 /i - dup neg?
+        [ neg shelf loc>> second 2array shelf loc<< ]
+        [ cell loc>> second 2array cell loc<< ] if
+    ] unless ;
 
-:: build-tree ( node selection -- shelf )
-    <pile> 1 >>fill { 0 9 } >>gap
-        <elastic-shelf> { 9 0 } >>gap 1 >>align
-            node contents>> [ selection build-tree ] map add-gadgets
-            node subtree? { 2 0 } { 5 0 } ? <filled-border> add-gadget
+:: build-tree ( node selection -- pile )
+    <special-pile> { 0 9 } >>gap
+        <shelf> { 9 0 } >>gap 1 >>align
+            node contents>> [ selection build-tree ] map add-gadgets add-gadget
         node selection <cell> add-gadget ;
 
 : <tree> ( word -- pile )
