@@ -14,8 +14,8 @@ FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
 
-CONSTANT: cell-height 26
-CONSTANT: min-cell-width 32
+CONSTANT: cell-height 24
+CONSTANT: min-cell-width 30
 
 TUPLE: cell < border  selection ;
 TUPLE: cell-editor < editor ;
