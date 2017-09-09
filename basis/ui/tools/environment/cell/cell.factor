@@ -26,9 +26,16 @@ TUPLE: cell-editor < editor ;
 : selected? ( cell -- ? )
     [ control-value ] [ selection>> value>> [ result? ] [ parent>> ] smart-when ] bi eq? ;
 
+:: subtree-input? ( node -- ? )
+    node introduce?
+    node name>> empty? and
+    node [ subtree? ] find-parent and ;
+
 :: cell-colors ( cell -- bg-color text-color )
     cell control-value
-    { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
+    { { [ dup subtree-input? ] [ drop inactive-background light-text-colour ] }
+      { [ dup subtree? ] [ drop inactive-background light-text-colour ] }
+      { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
       { [ dup getter? ] [ drop yellow-background dark-text-colour ] }
@@ -64,21 +71,17 @@ TUPLE: cell-editor < editor ;
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
     [ length 1 > ] [ unclip-last replace-space suffix ] smart-when ;
 
-:: collapsed? ( cell -- ? )
-    cell control-value :> value
-    value introduce?
-    value name>> empty? and
-    value [ subtree? ] find-parent and
-    cell selected? not and
-    value subtree? or ;
-
 : <cell> ( value selection -- node )
     cell new { 12 0 } >>size min-cell-width cell-height 2array >>min-dim
     swap >>selection swap <model> >>model horizontal >>orientation ;
 
+:: no-label? ( cell -- ? )
+    cell control-value [ subtree? ] [ subtree-input? ] bi or
+    cell selected? not and ;
+
 M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
-    cell collapsed? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
+    cell no-label? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
     <label> set-font add-gadget
     <cell-editor> f >>visible?
         cell cell-colors :> text-color drop
@@ -120,7 +123,7 @@ M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
 
 M:: cell pref-dim* ( cell -- dim )
-    cell call-next-method cell collapsed? [ 5 over set-second ] when ;
+    cell call-next-method cell control-value subtree? [ 2 over set-second ] when ;
 
 :: select-cell ( cell -- cell  )
     cell control-value name>> "⨁" = [ 
