@@ -54,49 +54,42 @@ M: tree-control pref-dim*
 : <tree-toolbar> ( model -- gadget )
     tree-toolbar new horizontal >>orientation { 5 0 } >>gap swap >>model ;
 
+:: add-button ( toolbar cond-quot color letter action-quot tooltip -- toolbar )
+    toolbar dup control-value cond-quot call( x -- ? )
+    [ color letter [ drop toolbar model>> action-quot change-model ] ]
+    [ inactive-background "" [ drop ] ] if <round-button>
+    tooltip >>tooltip add-gadget ;
+
 M:: tree-toolbar model-changed ( model tree-toolbar -- )
     tree-toolbar dup clear-gadget
     model value>> [ word? ] find-parent ?add-words drop
     model value>> node? [
-        model value>> top-node?
-            [ dark-background "I" [ drop model [ introduce change-node-type ] change-model ] ]
-            [ inactive-background "" [ drop ] ] if <round-button>
-            "Convert cell into an input cell    ( Ctrl I )" >>tooltip add-gadget
-        model value>> top-node?
-            [ yellow-background "G" [ drop model [ getter change-node-type ] change-model ] ]
-            [ inactive-background "" [ drop ] ] if <round-button>
-            "Convert cell into a get cell    ( Ctrl G )" >>tooltip add-gadget
-        model value>> top-node?
-            [ white-background "T" [ drop model [ text change-node-type ] change-model ] ]
-            [ inactive-background "" [ drop ] ] if <round-button>
-            "Convert cell into a text cell    ( Ctrl T )" >>tooltip add-gadget
+        [ top-node? ] dark-background "I" [ introduce change-node-type ]
+            "Convert cell into an input cell    ( Ctrl I )" add-button
+        [ top-node? ] yellow-background "G" [ getter change-node-type ]
+            "Convert cell into a get cell    ( Ctrl G )" add-button
+        [ top-node? ] white-background "T" [ text change-node-type ]
+            "Convert cell into a text cell    ( Ctrl T )" add-button
         <gadget> add-gadget
-        model value>> subtree? not
-            [ green-background "W" [ drop model [ call change-node-type ] change-model ] ]
-            [ inactive-background "" [ drop ] ] if <round-button>
-            "Convert cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
+        [ subtree? not ] green-background "W" [ call change-node-type ]
+            "Convert cell into a word cell    ( Ctrl W )" add-button
         <gadget> add-gadget
-        model value>> bottom-node?
-             [ yellow-background "S" [ drop model [ setter change-node-type ] change-model ] ]
-             [ inactive-background "" [ drop ] ] if <round-button>
-             "Convert cell into a set cell    ( Ctrl S )" >>tooltip add-gadget
-        model value>> [ bottom-node? ] [ no-return? ] [ return? ] tri or and
-            [ dark-background "O" [ drop model [ return change-node-type ] change-model ] ]
-            [ inactive-background "" [ drop ] ] if <round-button>
-            "Convert cell into an output cell    ( Ctrl O )" >>tooltip add-gadget
+        [ bottom-node? ] yellow-background "S" [ setter change-node-type ]
+             "Convert cell into a set cell    ( Ctrl S )" add-button
+        [ [ bottom-node? ] [ no-return? ] [ return? ] tri or and ]
+            dark-background "O" [ return change-node-type ]
+            "Convert cell into an output cell    ( Ctrl O )" add-button
         <gadget> { 20 0 } >>dim add-gadget
-        model value>> parent>> [ variadic? ] [ word? ] bi or
-            [ blue-background "←" [ drop model [ insert-node-left ] change-model ] ]
-            [ inactive-background " " [ drop ] ] if <round-button>
-            "Insert new cell on the left    ( Alt ← )" >>tooltip add-gadget
-        model value>> parent>> [ variadic? ] [ word? ] bi or
-            [ blue-background "→" [ drop model [ insert-node-right ] change-model ] ]
-            [ inactive-background " " [ drop ] ] if <round-button>
-            "Insert new cell on the right    ( Alt → )" >>tooltip add-gadget
-        blue-background "↓" [ drop model [ insert-node ] change-model ] <round-button>
-            "Insert new cell below    ( Alt ↓ )" >>tooltip add-gadget
-        red-background "✕" [ drop model [ remove-node ] change-model ] <round-button>
-            "Delete cell    ( Ctrl R )" >>tooltip add-gadget
+        [ parent>> [ variadic? ] [ word? ] bi or ]
+            blue-background "←" [ insert-node-left ]
+            "Insert new cell on the left    ( Alt ← )" add-button
+        [ parent>> [ variadic? ] [ word? ] bi or ]
+            blue-background "→" [ insert-node-right ]
+            "Insert new cell on the right    ( Alt → )" add-button
+        [ drop t ] blue-background "↓" [ insert-node ]
+            "Insert new cell below    ( Alt ↓ )" add-button
+        [ drop t ] red-background "✕" [ remove-node ]
+            "Delete cell    ( Ctrl R )" add-button
     ] when drop ;
 
 : <path-display> ( model -- gadget )
