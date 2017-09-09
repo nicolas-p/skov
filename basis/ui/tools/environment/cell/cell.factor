@@ -15,7 +15,7 @@ FROM: models => change-model ;
 IN: ui.tools.environment.cell
 
 CONSTANT: cell-height 26
-CONSTANT: min-cell-width 26
+CONSTANT: min-cell-width 32
 
 TUPLE: cell < border  selection ;
 TUPLE: cell-editor < editor ;
@@ -37,7 +37,7 @@ TUPLE: cell-editor < editor ;
 :: cell-theme ( cell -- cell )
     cell dup cell-colors
     cell control-value name>> empty? [ faded-color ] when
-    <gradient-rounded> >>interior ;
+    <gradient-dynamic-shape> >>interior ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
@@ -71,7 +71,7 @@ TUPLE: cell-editor < editor ;
     value subtree? or ;
 
 : <cell> ( value selection -- node )
-    cell new { 8 0 } >>size min-cell-width cell-height 2array >>min-dim
+    cell new { 12 0 } >>size min-cell-width cell-height 2array >>min-dim
     swap >>selection swap <model> >>model horizontal >>orientation ;
 
 M:: cell model-changed ( model cell -- )
