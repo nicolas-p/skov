@@ -31,6 +31,8 @@ TUPLE: cell-editor < editor ;
     { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
+      { [ dup getter? ] [ drop yellow-background dark-text-colour ] }
+      { [ dup setter? ] [ drop yellow-background dark-text-colour ] }
       [ drop cell selected? active-background inactive-background ? light-text-colour ]
     } cond ;
 

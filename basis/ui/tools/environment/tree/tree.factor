@@ -63,6 +63,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into an input cell    ( Ctrl I )" >>tooltip add-gadget
         model value>> top-node?
+            [ yellow-background "G" [ drop model [ getter change-node-type ] change-model ] ]
+            [ inactive-background "" [ drop ] ] if <round-button>
+            "Convert cell into a get cell    ( Ctrl G )" >>tooltip add-gadget
+        model value>> top-node?
             [ white-background "T" [ drop model [ text change-node-type ] change-model ] ]
             [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into a text cell    ( Ctrl T )" >>tooltip add-gadget
@@ -72,6 +76,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             [ inactive-background "" [ drop ] ] if <round-button>
             "Convert cell into a word cell    ( Ctrl W )" >>tooltip add-gadget
         <gadget> add-gadget
+        model value>> bottom-node?
+             [ yellow-background "S" [ drop model [ setter change-node-type ] change-model ] ]
+             [ inactive-background "" [ drop ] ] if <round-button>
+             "Convert cell into a set cell    ( Ctrl S )" >>tooltip add-gadget
         model value>> [ bottom-node? ] [ no-return? ] [ return? ] tri or and
             [ dark-background "O" [ drop model [ return change-node-type ] change-model ] ]
             [ inactive-background "" [ drop ] ] if <round-button>
