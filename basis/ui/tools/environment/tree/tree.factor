@@ -36,7 +36,7 @@ M:: special-pile layout* ( pack -- )
 
 :: build-tree ( node selection -- pile )
     <special-pile> { 0 1 } >>gap
-        <shelf> { 9 0 } >>gap 1 >>align
+        <shelf> { 8 0 } >>gap 1 >>align
             node contents>> [ selection build-tree ] map add-gadgets add-gadget
         node selection <cell> add-gadget ;
 
