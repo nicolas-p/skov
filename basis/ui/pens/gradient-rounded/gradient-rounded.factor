@@ -6,13 +6,13 @@ IN: ui.pens.gradient-rounded
 
 TUPLE: gradient-shape < caching-pen  colors foreground shape last-vertices last-colors ;
 TUPLE: gradient-squircle < gradient-shape ;
-TUPLE: gradient-dynamic-shape < gradient-shape ;
+TUPLE: gradient-dynamic-shape < gradient-shape  selected? ;
 
 : <gradient-squircle> ( colors foreground -- gradient )
     gradient-squircle new swap >>foreground swap >>colors ;
 
-: <gradient-dynamic-shape> ( colors foreground -- gradient )
-    gradient-dynamic-shape new swap >>foreground swap >>colors ;
+: <gradient-dynamic-shape> ( colors foreground selected? -- gradient )
+    gradient-dynamic-shape new swap >>selected? swap >>foreground swap >>colors ;
 
 <PRIVATE
 
@@ -44,7 +44,7 @@ CONSTANT: points 100
     dim first2 :> ( x y )
     left-shape right-shape [ execute( -- seq ) [ y v*n ] map ] bi@
     reverse [ first2 swap x swap - swap 2array ] map append
-    x 2 / y 2array prefix ;
+    x 2 / y 2 / 2array prefix dup second suffix ;
 
 :: interp-color ( x colors -- seq )
     colors [ >rgba-components 4array ] map first2 zip [ first2 dupd - x * - ] map ;
@@ -55,6 +55,20 @@ CONSTANT: points 100
 : draw-triangle-fan ( vertices colors -- )
     GL_TRIANGLE_FAN glBegin
     [ first3 glColor3f first2 glVertex2f ] 2each
+    glEnd ;
+
+:: gradient-start ( b c -- s )
+    c first2 :> ( xc yc )
+    b first2 :> ( xb yb )
+    8 xb xc - sq yb yc - sq + sqrt / :> alpha
+    xb xb xc - alpha * -
+    yb yb yc - alpha * - 2array ;
+
+: draw-triangle-fan-selected ( vertices -- )
+    unclip dupd [ gradient-start ] curry map
+    GL_TRIANGLE_STRIP glBegin
+    [ 1.0 1.0 1.0 0.0 glColor4f first2 glVertex2f
+      1.0 1.0 1.0 0.5 glColor4f first2 glVertex2f ] 2each
     glEnd ;
 
 : left ( gadget -- dim )  screen-loc first ;
@@ -112,3 +126,9 @@ M: gradient-shape pen-background
 
 M: gradient-shape pen-foreground
     nip foreground>> ;
+
+M: gradient-dynamic-shape draw-interior
+    [ call-next-method ]
+    [ selected?>> ]
+    [ last-vertices>> ] tri
+    [ draw-triangle-fan-selected ] curry when ;

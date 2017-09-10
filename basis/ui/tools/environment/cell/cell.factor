@@ -46,7 +46,7 @@ TUPLE: cell-editor < editor ;
 :: cell-theme ( cell -- cell )
     cell dup cell-colors
     cell control-value name>> empty? [ faded-color ] when
-    <gradient-dynamic-shape> >>interior ;
+    cell selected? cell control-value node? and <gradient-dynamic-shape> >>interior ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
