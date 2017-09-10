@@ -76,7 +76,7 @@ CONSTANT: points 100
 : right ( gadget -- dim )  [ screen-loc first ] [ dim>> first ] bi + ;
 
 : default-value ( side -- x )
-    \ left = 1000 0 ? ;
+    \ left = 10000 0 ? ;
 
 : compare ( x y side -- ? )
     \ left = [ 3 - < ] [ 3 + > ] if ;
