@@ -1,8 +1,8 @@
 USING: accessors arrays assocs colors combinators
-combinators.smart kernel locals math math.functions math.order
-math.ranges math.vectors opengl.gl sequences ui.gadgets
-ui.gadgets.packs ui.pens ui.pens.caching ui.pens.gradient ;
-FROM: code => node? ;
+combinators.short-circuit combinators.smart kernel locals math
+math.functions math.order math.ranges math.vectors opengl.gl
+sequences ui.gadgets ui.gadgets.packs ui.pens ui.pens.caching
+ui.pens.gradient ;
 IN: ui.pens.gradient-rounded
 
 TUPLE: gradient-shape < caching-pen  colors foreground shape last-vertices last-colors ;
@@ -87,7 +87,8 @@ CONSTANT: points 100
     [ side default-value ] smart-if* ;
 
 :: below ( gadget side -- dim )
-    gadget parent>> parent>> [ model>> [ value>> node? ] [ t ] if* ]
+    gadget parent>> parent>>
+    [ dup parent>> children>> { [ length 1 > nip ] [ second = not ] } 2&& ]
     [ parent>> children>> second side execute( x -- x ) ]
     [ side default-value ] smart-if* ;
 
