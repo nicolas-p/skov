@@ -12,7 +12,8 @@ M: round-button pref-dim*
 
 :: <round-button> ( colors label quot -- button )
     label quot round-button new-button
-    colors dup dark-background = [ light-text-colour ] [ dark-text-colour ] if
+    colors dup [ dark-background = ] [ inactive-background = ] bi or
+    [ light-text-colour ] [ dark-text-colour ] if
     <gradient-squircle> >>interior
     dup gadget-child
     [ t >>bold? 13 >>size
