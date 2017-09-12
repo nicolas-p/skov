@@ -9,6 +9,7 @@ ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
 ui.gadgets.labels ui.gadgets.worlds ui.gestures
 ui.pens.gradient-rounded ui.pens.solid ui.pens.tile ui.render
+ui.pens.title-gradient
 ui.text ui.tools.browser ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
@@ -46,7 +47,9 @@ TUPLE: cell-editor < editor ;
 :: cell-theme ( cell -- cell )
     cell dup cell-colors
     cell control-value name>> empty? [ faded-color ] when
-    cell selected? cell control-value node? and <gradient-dynamic-shape> >>interior ;
+    cell selected?
+    cell control-value node? [ <gradient-dynamic-shape> ] [ <title-gradient> ] if
+    >>interior ;
 
 :: enter-name ( name cell -- cell )
     cell control-value
