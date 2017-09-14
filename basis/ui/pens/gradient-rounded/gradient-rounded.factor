@@ -58,18 +58,18 @@ CONSTANT: points 100
     [ first3 glColor3f first2 glVertex2f ] 2each
     glEnd ;
 
-:: gradient-start ( b c -- s )
-    c first2 :> ( xc yc )
-    b first2 :> ( xb yb )
-    8 xb xc - sq yb yc - sq + sqrt / :> alpha
-    xb xb xc - alpha * -
-    yb yb yc - alpha * - 2array ;
+:: gradient-start ( edge center -- s )
+    center first2 :> ( xc yc )
+    edge first2 :> ( xe ye )
+    8 xe xc - sq ye yc - sq + sqrt / :> alpha
+    xe xe xc - alpha * -
+    ye ye yc - alpha * - 8 max 16 min 2array ;
 
 : draw-triangle-fan-selected ( vertices -- )
     unclip dupd [ gradient-start ] curry map
     GL_TRIANGLE_STRIP glBegin
     [ 1.0 1.0 1.0 0.0 glColor4f first2 glVertex2f
-      1.0 1.0 1.0 0.5 glColor4f first2 glVertex2f ] 2each
+      1.0 1.0 1.0 0.6 glColor4f first2 glVertex2f ] 2each
     glEnd ;
 
 : left ( gadget -- dim )  screen-loc first ;
