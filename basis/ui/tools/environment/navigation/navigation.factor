@@ -5,7 +5,8 @@ models sequences ui.gadgets ui.gadgets.borders code.execution combinators
 ui.gadgets.buttons ui.gadgets.buttons.round ui.gadgets.icons
 ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
 ui.tools.environment.theme ui.tools.environment.tree
-ui.tools.environment.cell system ;
+ui.tools.environment.cell system 
+ui.tools.environment.navigation.dot-pattern ;
 FROM: models => change-model ;
 IN: ui.tools.environment.navigation
 
@@ -38,11 +39,9 @@ M:: navigation model-changed ( model gadget -- )
     model value>> parents [ vocab? ] filter reverse
     dup last :> voc
     [ model <name-bar> ] map add-gadgets
-    <gadget> { 0 20 } >>dim add-gadget
-    "Vocabularies" <category> { 0 10 } <border> add-gadget
+    "Vocabularies" <category> { 0 10 } <border> <dot-pattern> add-gadget
     voc contents>> [ vocab? ] filter vocab new "⨁" >>name suffix [ model <name-bar> ] map add-gadgets
-    <gadget> { 0 20 } >>dim add-gadget
-    "Words" <category> { 0 10 } <border> add-gadget
+    "Words" <category> { 0 10 } <border> <dot-pattern> add-gadget
     voc contents>> [ word? ] filter word new "⨁" >>name suffix [ 
         [ model <name-bar> add-gadget ] 
         [ [ model value>> eq? ]
