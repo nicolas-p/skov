@@ -16,7 +16,11 @@ IN: code.execution
     [ [ factor-name ] map members >array ] bi@ <effect> ;
 
 : set-ids ( seq -- )
-    [ name>> ] collect-by [ [ <local> ] dip [ id<< ] with each ] assoc-each ;
+    [ name>> ] collect-by [ 
+        [ drop empty? ]
+        [ [ "x" <local> >>id ] map 2drop ]
+        [ [ <local> ] dip [ id<< ] with each ] smart-if
+    ] assoc-each ;
 
 : set-input-ids ( word -- word )
     dup introduces set-ids ;
@@ -32,8 +36,12 @@ IN: code.execution
     call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
     2array ;
 
+: process-quotation-call ( call -- seq )
+    contents>> length 1 - [ "x" ] replicate "o" 1array <effect> \ call-effect 2array ;
+
 : process-variadic ( call -- word/seq )
-    { { [ dup simple-variadic? ] [ process-simple-variadic ] }
+    { { [ dup name>> "call" = ] [ process-quotation-call ] }
+      { [ dup simple-variadic? ] [ process-simple-variadic ] }
       { [ dup special-variadic? ] [ process-special-variadic ] }
       [ target>> ]
     } cond ;

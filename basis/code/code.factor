@@ -211,16 +211,20 @@ M: node path
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
 CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
-CONSTANT: special-variadic-words { "array" } ! "sequence" "each" "map" "append" "produce" }
+CONSTANT: sequence-variadic-words { "array" } ! "sequence" "each" "map" "append" "produce" }
+CONSTANT: special-variadic-words { "call" }
 
 : simple-variadic? ( call -- ? )
     name>> simple-variadic-words member? ;
+
+: sequence-variadic? ( call -- ? )
+    name>> sequence-variadic-words member? ;
 
 : special-variadic? ( call -- ? )
     name>> special-variadic-words member? ;
 
 : variadic? ( call -- ? )
-    [ simple-variadic? ] [ special-variadic? ] bi or ;
+    [ simple-variadic? ] [ sequence-variadic? ] [ special-variadic? ] tri or or ;
 
 SINGLETON: recursion
 
@@ -240,7 +244,8 @@ M:: call in-out ( call -- seq seq )
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
-      { [ dup special-variadic? ] [ drop { "" "" } { "seq" } ] }
+      { [ dup sequence-variadic? ] [ drop { "" "" } { "seq" } ] }
+      { [ dup name>> "call" = ] [ drop { "callable" } { "result" } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
 
