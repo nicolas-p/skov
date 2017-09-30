@@ -71,7 +71,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
         [ top-node? ] white-background "T" [ text change-node-type ]
             "Convert cell into a text cell    ( Ctrl T )" add-button
         <gadget> add-gadget
-        [ subtree? not ] green-background "W" [ call change-node-type ]
+        [ drop t ] green-background "W" [ call change-node-type ]
             "Convert cell into a word cell    ( Ctrl W )" add-button
         <gadget> add-gadget
         [ bottom-node? ] yellow-background "S" [ setter change-node-type ]

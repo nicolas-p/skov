@@ -16,12 +16,11 @@ TUPLE: element < identity-tuple  name parent contents default-name ;
 TUPLE: vocab < element ;
 TUPLE: word < element  defined? alt result ;
 
-TUPLE: node < element ;
+TUPLE: node < element  quoted? ;
 TUPLE: introduce < node  id ;
 TUPLE: return < node ;
 TUPLE: call < node  target ;
 TUPLE: text < node ;
-TUPLE: subtree < node ;
 TUPLE: setter < node  id ;
 TUPLE: getter < node  id ;
 
@@ -31,6 +30,8 @@ UNION: input/output  introduce return ;
 UNION: link  setter getter ;
 UNION: source  introduce text getter ;
 UNION: sink  return setter ;
+
+PREDICATE: quoted-call < call  quoted?>> ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -123,9 +124,6 @@ vocab new "●" >>name skov-root set-global
     node nodes index 1 +
     nodes insert-nth! new-node ;
 
-: ?insert-subtree ( elt -- )
-    [ subtree? ] [ subtree replace-with-new-parent ] smart-unless drop ;
-
 : remove-node ( elt -- parent/child )
     [ contents>> empty? ]
     [ remove-from-parent ]
@@ -148,8 +146,7 @@ vocab new "●" >>name skov-root set-global
     } case [ (change-node-type) ] [ drop ] if ;
 
 : name-or-default ( elt -- str )
-    { { [ dup subtree? ] [ drop "" ] }
-      { [ dup name>> empty? not ] [ name>> ] }
+    { { [ dup name>> empty? not ] [ name>> ] }
       { [ dup default-name>> empty? not ] [ default-name>> ] }
       { [ dup introduce? ] [ drop "input" ] }
       { [ dup return? ] [ drop "output" ] }
@@ -224,9 +221,6 @@ M: source in-out
 M: sink in-out
     drop { "" } f ;
 
-M: subtree in-out
-    drop { "" } { "" } ;
-
 M:: call in-out ( call -- seq seq )
     call target>>
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
@@ -247,13 +241,12 @@ M:: call in-out ( call -- seq seq )
       [ name matching-words-exact ]
     } cond ;
 
-:: ?add-subtrees ( elt -- )
-    elt contents>> elt in-out drop
-    [ "quot" swap subseq? [ ?insert-subtree ] [ drop ] if ] 2each ;
+: ?add-quotations ( elt -- )
+    [ contents>> ] [ in-out drop ] bi [ "quot" swap subseq? >>quoted? drop ] 2each ;
 
 :: ?add-words-above ( elt -- )
     elt elt in-out drop change-nodes-above
-    elt ?add-subtrees
+    elt ?add-quotations
     elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
@@ -267,13 +260,12 @@ M:: call in-out ( call -- seq seq )
 
 : any-empty-name? ( def -- ? )
     sort-tree
-    [ subtree? ] reject
-    [ [ introduce? ] [ [ subtree? ] find-parent ] bi and ] reject
+    [ [ introduce? ] [ [ quoted-call? ] find-parent ] bi and ] reject
     [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
    { [ word? ]
-     [ introduces [ [ subtree? ] find-parent ] reject empty? ]
+     [ introduces [ [ quoted-call? ] find-parent ] reject empty? ]
      [ returns empty? ]
      [ calls empty? not ]
      [ any-empty-name? not ]

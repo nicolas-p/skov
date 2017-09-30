@@ -15,13 +15,13 @@ DEFER: make-tree
     { { [ dup words:word? ] [ call-from-factor ] }
       { [ dup string? ] [ text new >>name ] }
       { [ dup number? ] [ call new swap [ number>string >>name ] keep >>target ] }
-      { [ dup quotation? ] [ subtree new swap [ node-from-factor ] map
-                             >vector make-tree add-element ] } 
+    !  { [ dup quotation? ] [ subtree new swap [ node-from-factor ] map
+    !                         >vector make-tree add-element ] } 
     } cond ;
 
 : make-tree ( nodes -- tree )
     dup [ introduce new ] [ pop ] if-empty dup
-    [ subtree? ] [ drop 0 ] [ in-out drop length ] smart-if
+   ! [ subtree? ] [ drop 0 ] [ in-out drop length ] smart-if
     swapd [ dup make-tree ] replicate reverse nip [ add-element ] each ;
 
 :: word-from-factor ( factor-word -- word )

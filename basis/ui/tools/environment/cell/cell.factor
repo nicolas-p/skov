@@ -30,12 +30,11 @@ TUPLE: cell-editor < editor ;
 :: subtree-input? ( node -- ? )
     node introduce?
     node name>> empty? and
-    node [ subtree? ] find-parent and ;
+    node [ quoted-call? ] find-parent and ;
 
 :: cell-colors ( cell -- bg-color text-color )
     cell control-value
     { { [ dup subtree-input? ] [ drop inactive-background light-text-colour ] }
-      { [ dup subtree? ] [ drop inactive-background light-text-colour ] }
       { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
@@ -79,7 +78,7 @@ TUPLE: cell-editor < editor ;
     swap >>selection swap <model> >>model horizontal >>orientation ;
 
 :: no-label? ( cell -- ? )
-    cell control-value [ subtree? ] [ subtree-input? ] bi or
+    cell control-value subtree-input?
     cell selected? not and ;
 
 M:: cell model-changed ( model cell -- )
@@ -124,9 +123,6 @@ M: cell focusable-child*
 
 M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
-
-M:: cell pref-dim* ( cell -- dim )
-    cell call-next-method cell control-value subtree? [ 2 over set-second ] when ;
 
 :: select-cell ( cell -- cell  )
     cell control-value name>> "⨁" = [ 

@@ -63,9 +63,9 @@ M: setter transform
 M: call transform
     [ contents>> [ transform ] map ] [ process-variadic ] bi 2array ;
 
-M: subtree transform
+M: quoted-call transform
     [ introduces [ name>> empty? ] filter [ transform ] map ]
-    [ contents>> first transform flatten >quotation <lambda> ] bi ;
+    [ call-next-method flatten >quotation <lambda> ] bi ;
 
 M: return transform
     contents>> [ transform ] map ;
