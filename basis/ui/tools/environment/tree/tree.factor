@@ -26,7 +26,7 @@ M:: special-pile layout* ( pack -- )
     pack call-next-method
     pack children>> first2 :> ( shelf cell )
     shelf layout
-    shelf children>> empty? [ 
+    shelf children>> empty? [
         shelf children>> [ first ] [ last ] bi [ children>> last center-point ] bi@ :> ( a b )
         cell pref-dim first2 [ b a - 20 + max ] dip 2array cell dim<<
         a b + 2 /i cell dim>> first 2 /i - dup neg?
@@ -34,11 +34,15 @@ M:: special-pile layout* ( pack -- )
         [ cell loc>> second 2array cell loc<< ] if
     ] unless ;
 
+: <quoted-cell> ( cell -- pile )
+    <special-pile> <shelf> rot add-gadget add-gadget <gadget> { 0 3 } >>dim add-gadget ;
+
 :: build-tree ( node selection -- pile )
     <special-pile> { 0 1 } >>gap
         <shelf> { 8 0 } >>gap 1 >>align
             node contents>> [ selection build-tree ] map add-gadgets add-gadget
-        node selection <cell> add-gadget ;
+        node selection <cell> add-gadget
+    node quoted-call? [ <quoted-cell> ] when ;
 
 : <tree> ( word -- pile )
     tree new horizontal >>orientation swap >>model { 15 0 } >>gap 1 >>align ;
