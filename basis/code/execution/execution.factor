@@ -48,6 +48,11 @@ IN: code.execution
 
 GENERIC: transform ( node -- compiler-node )
 
+:: transform-quotation ( node -- compiler-node )
+    node transform node quoted-node?
+    [ node introduces [ name>> empty? ] filter [ transform ] map
+      swap flatten >quotation <lambda> ] when ;
+
 M: introduce transform
     id>> ;
 
@@ -58,22 +63,18 @@ M: getter transform
     id>> ;
 
 M: setter transform
-    [ contents>> [ transform ] map ] [ id>> <def> ] bi 2array ;
+    [ contents>> [ transform-quotation ] map ] [ id>> <def> ] bi 2array ;
 
 M: call transform
-    [ contents>> [ transform ] map ] [ process-variadic ] bi 2array ;
-
-M: quoted-call transform
-    [ introduces [ name>> empty? ] filter [ transform ] map ]
-    [ call-next-method flatten >quotation <lambda> ] bi ;
+    [ contents>> [ transform-quotation ] map ] [ process-variadic ] bi 2array ;
 
 M: return transform
-    contents>> [ transform ] map ;
+    contents>> [ transform-quotation ] map ;
 
 M: word transform
     set-input-ids set-link-ids
     [ introduces [ name>> empty? ] reject [ transform ] map members ]
-    [ contents>> [ transform ] map flatten >quotation ] bi <lambda> ;
+    [ contents>> [ transform-quotation ] map flatten >quotation ] bi <lambda> ;
 
 :: set-recursion ( word lambda -- lambda )
     lambda [ recursion 1array word 1array replace 

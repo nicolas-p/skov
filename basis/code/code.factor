@@ -31,7 +31,7 @@ UNION: link  setter getter ;
 UNION: source  introduce text getter ;
 UNION: sink  return setter ;
 
-PREDICATE: quoted-call < call  quoted?>> ;
+PREDICATE: quoted-node < node  quoted?>> ;
 
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
@@ -260,12 +260,12 @@ M:: call in-out ( call -- seq seq )
 
 : any-empty-name? ( def -- ? )
     sort-tree
-    [ [ introduce? ] [ [ quoted-call? ] find-parent ] bi and ] reject
+    [ [ introduce? ] [ [ quoted-node? ] find-parent ] bi and ] reject
     [ name>> empty? ] any? ;
 
 : executable? ( def -- ? )
    { [ word? ]
-     [ introduces [ [ quoted-call? ] find-parent ] reject empty? ]
+     [ introduces [ [ quoted-node? ] find-parent ] reject empty? ]
      [ returns empty? ]
      [ calls empty? not ]
      [ any-empty-name? not ]

@@ -30,7 +30,7 @@ TUPLE: cell-editor < editor ;
 :: subtree-input? ( node -- ? )
     node introduce?
     node name>> empty? and
-    node [ quoted-call? ] find-parent and ;
+    node [ quoted-node? ] find-parent and ;
 
 :: cell-colors ( cell -- bg-color text-color )
     cell control-value

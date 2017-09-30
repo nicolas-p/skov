@@ -42,7 +42,7 @@ M:: special-pile layout* ( pack -- )
         <shelf> { 8 0 } >>gap 1 >>align
             node contents>> [ selection build-tree ] map add-gadgets add-gadget
         node selection <cell> add-gadget
-    node quoted-call? [ <quoted-cell> ] when ;
+    node quoted?>> [ <quoted-cell> ] when ;
 
 : <tree> ( word -- pile )
     tree new horizontal >>orientation swap >>model { 15 0 } >>gap 1 >>align ;
