@@ -7,13 +7,7 @@ FROM: code => call word ;
 IN: code.factor-abstraction
 
 :: call-from-factor ( factor-word -- call )
-    factor-word name>>
-    { { [ " (accessor)" ?tail ] [ accessor ] }
-      { [ " (mutator)" ?tail ] [ mutator ] }
-      { [ " (constructor)" ?tail ] [ constructor ] }
-      [ call ]
-    } cond new swap >>name
-    factor-word >>target ;
+    call new factor-word name>> >>name factor-word >>target ;
 
 DEFER: make-tree
 

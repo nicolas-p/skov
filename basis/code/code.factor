@@ -21,9 +21,6 @@ TUPLE: introduce < node  id ;
 TUPLE: return < node ;
 TUPLE: call < node  target ;
 TUPLE: text < node ;
-TUPLE: constructor < call ;
-TUPLE: accessor < call ;
-TUPLE: mutator < call ;
 TUPLE: subtree < node ;
 TUPLE: setter < node  id ;
 TUPLE: getter < node  id ;
@@ -174,15 +171,6 @@ M: call factor-name
         { "times" "special times" }
         { "produce" "special produce" }
     } [ change-name ] each ;
-
-M: constructor factor-name
-    name>> " (constructor)" append ;
-
-M: accessor factor-name
-    name>> " (accessor)" append ;
-
-M: mutator factor-name
-    name>> " (mutator)" append ;
 
 GENERIC: path ( elt -- str )
 
