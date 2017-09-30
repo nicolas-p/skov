@@ -31,7 +31,7 @@ IN: code.execution
 :: process-simple-variadic ( call -- seq )
     call contents>> length 1 - [ call target>> ] replicate ;
 
-:: process-special-variadic ( call -- seq )
+:: process-sequence-variadic ( call -- seq )
     call contents>> length
     call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
     2array ;
@@ -42,7 +42,7 @@ IN: code.execution
 : process-variadic ( call -- word/seq )
     { { [ dup name>> "call" = ] [ process-quotation-call ] }
       { [ dup simple-variadic? ] [ process-simple-variadic ] }
-      { [ dup special-variadic? ] [ process-special-variadic ] }
+      { [ dup sequence-variadic? ] [ process-sequence-variadic ] }
       [ target>> ]
     } cond ;
 
