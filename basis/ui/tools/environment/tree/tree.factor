@@ -84,6 +84,13 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             dark-background "O" [ return change-node-type ]
             "Convert cell into an output cell    ( Ctrl O )" add-button
         <gadget> { 20 0 } >>dim add-gadget
+        model value>> bottom-node?
+            [ inactive-background "" [ drop ] ]
+            [ blue-background model value>> quoted?>> "︾" "︽" ?
+              [ drop model [ (un)quote ] change-model ] ] if <round-button>
+            model value>> quoted?>> "Unquote" "Quote" ? "    ( Ctrl Q )" append 
+            >>tooltip add-gadget
+        <gadget> add-gadget
         [ parent>> [ variadic? ] [ word? ] bi or ]
             blue-background "←" [ insert-node-left ]
             "Insert new cell on the left    ( Alt ← )" add-button

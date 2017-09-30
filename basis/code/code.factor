@@ -241,6 +241,9 @@ M:: call in-out ( call -- seq seq )
       [ name matching-words-exact ]
     } cond ;
 
+: (un)quote ( node -- node )
+    dup quoted?>> not >>quoted? ;
+
 : ?add-quotations ( elt -- )
     [ contents>> ] [ in-out drop ] bi [ "quot" swap subseq? >>quoted? drop ] 2each ;
 
