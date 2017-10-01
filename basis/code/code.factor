@@ -244,12 +244,8 @@ M:: call in-out ( call -- seq seq )
 : (un)quote ( node -- node )
     dup quoted?>> not >>quoted? ;
 
-: ?add-quotations ( elt -- )
-    [ contents>> ] [ in-out drop ] bi [ "quot" swap subseq? >>quoted? drop ] 2each ;
-
 :: ?add-words-above ( elt -- )
     elt elt in-out drop change-nodes-above
-    elt ?add-quotations
     elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
