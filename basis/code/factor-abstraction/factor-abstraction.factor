@@ -9,20 +9,17 @@ IN: code.factor-abstraction
 :: call-from-factor ( factor-word -- call )
     call new factor-word name>> >>name factor-word >>target ;
 
-DEFER: make-tree
+: make-tree ( nodes -- tree )
+    dup [ introduce new ] [ pop ] if-empty dup
+    [ quoted-node? ] [ drop 0 ] [ in-out drop length ] smart-if
+    swapd [ dup make-tree ] replicate reverse nip [ add-element ] each ;
 
 : node-from-factor ( factor-word -- node )
     { { [ dup words:word? ] [ call-from-factor ] }
       { [ dup string? ] [ text new >>name ] }
       { [ dup number? ] [ call new swap [ number>string >>name ] keep >>target ] }
-    !  { [ dup quotation? ] [ subtree new swap [ node-from-factor ] map
-    !                         >vector make-tree add-element ] } 
+      { [ dup quotation? ] [ [ node-from-factor ] map >vector make-tree t >>quoted? ] } 
     } cond ;
-
-: make-tree ( nodes -- tree )
-    dup [ introduce new ] [ pop ] if-empty dup
-   ! [ subtree? ] [ drop 0 ] [ in-out drop length ] smart-if
-    swapd [ dup make-tree ] replicate reverse nip [ add-element ] each ;
 
 :: word-from-factor ( factor-word -- word )
     factor-word stack-effect
