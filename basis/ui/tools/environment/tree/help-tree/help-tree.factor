@@ -11,4 +11,4 @@ IN: ui.tools.environment.tree.help-tree
 
 : <definition-tree> ( factor-word -- gadget )
     [ word-from-factor <model> <tree> { 5 5 } <border> ]
-    [ drop drop "(cannot be diplayed)" <label> ] recover ;
+    [ drop drop "(cannot be displayed)" <label> ] recover ;
