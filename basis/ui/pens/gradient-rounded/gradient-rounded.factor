@@ -24,13 +24,13 @@ CONSTANT: points 100
     [ cos ] [ sin ] bi [ [ abs sqrt ] [ sgn ] bi * 0.5 * 0.5 + ] bi@ 2array ;
 
 :: tan-point ( y -- xy )
-    y tau * 4 / tan 300 / y 6 / + y 2array ;
+    y tau * 4 / tan 300 / 0.5 min y 6 / + y 2array ;
 
 :: squircle ( -- seq )
     1/4 tau * 3/4 tau * 1/2 tau * points / <range> [ squircle-point ] map ;
 
 : wide-narrow ( -- seq )
-    0.0 0.99 1 points / <range> [ tan-point ] map reverse ;
+    0.0 1.0 1 points / <range> [ tan-point ] map reverse ;
 
 : narrow-wide ( -- seq )
     wide-narrow unzip [ reverse ] dip zip ;
