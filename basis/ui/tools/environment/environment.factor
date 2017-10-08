@@ -3,9 +3,10 @@
 USING: accessors code code.execution code.import-export
 combinators kernel listener locals memory models namespaces
 sequences ui ui.commands ui.gadgets ui.gadgets.scrollers
-ui.gadgets.status-bar ui.gadgets.tracks ui.gestures
-ui.tools.browser ui.tools.common ui.tools.environment.cell
-ui.tools.environment.navigation ui.tools.environment.theme ;
+ui.gadgets.status-bar ui.gadgets.tracks ui.gadgets.worlds
+ui.gestures ui.pixel-formats ui.tools.browser ui.tools.common
+ui.tools.environment.cell ui.tools.environment.navigation
+ui.tools.environment.theme ;
 FROM: models => change-model ;
 IN: ui.tools.environment
 
@@ -20,7 +21,12 @@ environment { 700 600 } set-tool-dim
     with-background ;
 
 : environment-window ( -- )
-    [ <environment> "Skov" open-status-window ] with-ui ;
+    [ <environment>
+      <world-attributes> 
+      { windowed double-buffered multisampled
+        T{ samples f 4 } T{ sample-buffers f 1 } }
+      >>pixel-format-attributes
+      "Skov" >>title open-status-window ] with-ui ;
 
 : save-skov-image ( env -- )
     drop save export-vocabs ;
