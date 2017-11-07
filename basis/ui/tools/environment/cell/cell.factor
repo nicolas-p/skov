@@ -151,6 +151,11 @@ M: cell graft*
         [ (browser-window) ] [ show-browser ] if*
     ] with-interactive-vocabs ;
 
+:: ask-for-completion ( cell -- )
+    cell children>> [ editor? ] filter first editor-string
+    [ cell model>> [ swap >>name t >>completion ] with change-model
+      cell selection>> notify-connections ] unless-empty ;
+
 cell H{
     { T{ button-down }               [ select-cell drop ] }
     { lose-focus                     [ ?enter-name drop ] }
@@ -180,6 +185,7 @@ cell H{
     { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
     { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
     { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
+    { T{ key-down f f "TAB" }        [ ask-for-completion ] }
 } set-gestures
 
 : previous-character* ( editor -- )

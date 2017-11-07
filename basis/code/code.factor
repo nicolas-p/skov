@@ -19,7 +19,7 @@ TUPLE: word < element  defined? alt result ;
 TUPLE: node < element  quoted? ;
 TUPLE: introduce < node  id ;
 TUPLE: return < node ;
-TUPLE: call < node  target ;
+TUPLE: call < node  target completion ;
 TUPLE: text < node ;
 TUPLE: setter < node  id ;
 TUPLE: getter < node  id ;
@@ -230,6 +230,9 @@ M:: call in-out ( call -- seq seq )
       { [ dup name>> "call" = ] [ drop { "callable" } { "result" } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
+
+:: matching-words ( str -- seq )
+    interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str head? ] filter ;
 
 :: matching-words-exact ( str -- seq )
     interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str = ] filter ;

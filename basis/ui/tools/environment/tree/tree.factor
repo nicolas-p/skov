@@ -13,8 +13,9 @@ IN: ui.tools.environment.tree
 TUPLE: tree < pack ;
 TUPLE: tree-control < pack ;
 TUPLE: tree-toolbar < tree-control ;
-TUPLE: path-display < tree-control ;
+TUPLE: path-display < tree-control selected ;
 TUPLE: special-pile < pack ;
+TUPLE: path-item < border  word ;
 
 : <special-pile> ( -- pack )
     special-pile new vertical >>orientation ;
@@ -103,14 +104,20 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Delete cell    ( Ctrl R )" add-button
     ] when drop ;
 
+: <path-item> ( factor-word -- gadget )
+    dup [ vocabulary>> "." "  ⟩  " replace "  ⟩  " append ] [ name>> ] bi append
+    <label> [ t >>bold? ] change-font
+    path-item new swap add-gadget swap >>word ;
+
 : <path-display> ( model -- gadget )
-    path-display new horizontal >>orientation swap >>model ;
+    path-display new vertical >>orientation { 0 5 } >>gap swap >>model ;
 
 M:: path-display model-changed ( model path-display -- )
     path-display dup clear-gadget
-    model value>> call? [ 
-        model value>> path [ "." " ⟩ " replace " ⟩ " append
-        model value>> name>> append <label> [ t >>bold? ] change-font add-gadget ] when*
+    model value>> call? [
+        model value>> completion>>
+        [ model value>> name>> matching-words [ <path-item> ] map add-gadgets ]
+        [ model value>> target>> [ <path-item> add-gadget ] when* ] if
     ] when drop ;
 
 : <tree-editor> ( word -- gadget )
@@ -120,6 +127,20 @@ M:: path-display model-changed ( model path-display -- )
 : select-nothing ( tree -- )
     model>> [ [ node? not ] find-parent ] change-model ;
 
+: choose-word ( path-item -- )
+    [ word>> ] [ parent>> model>> ] bi
+    [ swap >>target dup target>> name>> >>name f >>completion ] with change-model ;
+
+: select-word ( path-item -- )
+    dark-background second <solid> >>interior relayout-1 ;
+
+: deselect-word ( path-item -- )
+    f >>interior relayout-1 ;
+
 tree H{
     { T{ button-down } [ select-nothing ] }
+} set-gestures
+
+path-item H{
+    { T{ button-down } [ choose-word ] }
 } set-gestures
