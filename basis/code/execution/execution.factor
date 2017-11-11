@@ -3,9 +3,9 @@
 USING: accessors arrays assocs classes.parser classes.tuple code
 combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
-locals.types math quotations sequences sequences.deep sets
-splitting ui.gadgets.buttons.activate ui.gadgets.panes
-vocabs.parser ;
+locals.types math math.statistics quotations sequences
+sequences.deep sets splitting ui.gadgets.buttons.activate
+ui.gadgets.panes vocabs.parser ;
 FROM: code => call ;
 QUALIFIED: words
 QUALIFIED: vocabs
@@ -31,6 +31,13 @@ IN: code.execution
 :: process-simple-variadic ( call -- seq )
     call contents>> length 1 - [ call target>> ] replicate ;
 
+:: process-comparison-variadic ( call -- seq )
+    call contents>> length 2 = [ call target>> 1array ]
+    [ \ dupd call target>> \ -rot 3array
+      call contents>> length 3 -
+      [ \ dupd suffix call target>> suffix \ swapd suffix \ and suffix \ -rot suffix ] times
+      call target>> suffix \ and suffix ] if ;
+
 :: process-sequence-variadic ( call -- seq )
     call contents>> length
     call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
@@ -42,6 +49,7 @@ IN: code.execution
 : process-variadic ( call -- word/seq )
     { { [ dup name>> "call" = ] [ process-quotation-call ] }
       { [ dup simple-variadic? ] [ process-simple-variadic ] }
+      { [ dup comparison-variadic? ] [ process-comparison-variadic ] }
       { [ dup sequence-variadic? ] [ process-sequence-variadic ] }
       [ target>> ]
     } cond ;

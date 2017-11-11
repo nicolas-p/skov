@@ -1,13 +1,14 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors arrays code kernel locals math math.order
-math.vectors models sequences splitting ui.gadgets
-ui.gadgets.borders ui.gadgets.buttons.round ui.gadgets.labels
-ui.gadgets.packs ui.gadgets.packs.private ui.gestures
-ui.pens.solid ui.tools.environment.cell
+USING: accessors arrays code combinators.short-circuit kernel
+locals math math.order math.vectors models sequences splitting
+ui.gadgets ui.gadgets.borders ui.gadgets.buttons.round
+ui.gadgets.labels ui.gadgets.packs ui.gadgets.packs.private
+ui.gestures ui.pens.solid ui.tools.environment.cell
 ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
+QUALIFIED: words
 IN: ui.tools.environment.tree
 
 TUPLE: tree < pack ;
@@ -92,10 +93,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             model value>> quoted?>> "Unquote" "Quote" ? "    ( Ctrl Q )" append 
             >>tooltip add-gadget
         <gadget> add-gadget
-        [ parent>> [ variadic? ] [ word? ] bi or ]
+        [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "←" [ insert-node-left ]
             "Insert new cell on the left    ( Alt ← )" add-button
-        [ parent>> [ variadic? ] [ word? ] bi or ]
+        [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "→" [ insert-node-right ]
             "Insert new cell on the right    ( Alt → )" add-button
         [ drop t ] blue-background "↓" [ insert-node ]
@@ -115,9 +116,11 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
 M:: path-display model-changed ( model path-display -- )
     path-display dup clear-gadget
     model value>> call? [
-        model value>> completion>>
-        [ model value>> name>> matching-words [ <path-item> ] map add-gadgets ]
-        [ model value>> target>> [ <path-item> add-gadget ] when* ] if
+    model value>> target>> words:word? [
+            model value>> completion>>
+            [ model value>> name>> matching-words [ <path-item> ] map add-gadgets ]
+            [ model value>> target>> [ <path-item> add-gadget ] when* ] if
+        ] when
     ] when drop ;
 
 : <tree-editor> ( word -- gadget )

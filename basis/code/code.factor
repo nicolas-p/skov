@@ -199,8 +199,13 @@ CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
 CONSTANT: sequence-variadic-words { "array" } ! "sequence" "each" "map" "append" "produce" }
 CONSTANT: special-variadic-words { "call" }
 
+GENERIC: in-out ( elt -- seq seq )
+
 : simple-variadic? ( call -- ? )
     name>> simple-variadic-words member? ;
+
+: comparison-variadic? ( call -- ? )
+    in-out [ length 2 = ] [ ?first "?" = ] bi* and ;
 
 : sequence-variadic? ( call -- ? )
     name>> sequence-variadic-words member? ;
@@ -209,11 +214,10 @@ CONSTANT: special-variadic-words { "call" }
     name>> special-variadic-words member? ;
 
 : variadic? ( call -- ? )
-    [ simple-variadic? ] [ sequence-variadic? ] [ special-variadic? ] tri or or ;
+    { [ simple-variadic? ] [ comparison-variadic? ]
+      [ sequence-variadic? ] [ special-variadic? ] } cleave or or or ;
 
 SINGLETON: recursion
-
-GENERIC: in-out ( elt -- seq seq )
 
 M: source in-out
     drop f { "" } ;
