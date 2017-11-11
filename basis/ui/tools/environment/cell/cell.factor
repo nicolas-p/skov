@@ -180,8 +180,8 @@ cell H{
     { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
     { T{ key-down f f "LEFT" }       [ ?enter-name [ left-node ] change-cell ] }
     { T{ key-down f f "RIGHT" }      [ ?enter-name [ right-node ] change-cell ] }
-    { T{ key-down f { M+ } "LEFT" }  [ [ insert-node-left ] change-cell ] }
-    { T{ key-down f { M+ } "RIGHT" } [ [ insert-node-right ] change-cell ] }
+    { T{ key-down f { M+ } "LEFT" }  [ ?enter-name [ insert-node-left ] change-cell ] }
+    { T{ key-down f { M+ } "RIGHT" } [ ?enter-name [ insert-node-right ] change-cell ] }
     { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
     { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
     { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
