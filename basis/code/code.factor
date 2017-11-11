@@ -3,9 +3,9 @@
 USING: accessors arrays classes combinators
 combinators.short-circuit combinators.smart compiler.units
 effects fry hashtables.private kernel listener locals math
-math.parser namespaces prettyprint sequences sequences.deep
-sequences.extras sets splitting strings ui.gadgets vectors
-vocabs.parser ;
+math.order math.parser namespaces prettyprint sequences
+sequences.deep sequences.extras sets splitting strings
+ui.gadgets vectors vocabs.parser ;
 QUALIFIED: vocabs
 QUALIFIED: definitions
 QUALIFIED: words
@@ -198,17 +198,25 @@ M: node path
 : input-output-names ( word -- seq seq )
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
-CONSTANT: simple-variadic-words { "add" "mul" "and" "or" "min" "max" }
+SINGLETON: recursion
+
+:: (in-out) ( call -- seq seq )
+    call target>>
+    { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
+      { [ dup number? ] [ drop { } { "" } ] }
+      { [ dup not ] [ drop { } { } ] }
+      [ "declared-effect" words:word-prop convert-stack-effect ]
+    } cond ;
+
 CONSTANT: sequence-variadic-words { "array" } ! "sequence" "each" "map" "append" "produce" }
 CONSTANT: special-variadic-words { "call" }
 
-GENERIC: in-out ( elt -- seq seq )
-
 : simple-variadic? ( call -- ? )
-    name>> simple-variadic-words member? ;
+    (in-out) { [ drop length 2 = ] [ nip length 1 = ]
+        [ first swap first2 dupd = -rot = and ] } 2&& ;
 
 : comparison-variadic? ( call -- ? )
-    in-out [ length 2 = ] [ ?first "?" = ] bi* and ;
+    (in-out) [ length 2 = ] [ ?first "?" = ] bi* and ;
 
 : sequence-variadic? ( call -- ? )
     name>> sequence-variadic-words member? ;
@@ -220,7 +228,7 @@ GENERIC: in-out ( elt -- seq seq )
     { [ simple-variadic? ] [ comparison-variadic? ]
       [ sequence-variadic? ] [ special-variadic? ] } cleave or or or ;
 
-SINGLETON: recursion
+GENERIC: in-out ( elt -- seq seq )
 
 M: source in-out
     drop f { "" } ;
@@ -229,15 +237,13 @@ M: sink in-out
     drop { "" } f ;
 
 M:: call in-out ( call -- seq seq )
-    call target>>
-    { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
-      { [ dup number? ] [ drop { } { "" } ] }
-      { [ dup not ] [ drop { } { } ] }
-      { [ dup sequence-variadic? ]
-        [ drop call arity [ "x" ] replicate { "seq" } ] }
-      { [ dup name>> "call" = ]
-        [ drop f call arity 1 - [ "x" suffix ] times "callable" suffix { "result" } ] }
-      [ "declared-effect" words:word-prop convert-stack-effect ]
+    { { [ call simple-variadic? ]
+        [ call (in-out) [ first [  ] curry call arity 2 max swap replicate ] dip ] }
+      { [ call sequence-variadic? ]
+        [ call arity 1 max [ "x" ] replicate { "seq" } ] }
+      { [ call name>> "call" = ]
+        [ f call arity 1 - [ "x" suffix ] times "quot" suffix { "result" } ] }
+      [ call (in-out) ]
     } cond ;
 
 :: matching-words ( str -- seq )

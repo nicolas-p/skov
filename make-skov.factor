@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: calendar calendar.format images.loader io.directories vocabs regexp accessors combinators.smart
 io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.theme.switching
-ui.images splitting system io.files io.encodings.utf8 
+ui.images splitting system io.files io.encodings.utf8 math effects math.order
 code.import-export parser help help.markup words debugger ;
 
 ! Setting Skov version in YYYY-MM-DD format
@@ -77,6 +77,17 @@ os windows = [
 
 ! Choosing dark mode
 dark-mode
+
+! Changing stack-effects
+\ + { "num" "num" } { "num" } <effect> "declared-effect" set-word-prop
+\ - { "num" "num'" } { "num" } <effect> "declared-effect" set-word-prop
+\ * { "num" "num" } { "num" } <effect> "declared-effect" set-word-prop
+\ / { "num" "num'" } { "num" } <effect> "declared-effect" set-word-prop
+\ and { "?" "?" } { "?" } <effect> "declared-effect" set-word-prop
+\ or { "?" "?" } { "?" } <effect> "declared-effect" set-word-prop
+\ xor { "?" "?'" } { "?" } <effect> "declared-effect" set-word-prop
+\ min { "obj" "obj" } { "obj" } <effect> "declared-effect" set-word-prop
+\ max { "obj" "obj" } { "obj" } <effect> "declared-effect" set-word-prop
 
 ! Renaming every word
 all-words [ [
