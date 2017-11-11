@@ -29,22 +29,22 @@ IN: code.execution
     dup links set-ids ;
 
 :: process-simple-variadic ( call -- seq )
-    call contents>> length 1 - [ call target>> ] replicate ;
+    call arity 1 - [ call target>> ] replicate ;
 
 :: process-comparison-variadic ( call -- seq )
-    call contents>> length 2 = [ call target>> 1array ]
+    call arity 2 = [ call target>> 1array ]
     [ \ dupd call target>> \ -rot 3array
-      call contents>> length 3 -
+      call arity 3 -
       [ \ dupd suffix call target>> suffix \ swapd suffix \ and suffix \ -rot suffix ] times
       call target>> suffix \ and suffix ] if ;
 
 :: process-sequence-variadic ( call -- seq )
-    call contents>> length
+    call arity
     call name>> "1" ?head drop CHAR: n prefix [ search ] with-interactive-vocabs
     2array ;
 
 : process-quotation-call ( call -- seq )
-    contents>> length 1 - [ "x" ] replicate "o" 1array <effect> \ call-effect 2array ;
+    arity 1 - [ "x" ] replicate "o" 1array <effect> \ call-effect 2array ;
 
 : process-variadic ( call -- word/seq )
     { { [ dup name>> "call" = ] [ process-quotation-call ] }

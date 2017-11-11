@@ -99,8 +99,11 @@ vocab new "●" >>name skov-root set-global
     node nodes index 1 +
     dup nodes length = [ drop node ] [ nodes nth ] if ;
 
+: arity ( node -- n )
+    contents>> length ;
+
 :: change-nodes-above ( elt names -- )
-    elt contents>> length :> old-n
+    elt arity :> old-n
     names length :> n
     elt {
       { [ n old-n > ] [ n old-n - [ call add-from-class ] times drop ] }
@@ -231,9 +234,9 @@ M:: call in-out ( call -- seq seq )
       { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
       { [ dup sequence-variadic? ]
-        [ drop call contents>> length [ "x" ] replicate { "seq" } ] }
+        [ drop call arity [ "x" ] replicate { "seq" } ] }
       { [ dup name>> "call" = ]
-        [ drop f call contents>> length 1 - [ "x" suffix ] times "callable" suffix { "result" } ] }
+        [ drop f call arity 1 - [ "x" suffix ] times "callable" suffix { "result" } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
 
