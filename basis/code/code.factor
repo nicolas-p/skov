@@ -230,8 +230,10 @@ M:: call in-out ( call -- seq seq )
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
-      { [ dup sequence-variadic? ] [ drop { "" "" } { "seq" } ] }
-      { [ dup name>> "call" = ] [ drop { "callable" } { "result" } ] }
+      { [ dup sequence-variadic? ]
+        [ drop call contents>> length [ "x" ] replicate { "seq" } ] }
+      { [ dup name>> "call" = ]
+        [ drop f call contents>> length 1 - [ "x" suffix ] times "callable" suffix { "result" } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
     } cond ;
 
