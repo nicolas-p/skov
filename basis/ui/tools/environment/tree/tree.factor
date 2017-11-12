@@ -132,7 +132,7 @@ M:: path-display model-changed ( model path-display -- )
     ] when drop ;
 
 : <tree-editor> ( word -- gadget )
-    <pile> { 0 20 } >>gap 1/2 >>align swap <model>
+    <pile> { 0 30 } >>gap 1/2 >>align swap <model>
     [ <tree-toolbar> ] [ <tree> ] [ <path-display> ] tri 3array add-gadgets ;
 
 : select-nothing ( tree -- )
