@@ -88,6 +88,7 @@ dark-mode
 \ xor { "?" "?'" } { "?" } <effect> "declared-effect" set-word-prop
 \ min { "obj" "obj" } { "obj" } <effect> "declared-effect" set-word-prop
 \ max { "obj" "obj" } { "obj" } <effect> "declared-effect" set-word-prop
+\ compose { "quot" "quot" } { "quot" } <effect> "declared-effect" set-word-prop
 
 ! Renaming every word
 all-words [ [
