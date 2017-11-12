@@ -200,7 +200,15 @@ M: node path
 
 SINGLETON: recursion
 
-:: (in-out) ( call -- seq seq )
+GENERIC: (in-out) ( elt -- seq seq )
+
+M: source (in-out)
+    drop f { "" } ;
+
+M: sink (in-out)
+    drop { "" } f ;
+
+M:: call (in-out) ( call -- seq seq )
     call target>>
     { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
       { [ dup number? ] [ drop { } { "" } ] }
@@ -228,22 +236,15 @@ CONSTANT: special-variadic-words { "call" }
     { [ simple-variadic? ] [ comparison-variadic? ]
       [ sequence-variadic? ] [ special-variadic? ] } cleave or or or ;
 
-GENERIC: in-out ( elt -- seq seq )
-
-M: source in-out
-    drop f { "" } ;
-
-M: sink in-out
-    drop { "" } f ;
-
-M:: call in-out ( call -- seq seq )
-    { { [ call simple-variadic? ]
-        [ call (in-out) [ first [  ] curry call arity 2 max swap replicate ] dip ] }
-      { [ call sequence-variadic? ]
-        [ call arity 1 max [ "x" ] replicate { "seq" } ] }
-      { [ call name>> "call" = ]
-        [ f call arity 1 - [ "x" suffix ] times "quot" suffix { "result" } ] }
-      [ call (in-out) ]
+:: in-out ( elt -- seq seq )
+    { { [ elt call? not ] [ elt (in-out) ] }
+      { [ elt simple-variadic? ]
+        [ elt (in-out) [ first [  ] curry elt arity 2 max swap replicate ] dip ] }
+      { [ elt sequence-variadic? ]
+        [ elt arity 1 max [ "x" ] replicate { "seq" } ] }
+      { [ elt name>> "call" = ]
+        [ f elt arity 1 - [ "x" suffix ] times "quot" suffix { "result" } ] }
+      [ elt (in-out) ]
     } cond ;
 
 :: matching-words ( str -- seq )
