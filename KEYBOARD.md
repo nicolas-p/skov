@@ -8,6 +8,7 @@ Control E       Export vocabularies to the 'work' directory and save the image
 Control V       Create a new vocabulary
 Control N       Create a new word
 
+Tab             Show all the words that match what you typed
 Return          Register the name of a vocabulary, word or cell
 
 Control I       Convert the selected cell to an input cell
