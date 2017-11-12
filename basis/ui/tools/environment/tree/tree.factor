@@ -4,8 +4,8 @@ USING: accessors arrays code combinators.short-circuit kernel
 locals math math.order math.vectors models sequences splitting
 ui.gadgets ui.gadgets.borders ui.gadgets.buttons.round
 ui.gadgets.labels ui.gadgets.packs ui.gadgets.packs.private
-ui.gestures ui.pens.solid ui.tools.environment.cell
-ui.tools.environment.theme ;
+ui.gestures ui.pens.gradient-rounded ui.pens.solid
+ui.tools.environment.cell ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.tree
@@ -15,7 +15,8 @@ TUPLE: tree-control < pack ;
 TUPLE: tree-toolbar < tree-control ;
 TUPLE: path-display < tree-control selected ;
 TUPLE: special-pile < pack ;
-TUPLE: path-item < border  word ;
+TUPLE: path-item < pack  word ;
+TUPLE: path-cell < border  word? ;
 
 : <special-pile> ( -- pack )
     special-pile new vertical >>orientation ;
@@ -104,10 +105,18 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Delete cell    ( Ctrl R )" add-button
     ] when drop ;
 
+: path-cell-colors ( cell -- bg-color text-color )
+    word?>> [ green-background dark-text-colour ]
+    [ blue-background dark-text-colour ] if ;
+
+: <path-cell> ( name word? -- node )
+    path-cell new { 5 0 } >>size { 0 18 } >>min-dim
+    swap >>word? swap " " append <label> set-small-font add-gadget
+    dup path-cell-colors <gradient-arrow> >>interior ;
+
 : <path-item> ( factor-word -- gadget )
-    dup [ vocabulary>> "." "  ⟩  " replace "  ⟩  " append ] [ name>> ] bi append
-    <label> [ t >>bold? ] change-font
-    path-item new swap add-gadget swap >>word ;
+    dup [ vocabulary>> "." split [ f <path-cell> ] map ] [ name>> t <path-cell> ] bi suffix 
+    path-item new swap add-gadgets swap >>word horizontal >>orientation { 7 0 } >>gap ;
 
 : <path-display> ( model -- gadget )
     path-display new vertical >>orientation { 0 5 } >>gap swap >>model ;

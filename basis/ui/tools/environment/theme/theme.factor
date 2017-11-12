@@ -20,6 +20,9 @@ CONSTANT: dark-text-colour COLOR: black
 CONSTANT: light-text-colour HEXCOLOR: C4DCDE
 CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
 
+: set-small-font ( label -- label )
+    [ 13 >>size t >>bold? ] change-font ;
+
 : set-font ( label -- label )
     [ 15 >>size t >>bold? ] change-font ;
 
