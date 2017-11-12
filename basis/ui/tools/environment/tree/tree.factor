@@ -8,7 +8,6 @@ ui.gestures ui.pens.solid ui.tools.environment.cell
 ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
-QUALIFIED: words
 IN: ui.tools.environment.tree
 
 TUPLE: tree < pack ;
@@ -116,11 +115,11 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
 M:: path-display model-changed ( model path-display -- )
     path-display dup clear-gadget
     model value>> call? [
-    model value>> target>> words:word? [
+        model value>> target>> number? [
             model value>> completion>>
             [ model value>> name>> matching-words [ <path-item> ] map add-gadgets ]
             [ model value>> target>> [ <path-item> add-gadget ] when* ] if
-        ] when
+        ] unless
     ] when drop ;
 
 : <tree-editor> ( word -- gadget )
