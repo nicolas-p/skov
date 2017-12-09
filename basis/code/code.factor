@@ -49,6 +49,11 @@ vocab new "●" >>name skov-root set-global
 : returns ( elt -- seq )  contents>> [ return? ] filter ;
 : links ( elt -- seq )  sort-tree [ link? ] filter ;
 
+: own-introduces ( elt -- seq )
+    contents>> [ [ introduce? ] filter ]
+    [ [ quoted?>> ] reject [ own-introduces ] map-concat ] bi
+    append ;
+
 :: add-element ( parent child -- parent )
      child parent >>parent parent [ ?push ] change-contents ;
 

@@ -58,7 +58,7 @@ GENERIC: transform ( node -- compiler-node )
 
 :: transform-quotation ( node -- compiler-node )
     node transform node quoted-node?
-    [ node introduces [ name>> empty? ] filter [ transform ] map
+    [ node own-introduces [ name>> empty? ] filter [ transform ] map
       swap flatten >quotation <lambda> ] when ;
 
 M: introduce transform
