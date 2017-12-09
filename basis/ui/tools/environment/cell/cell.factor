@@ -67,7 +67,8 @@ TUPLE: cell-editor < editor ;
     [ drop cell ] [ cell enter-name ] if ;
 
 : replace-space ( char -- char )
-    [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when ;
+    [ CHAR: space = ] [ drop CHAR: ⎵ ] smart-when
+    [ CHAR: \t = ] [ drop CHAR: ⇥ ] smart-when ;
 
 : make-spaces-visible ( str -- str )
     [ length 0 > ] [ unclip replace-space prefix ] smart-when
