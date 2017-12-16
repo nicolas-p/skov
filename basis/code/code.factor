@@ -50,61 +50,76 @@ vocab new "●" >>name skov-root set-global
 : links ( elt -- seq )  sort-tree [ link? ] filter ;
 
 : own-introduces ( elt -- seq )
+    ! returns all "introduce" nodes in the child tree but ignores quoted nodes
     contents>> [ [ introduce? ] filter ]
     [ [ quoted?>> ] reject [ own-introduces ] map-concat ] bi
     append ;
 
 :: add-element ( parent child -- parent )
-     child parent >>parent parent [ ?push ] change-contents ;
+    ! sets an existing element as the child of another existing element
+    child parent >>parent parent [ ?push ] change-contents ;
 
 : add-from-class ( parent child-class -- parent )
-     new add-element ;
+    ! sets a new element of a certain class as the child of an existing element
+    new add-element ;
 
 : add-with-name ( parent child-name child-class -- parent )
-     new swap >>name add-element ;
+    ! sets a new element of a certain class and with a certain name
+    ! as the child of an existing element
+    new swap >>name add-element ;
 
 : remove-from-parent ( child -- parent )
-     dup parent>> [ contents>> remove-eq! drop ] keep ;
+    ! removes a node from its parent
+    dup parent>> [ contents>> remove-eq! drop ] keep ;
 
 : replace* ( seq old rep -- seq )
+    ! replaces an element with another element in a sequence
     [ 1array ] bi@ replace ;
 
 :: replace-element ( old rep -- rep )
-     old parent>>
-     [ old rep old parent>> >>parent replace* ] change-contents drop rep ;
+    ! replaces an element with another element
+    old parent>>
+    [ old rep old parent>> >>parent replace* ] change-contents drop rep ;
 
 : replace-with-new-parent ( old class -- new )
+    ! replaces an element with a new element of a certain class
+    ! and sets the old element as a child of the new one
     dupd new replace-element swap add-element ;
 
-:: change-name ( str pair -- str )
-    str pair first = [ pair second ] [ str ] if ;
-
 : top-node? ( node -- ? )
+    ! tells if the node has no children
     contents>> empty? ;
 
 : bottom-node? ( node -- ? )
+    ! tells if the node has no parent
     parent>> node? not ;
 
 : middle-node? ( node -- ? )
+    ! tells if a node has a parent and has children
     [ top-node? ] [ bottom-node? ] bi or not ;
 
 : parent-node ( node -- node )
+    ! returns the parent of the node, or the same node if the parent is a "word"
     [ parent>> word? ] [ parent>> ] smart-unless ;
 
 : child-node ( node -- node )
+    ! returns the first child of the node, or the same node if it has no children
     [ contents>> empty? ] [ contents>> first ] smart-unless ;
 
 :: left-node ( node -- node )
+    ! returns the brother node on the left, or the same node if there is nothing to the left
     node parent>> contents>> :> nodes
     node nodes index 1 -
     dup neg? [ drop node ] [ nodes nth ] if ;
 
 :: right-node ( node -- node )
+    ! returns the brother node on the right, or the same node if there is nothing to the right
     node parent>> contents>> :> nodes
     node nodes index 1 +
     dup nodes length = [ drop node ] [ nodes nth ] if ;
 
 : arity ( node -- n )
+    ! returns the number of children of a node
     contents>> length ;
 
 :: change-nodes-above ( elt names -- )
@@ -118,32 +133,41 @@ vocab new "●" >>name skov-root set-global
     names elt contents>> [ default-name<< ] 2each ;
 
 : insert-node ( node -- new-node )
+    ! replaces a node with a new "call" which has the node as a child
     call replace-with-new-parent ;
 
 :: insert-node-left ( node -- new-node )
+    ! inserts a new "call" to the left of a node
     node parent>> contents>> :> nodes
     call new node parent>> >>parent dup :> new-node
     node nodes index
     nodes insert-nth! new-node ;
 
 :: insert-node-right ( node -- new-node )
+    ! inserts a new "call" to the right of a node
     node parent>> contents>> :> nodes
     call new node parent>> >>parent dup :> new-node
     node nodes index 1 +
     nodes insert-nth! new-node ;
 
-: remove-node ( elt -- parent/child )
+: remove-node ( node -- parent/child )
+    ! removes a node from its parent if the node has no children,
+    ! otherwise replaces the node by its first child
     [ contents>> empty? ]
     [ remove-from-parent ]
     [ dup child-node replace-element ] smart-if ;
 
-:: (change-node-type) ( elt class -- new-elt )
+:: change-node-type ( elt class -- new-elt )
+    ! replaces a node by a node of a different type that has the same name and contents
     elt class new elt name>> >>name elt contents>> [ add-element ] each replace-element ;
 
-: no-return? ( elt -- ? )
+: no-return? ( node -- ? )
+    ! tells if the word that contains the node has no "return" child
     [ word? ] find-parent returns empty? ;
 
-: change-node-type ( elt class -- new-elt )
+: ?change-node-type ( elt class -- new-elt )
+    ! replaces a node by a node of a different type that has the same name and contents
+    ! only if certain conditions are met
     2dup {
         { introduce [ top-node? ] }
         { text      [ top-node? ] }
@@ -151,9 +175,10 @@ vocab new "●" >>name skov-root set-global
         { return    [ [ bottom-node? ] [ no-return? ] bi and ] }
         { setter    [ bottom-node? ] }
         [ drop drop t ]
-    } case [ (change-node-type) ] [ drop ] if ;
+    } case [ change-node-type ] [ drop ] if ;
 
 : name-or-default ( elt -- str )
+    ! returns the name of the element, or its default name, or its class
     { { [ dup name>> empty? not ] [ name>> ] }
       { [ dup default-name>> empty? not ] [ default-name>> ] }
       { [ dup introduce? ] [ drop "input" ] }
@@ -163,19 +188,14 @@ vocab new "●" >>name skov-root set-global
       { [ dup setter? ] [ drop "set" ] }
       [ class-of unparse ] } cond >string ;
 
+CONSTANT: special-words { "while" "until" "if" "times" "produce" }
 GENERIC: factor-name ( elt -- str )
 
 M: element factor-name
     name>> ;
 
 M: call factor-name
-    name>> {
-        { "while" "special while" }
-        { "until" "special until" }
-        { "if" "special if" }
-        { "times" "special times" }
-        { "produce" "special produce" }
-    } [ change-name ] each ;
+    name>> dup special-words member? [ "special " swap prepend ] when ;
 
 GENERIC: path ( elt -- str )
 
@@ -195,12 +215,15 @@ M: node path
     [ array? ] [ first [ "quot" swap subseq? not ] [ " quot" append ] smart-when ] smart-when ;
 
 : convert-stack-effect ( stack-effect -- seq seq )
+    ! converts a stack effect into two sequences of input and output names
     [ in>> ] [ out>> ] bi [ [ replace-quot ] map ] bi@ ;
 
 : same-name-as-parent? ( call -- ? )
+    ! tells if a call has the same name as its parent
     dup [ word? ] find-parent [ name>> ] bi@ = ;
 
 : input-output-names ( word -- seq seq )
+    ! returns two sequences containing the input and output names of a word
     [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
 
 SINGLETON: recursion
@@ -253,12 +276,15 @@ CONSTANT: special-variadic-words { "call" }
     } cond ;
 
 :: matching-words ( str -- seq )
+    ! returns all Factor words whose name begins with a certain string
     interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str head? ] filter ;
 
 :: matching-words-exact ( str -- seq )
+    ! returns all Factor words that have a certain name
     interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str = ] filter ;
 
 :: find-target ( call -- seq )
+    ! returns the Factor word that has the same name as the call
     call factor-name :> name
     { { [ call same-name-as-parent? ] [ recursion 1array ] }
       { [ name string>number ] [ name string>number 1array ] }
@@ -266,7 +292,8 @@ CONSTANT: special-variadic-words { "call" }
     } cond ;
 
 : (un)quote ( node -- node )
-    dup quoted?>> not >>quoted? ;
+    ! toggles the "quoted?" attribute of a node
+    [ not ] change-quoted? ;
 
 :: ?add-words-above ( elt -- )
     elt elt in-out drop change-nodes-above
@@ -281,12 +308,14 @@ CONSTANT: special-variadic-words { "call" }
     [ [ dup ?add-word-below ?add-words-above ] each ]
     if-empty word ;
 
-: any-empty-name? ( def -- ? )
+: any-empty-name? ( word -- ? )
+    ! tells if there are any empty names in the child tree of a word
     sort-tree
     [ [ introduce? ] [ [ quoted-node? ] find-parent ] bi and ] reject
     [ name>> empty? ] any? ;
 
-: executable? ( def -- ? )
+: executable? ( word -- ? )
+    ! tells if a word has the right properties to be executable
    { [ word? ]
      [ introduces [ [ quoted-node? ] find-parent ] reject empty? ]
      [ returns empty? ]
@@ -295,16 +324,19 @@ CONSTANT: special-variadic-words { "call" }
      [ defined?>> ]
    } 1&& ;
 
-: error? ( def -- ? )
+: error? ( word -- ? )
+    ! tells if a word contains any error
     { [ defined?>> not ]
       [ any-empty-name? ] 
       [ contents>> empty? ]
     } 1|| ;
 
 : save-result ( str word  -- )
+    ! stores a string as the result of a word
     swap dupd result new swap >>contents swap >>parent >>result drop ;
 
-: forget-alt ( vocab/def -- )
+: forget-alt ( vocab/word -- )
+    ! deletes the Factor vocabulary or word that corresponds to the element
     { { [ dup vocab? ] [ path [ vocabs:forget-vocab ] with-compilation-unit ] }
       { [ dup word? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
       [ drop ]

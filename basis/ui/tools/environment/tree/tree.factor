@@ -70,20 +70,20 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
     tree-toolbar dup clear-gadget
     model value>> [ word? ] find-parent ?add-words drop
     model value>> node? [
-        [ top-node? ] dark-background "I" [ introduce change-node-type ]
+        [ top-node? ] dark-background "I" [ introduce ?change-node-type ]
             "Convert cell into an input cell    ( Ctrl I )" add-button
-        [ top-node? ] yellow-background "G" [ getter change-node-type ]
+        [ top-node? ] yellow-background "G" [ getter ?change-node-type ]
             "Convert cell into a get cell    ( Ctrl G )" add-button
-        [ top-node? ] white-background "T" [ text change-node-type ]
+        [ top-node? ] white-background "T" [ text ?change-node-type ]
             "Convert cell into a text cell    ( Ctrl T )" add-button
         <gadget> add-gadget
-        [ drop t ] green-background "W" [ call change-node-type ]
+        [ drop t ] green-background "W" [ call ?change-node-type ]
             "Convert cell into a word cell    ( Ctrl W )" add-button
         <gadget> add-gadget
-        [ bottom-node? ] yellow-background "S" [ setter change-node-type ]
+        [ bottom-node? ] yellow-background "S" [ setter ?change-node-type ]
              "Convert cell into a set cell    ( Ctrl S )" add-button
         [ [ bottom-node? ] [ no-return? ] [ return? ] tri or and ]
-            dark-background "O" [ return change-node-type ]
+            dark-background "O" [ return ?change-node-type ]
             "Convert cell into an output cell    ( Ctrl O )" add-button
         <gadget> { 20 0 } >>dim add-gadget
         model value>> bottom-node?

@@ -125,18 +125,18 @@ M: cell focusable-child*
 M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
 
-:: select-cell ( cell -- cell  )
+:: select-cell ( cell -- )
     cell control-value name>> "⨁" = [ 
         cell parent>> control-value [ vocab? ] find-parent
         cell control-value "" >>name add-element drop
     ] when
-    cell control-value cell selection>> set-model cell ;
+    cell control-value cell selection>> set-model ;
 
 :: change-cell ( cell quot -- )
     cell control-value node? [ cell selection>> quot change-model ] when ; inline
 
 : convert-cell ( cell class -- )
-    [ change-node-type ] curry change-cell ;
+    [ ?change-node-type ] curry change-cell ;
 
 : remove-cell ( cell -- )
     [ remove-node ] change-cell ;
@@ -158,7 +158,7 @@ M: cell graft*
       cell selection>> notify-connections ] unless-empty ;
 
 cell H{
-    { T{ button-down }               [ select-cell drop ] }
+    { T{ button-down }               [ select-cell ] }
     { lose-focus                     [ ?enter-name drop ] }
     { T{ key-down f f "RET" }        [ ?enter-name drop ] }
     { T{ key-down f { C+ } "w" }     [ ?enter-name call convert-cell ] }
