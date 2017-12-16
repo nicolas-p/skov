@@ -62,7 +62,7 @@ navigation H{
     { T{ key-down f { C+ } "V" }    [ vocab new-item ] }
     { T{ key-down f { C+ } "n" }    [ word new-item ] }
     { T{ key-down f { C+ } "N" }    [ word new-item ] }
-    { T{ key-down f { S+ } "UP" }   [ model>> [ left-node ] change-model ] }
-    { T{ key-down f { S+ } "DOWN" } [ model>> [ right-node ] change-model ] }
+    { T{ key-down f { S+ } "UP" }   [ model>> [ left side-node ] change-model ] }
+    { T{ key-down f { S+ } "DOWN" } [ model>> [ right side-node ] change-model ] }
     { T{ key-down f { S+ } "RET" }  [ toggle-result ] }
 } set-gestures

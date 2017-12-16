@@ -106,17 +106,14 @@ vocab new "●" >>name skov-root set-global
     ! returns the first child of the node, or the same node if it has no children
     [ contents>> empty? ] [ contents>> first ] smart-unless ;
 
-:: left-node ( node -- node )
-    ! returns the brother node on the left, or the same node if there is nothing to the left
-    node parent>> contents>> :> nodes
-    node nodes index 1 -
-    dup neg? [ drop node ] [ nodes nth ] if ;
+SYMBOL: left
+SYMBOL: right
 
-:: right-node ( node -- node )
-    ! returns the brother node on the right, or the same node if there is nothing to the right
+:: side-node ( node side -- node )
+    ! returns the brother node on the left/right, 
+    ! or the same node if there is nothing to the left/right
     node parent>> contents>> :> nodes
-    node nodes index 1 +
-    dup nodes length = [ drop node ] [ nodes nth ] if ;
+    node nodes index 1 side left eq? [ - ] [ + ] if nodes ?nth [ node ] unless* ;
 
 : arity ( node -- n )
     ! returns the number of children of a node
@@ -136,18 +133,11 @@ vocab new "●" >>name skov-root set-global
     ! replaces a node with a new "call" which has the node as a child
     call replace-with-new-parent ;
 
-:: insert-node-left ( node -- new-node )
-    ! inserts a new "call" to the left of a node
+:: insert-node-side ( node side -- new-node )
+    ! inserts a new "call" to the left/right of a node
     node parent>> contents>> :> nodes
     call new node parent>> >>parent dup :> new-node
-    node nodes index
-    nodes insert-nth! new-node ;
-
-:: insert-node-right ( node -- new-node )
-    ! inserts a new "call" to the right of a node
-    node parent>> contents>> :> nodes
-    call new node parent>> >>parent dup :> new-node
-    node nodes index 1 +
+    node nodes index side right eq? [ 1 + ] when
     nodes insert-nth! new-node ;
 
 : replace-node-by-child ( node -- child )

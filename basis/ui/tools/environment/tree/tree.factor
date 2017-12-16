@@ -94,10 +94,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             >>tooltip add-gadget
         <gadget> add-gadget
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
-            blue-background "←" [ insert-node-left ]
+            blue-background "←" [ left insert-node-side ]
             "Insert new cell on the left    ( Alt ← )" add-button
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
-            blue-background "→" [ insert-node-right ]
+            blue-background "→" [ right insert-node-side ]
             "Insert new cell on the right    ( Alt → )" add-button
         [ drop t ] blue-background "↓" [ insert-node ]
             "Insert new cell below    ( Alt ↓ )" add-button

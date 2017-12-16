@@ -179,10 +179,10 @@ cell H{
     { T{ key-down f { C+ } "Q" }     [ quote-cell ] }
     { T{ key-down f f "UP" }         [ ?enter-name [ child-node ] change-cell ] }
     { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
-    { T{ key-down f f "LEFT" }       [ ?enter-name [ left-node ] change-cell ] }
-    { T{ key-down f f "RIGHT" }      [ ?enter-name [ right-node ] change-cell ] }
-    { T{ key-down f { M+ } "LEFT" }  [ ?enter-name [ insert-node-left ] change-cell ] }
-    { T{ key-down f { M+ } "RIGHT" } [ ?enter-name [ insert-node-right ] change-cell ] }
+    { T{ key-down f f "LEFT" }       [ ?enter-name [ left side-node ] change-cell ] }
+    { T{ key-down f f "RIGHT" }      [ ?enter-name [ right side-node ] change-cell ] }
+    { T{ key-down f { M+ } "LEFT" }  [ ?enter-name [ left insert-node-side ] change-cell ] }
+    { T{ key-down f { M+ } "RIGHT" } [ ?enter-name [ right insert-node-side ] change-cell ] }
     { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
     { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
     { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
@@ -191,12 +191,12 @@ cell H{
 
 : previous-character* ( editor -- )
     [ editor-caret second 0 = ]
-    [ parent>> ?enter-name [ left-node ] change-cell ]
+    [ parent>> ?enter-name [ left side-node ] change-cell ]
     [ previous-character ] smart-if ;
 
 : next-character* ( editor -- )
     [ [ editor-caret second ] [ editor-string length ] bi = ]
-    [ parent>> ?enter-name [ right-node ] change-cell ]
+    [ parent>> ?enter-name [ right side-node ] change-cell ]
     [ next-character ] smart-if ;
 
 cell-editor "caret-motion" f {
