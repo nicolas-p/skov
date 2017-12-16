@@ -55,20 +55,20 @@ vocab new "●" >>name skov-root set-global
     [ [ quoted?>> ] reject [ own-introduces ] map-concat ] bi
     append ;
 
-:: add-element ( parent child -- parent )
+:: add-element ( elt child-elt -- elt )
     ! sets an existing element as the child of another existing element
-    child parent >>parent parent [ ?push ] change-contents ;
+    child-elt elt >>parent elt [ ?push ] change-contents ;
 
-: add-from-class ( parent child-class -- parent )
+: add-from-class ( elt child-class -- elt )
     ! sets a new element of a certain class as the child of an existing element
     new add-element ;
 
-: add-with-name ( parent child-name child-class -- parent )
+: add-with-name ( elt child-name child-class -- elt )
     ! sets a new element of a certain class and with a certain name
     ! as the child of an existing element
     new swap >>name add-element ;
 
-: remove-from-parent ( child -- parent )
+: remove-element ( elt -- parent )
     ! removes a node from its parent
     dup parent>> [ contents>> remove-eq! drop ] keep ;
 
@@ -150,12 +150,9 @@ vocab new "●" >>name skov-root set-global
     node nodes index 1 +
     nodes insert-nth! new-node ;
 
-: remove-node ( node -- parent/child )
-    ! removes a node from its parent if the node has no children,
-    ! otherwise replaces the node by its first child
-    [ contents>> empty? ]
-    [ remove-from-parent ]
-    [ dup child-node replace-element ] smart-if ;
+: replace-node-by-child ( node -- child )
+    ! replaces a node by its first child or by a new "call" if it has no children
+    dup contents>> ?first [ call new ] unless* replace-element ;
 
 :: change-node-type ( elt class -- new-elt )
     ! replaces a node by a node of a different type that has the same name and contents

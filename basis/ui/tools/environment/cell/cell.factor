@@ -92,7 +92,7 @@ M:: cell model-changed ( model cell -- )
     model value>> node? [
         cell selected? model value>> parent>> and [
             inactive-background "✕"
-            [ drop model value>> remove-from-parent cell selection>> set-model ] <round-button>
+            [ drop model value>> remove-element cell selection>> set-model ] <round-button>
             model value>> vocab? "Delete vocabulary" "Delete word" ? "    ( Ctrl R )" append
             >>tooltip add-gadget ] when
         model value>> executable? [
@@ -139,7 +139,7 @@ M: cell graft*
     [ ?change-node-type ] curry change-cell ;
 
 : remove-cell ( cell -- )
-    [ remove-node ] change-cell ;
+    [ replace-node-by-child ] change-cell ;
 
 : insert-cell ( cell -- )
     [ insert-node ] change-cell ;

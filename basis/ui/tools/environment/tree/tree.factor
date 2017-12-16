@@ -101,7 +101,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Insert new cell on the right    ( Alt → )" add-button
         [ drop t ] blue-background "↓" [ insert-node ]
             "Insert new cell below    ( Alt ↓ )" add-button
-        [ drop t ] red-background "✕" [ remove-node ]
+        [ drop t ] red-background "✕" [ replace-node-by-child ]
             "Delete cell    ( Ctrl R )" add-button
     ] when drop ;
 
