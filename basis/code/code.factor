@@ -94,6 +94,14 @@ vocab new "●" >>name skov-root set-global
     ! tells if the node has no parent
     parent>> node? not ;
 
+: leftmost-node? ( node -- ? )
+    ! tells if a node has no brother on the left
+    dup parent>> contents>> index 0 = ;
+
+: rightmost-node? ( node -- ? )
+    ! tells if a node has no brother on the right
+    dup parent>> contents>> [ index ] keep length 1 - = ;
+
 : middle-node? ( node -- ? )
     ! tells if a node has a parent and has children
     [ top-node? ] [ bottom-node? ] bi or not ;
@@ -139,6 +147,13 @@ SYMBOL: right
     call new node parent>> >>parent dup :> new-node
     node nodes index side right eq? [ 1 + ] when
     nodes insert-nth! new-node ;
+
+:: move-node-side ( node side -- node )
+    ! moves a node to the left/right, replacing its brother
+    node side side-node :> other
+    node other name>> [ 
+        call new replace-element drop
+        other node replace-element ] unless ;
 
 : replace-node-by-child ( node -- child )
     ! replaces a node by its first child or by a new "call" if it has no children

@@ -181,6 +181,8 @@ cell H{
     { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
     { T{ key-down f f "LEFT" }       [ ?enter-name [ left side-node ] change-cell ] }
     { T{ key-down f f "RIGHT" }      [ ?enter-name [ right side-node ] change-cell ] }
+    { T{ key-down f { A+ } "LEFT" }  [ ?enter-name [ left move-node-side ] change-cell ] }
+    { T{ key-down f { A+ } "RIGHT" } [ ?enter-name [ right move-node-side ] change-cell ] }
     { T{ key-down f { M+ } "LEFT" }  [ ?enter-name [ left insert-node-side ] change-cell ] }
     { T{ key-down f { M+ } "RIGHT" } [ ?enter-name [ right insert-node-side ] change-cell ] }
     { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }

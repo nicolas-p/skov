@@ -28,6 +28,9 @@ Shift ↓         Select the word below
 →               Select the cell to the right
 ←               Select the cell to the left
 
+Control →       Move the cell to the right
+Control ←       Move the cell to the left
+
 Option →        Insert a cell to the right
 Option ←        Insert a cell to the left
 Option ↓        Insert a cell below

@@ -93,6 +93,11 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             model value>> quoted?>> "Unquote" "Quote" ? "    ( Ctrl Q )" append 
             >>tooltip add-gadget
         <gadget> add-gadget
+        [ leftmost-node? not ] blue-background "⇐" [ left move-node-side ]
+            "Move cell to the left    ( Ctrl ← )" add-button
+        [ rightmost-node? not ] blue-background "⇒" [ right move-node-side ]
+            "Move cell to the right    ( Ctrl → )" add-button
+        <gadget> add-gadget
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "←" [ left insert-node-side ]
             "Insert new cell on the left    ( Alt ← )" add-button
@@ -101,6 +106,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             "Insert new cell on the right    ( Alt → )" add-button
         [ drop t ] blue-background "↓" [ insert-node ]
             "Insert new cell below    ( Alt ↓ )" add-button
+        <gadget> add-gadget
         [ drop t ] red-background "✕" [ replace-node-by-child ]
             "Delete cell    ( Ctrl R )" add-button
     ] when drop ;
