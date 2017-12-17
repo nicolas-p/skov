@@ -25,7 +25,7 @@ M: dot-pattern draw-gadget*
     GL_POINT_SMOOTH glEnable
     9 glPointSize
     GL_POINTS glBegin
-    blue-background second >rgba-components drop 0.15 glColor4f
+    blue-background second >rgba-components drop 0.12 glColor4f
     iota [ draw-dot-ring ] 2with each
     glEnd ;
 
