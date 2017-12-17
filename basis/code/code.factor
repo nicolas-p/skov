@@ -36,6 +36,13 @@ PREDICATE: quoted-node < node  quoted?>> ;
 SYMBOL: skov-root
 vocab new "●" >>name skov-root set-global
 
+SYMBOL: left
+SYMBOL: right
+
+: arity ( node -- n )
+    ! returns the number of children of a node
+    contents>> length ;
+
 : walk ( node -- seq )
     [ contents>> [ walk ] map ] [ ] bi 2array ;
 
@@ -78,13 +85,21 @@ vocab new "●" >>name skov-root set-global
 
 :: replace-element ( old rep -- rep )
     ! replaces an element with another element
-    old parent>>
-    [ old rep old parent>> >>parent replace* ] change-contents drop rep ;
+    old parent>> [ old rep old parent>> >>parent replace* ] change-contents drop rep ;
 
-: replace-with-new-parent ( old class -- new )
+: replace-parent ( node -- node )
+    ! replaces the parent of the node with the node
+    dup parent>> [ node? ] [ swap replace-element ] smart-when* ;
+
+: insert-new-parent ( old -- new )
     ! replaces an element with a new element of a certain class
     ! and sets the old element as a child of the new one
-    dupd new replace-element swap add-element ;
+    dup call new replace-element swap add-element ;
+
+:: exchange-node-side ( node side -- node )
+    ! exchanges a node and the node the left/right
+    node parent>> contents>> :> nodes
+    node nodes index dup 1 side left eq? [ - ] [ + ] if nodes exchange node ;
 
 : top-node? ( node -- ? )
     ! tells if the node has no children
@@ -114,18 +129,11 @@ vocab new "●" >>name skov-root set-global
     ! returns the first child of the node, or the same node if it has no children
     [ contents>> empty? ] [ contents>> first ] smart-unless ;
 
-SYMBOL: left
-SYMBOL: right
-
 :: side-node ( node side -- node )
     ! returns the brother node on the left/right, 
     ! or the same node if there is nothing to the left/right
     node parent>> contents>> :> nodes
     node nodes index 1 side left eq? [ - ] [ + ] if nodes ?nth [ node ] unless* ;
-
-: arity ( node -- n )
-    ! returns the number of children of a node
-    contents>> length ;
 
 :: change-nodes-above ( elt names -- )
     elt arity :> old-n
@@ -136,28 +144,6 @@ SYMBOL: right
       [ drop ]
     } cond
     names elt contents>> [ default-name<< ] 2each ;
-
-: insert-node ( node -- new-node )
-    ! replaces a node with a new "call" which has the node as a child
-    call replace-with-new-parent ;
-
-:: insert-node-side ( node side -- new-node )
-    ! inserts a new "call" to the left/right of a node
-    node parent>> contents>> :> nodes
-    call new node parent>> >>parent dup :> new-node
-    node nodes index side right eq? [ 1 + ] when
-    nodes insert-nth! new-node ;
-
-:: move-node-side ( node side -- node )
-    ! moves a node to the left/right, replacing its brother
-    node side side-node :> other
-    node other name>> [ 
-        call new replace-element drop
-        other node replace-element ] unless ;
-
-: replace-node-by-child ( node -- child )
-    ! replaces a node by its first child or by a new "call" if it has no children
-    dup contents>> ?first [ call new ] unless* replace-element ;
 
 :: change-node-type ( elt class -- new-elt )
     ! replaces a node by a node of a different type that has the same name and contents
@@ -266,6 +252,14 @@ CONSTANT: special-variadic-words { "call" }
     { [ simple-variadic? ] [ comparison-variadic? ]
       [ sequence-variadic? ] [ special-variadic? ] } cleave or or or ;
 
+:: insert-node-side ( node side -- new-node )
+    ! inserts a new "call" to the left/right of a node
+    node dup parent>> { [ word? ] [ variadic? ] } 1||
+    [ parent>> contents>> :> nodes
+      call new node parent>> >>parent dup :> new-node
+      node nodes index side right eq? [ 1 + ] when
+      nodes insert-nth! new-node ] when ;
+
 :: in-out ( elt -- seq seq )
     { { [ elt call? not ] [ elt (in-out) ] }
       { [ elt simple-variadic? ]
@@ -302,7 +296,7 @@ CONSTANT: special-variadic-words { "call" }
     elt contents>> [ ?add-words-above ] each ;
 
 :: ?add-word-below ( elt -- )
-    elt in-out nip [ first elt insert-node default-name<< ] unless-empty ;
+    elt in-out nip [ first elt insert-new-parent default-name<< ] unless-empty ;
 
 :: ?add-words ( word -- word )
     word contents>>

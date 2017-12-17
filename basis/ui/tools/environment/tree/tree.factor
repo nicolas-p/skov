@@ -93,10 +93,10 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             model value>> quoted?>> "Unquote" "Quote" ? "    ( Ctrl Q )" append 
             >>tooltip add-gadget
         <gadget> add-gadget
-        [ leftmost-node? not ] blue-background "⇐" [ left move-node-side ]
-            "Move cell to the left    ( Ctrl ← )" add-button
-        [ rightmost-node? not ] blue-background "⇒" [ right move-node-side ]
-            "Move cell to the right    ( Ctrl → )" add-button
+        [ leftmost-node? not ] blue-background "⇐" [ left exchange-node-side ]
+            "Exchange cell and cell on the left    ( Ctrl ← )" add-button
+        [ rightmost-node? not ] blue-background "⇒" [ right exchange-node-side ]
+            "Exchange cell and cell on the right    ( Ctrl → )" add-button
         <gadget> add-gadget
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "←" [ left insert-node-side ]
@@ -104,11 +104,13 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "→" [ right insert-node-side ]
             "Insert new cell on the right    ( Alt → )" add-button
-        [ drop t ] blue-background "↓" [ insert-node ]
+        [ drop t ] blue-background "↓" [ insert-new-parent ]
             "Insert new cell below    ( Alt ↓ )" add-button
         <gadget> add-gadget
-        [ drop t ] red-background "✕" [ replace-node-by-child ]
-            "Delete cell    ( Ctrl R )" add-button
+        [ bottom-node? not ] red-background "⇓" [ replace-parent ]
+            "Replace cell below    ( Ctrl R )" add-button
+        [ [ top-node? ] [ bottom-node? ] bi and not ] red-background "✕" [ remove-element ]
+            "Delete cell and everything above    ( Ctrl D )" add-button
     ] when drop ;
 
 : path-cell-colors ( cell -- bg-color text-color )

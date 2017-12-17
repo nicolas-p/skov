@@ -138,15 +138,6 @@ M: cell graft*
 : convert-cell ( cell class -- )
     [ ?change-node-type ] curry change-cell ;
 
-: remove-cell ( cell -- )
-    [ replace-node-by-child ] change-cell ;
-
-: insert-cell ( cell -- )
-    [ insert-node ] change-cell ;
-
-: quote-cell ( cell -- )
-    [ (un)quote ] change-cell ;
-
 : show-help-on-word ( cell -- )
     [ control-value target/alt
         [ (browser-window) ] [ show-browser ] if*
@@ -173,19 +164,21 @@ cell H{
     { T{ key-down f { C+ } "S" }     [ ?enter-name setter convert-cell ] }
     { T{ key-down f { C+ } "g" }     [ ?enter-name getter convert-cell ] }
     { T{ key-down f { C+ } "G" }     [ ?enter-name getter convert-cell ] }
-    { T{ key-down f { C+ } "r" }     [ remove-cell ] }
-    { T{ key-down f { C+ } "R" }     [ remove-cell ] }
-    { T{ key-down f { C+ } "q" }     [ quote-cell ] }
-    { T{ key-down f { C+ } "Q" }     [ quote-cell ] }
+    { T{ key-down f { C+ } "r" }     [ [ replace-parent ] change-cell ] }
+    { T{ key-down f { C+ } "R" }     [ [ replace-parent ] change-cell ] }
+    { T{ key-down f { C+ } "d" }     [ [ remove-element ] change-cell ] }
+    { T{ key-down f { C+ } "D" }     [ [ remove-element ] change-cell ] }
+    { T{ key-down f { C+ } "q" }     [ [ (un)quote ] change-cell ] }
+    { T{ key-down f { C+ } "Q" }     [ [ (un)quote ] change-cell ] }
     { T{ key-down f f "UP" }         [ ?enter-name [ child-node ] change-cell ] }
     { T{ key-down f f "DOWN" }       [ ?enter-name [ parent-node ] change-cell ] }
     { T{ key-down f f "LEFT" }       [ ?enter-name [ left side-node ] change-cell ] }
     { T{ key-down f f "RIGHT" }      [ ?enter-name [ right side-node ] change-cell ] }
-    { T{ key-down f { A+ } "LEFT" }  [ ?enter-name [ left move-node-side ] change-cell ] }
-    { T{ key-down f { A+ } "RIGHT" } [ ?enter-name [ right move-node-side ] change-cell ] }
+    { T{ key-down f { A+ } "LEFT" }  [ ?enter-name [ left exchange-node-side ] change-cell ] }
+    { T{ key-down f { A+ } "RIGHT" } [ ?enter-name [ right exchange-node-side ] change-cell ] }
     { T{ key-down f { M+ } "LEFT" }  [ ?enter-name [ left insert-node-side ] change-cell ] }
     { T{ key-down f { M+ } "RIGHT" } [ ?enter-name [ right insert-node-side ] change-cell ] }
-    { T{ key-down f { M+ } "DOWN" }  [ ?enter-name insert-cell ] }
+    { T{ key-down f { M+ } "DOWN" }  [ ?enter-name [ insert-new-parent ] change-cell ] }
     { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
     { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
     { T{ key-down f f "TAB" }        [ ask-for-completion ] }
