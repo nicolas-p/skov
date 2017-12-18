@@ -13,7 +13,7 @@ TUPLE: dot-pattern < gadget ;
 CONSTANT: dr 8
 
 :: draw-dot-ring ( x y n -- )
-    n 6 * iota [
+    n 6 * <iota> [
         tau * 6 n * /
         [ sin n * dr * x 2 /i + dup [ 3 > ] [ x 3 - < ] bi and ]
         [ cos n * dr * 44 + dup [ 3 > ] [ y 3 - < ] bi and ] bi
@@ -26,7 +26,7 @@ M: dot-pattern draw-gadget*
     9 glPointSize
     GL_POINTS glBegin
     blue-background second >rgba-components drop 0.12 glColor4f
-    iota [ draw-dot-ring ] 2with each
+    <iota> [ draw-dot-ring ] 2with each
     glEnd ;
 
 M: dot-pattern pref-dim*
