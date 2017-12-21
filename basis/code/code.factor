@@ -126,7 +126,7 @@ SYMBOL: right
 
 : parent-node ( node -- node )
     ! returns the parent of the node, or the same node if the parent is a "word"
-    [ parent>> word? ] [ parent>> ] smart-unless ;
+    [ parent>> dup word? not and ] [ parent>> ] smart-when ;
 
 : child-node ( node -- node )
     ! returns the first child of the node, or the same node if it has no children

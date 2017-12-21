@@ -135,6 +135,9 @@ M: cell graft*
 :: change-cell ( cell quot -- )
     cell control-value node? [ cell selection>> quot change-model ] when ; inline
 
+:: change-cell* ( cell quot -- )
+    cell control-value node? [ cell selection>> quot change-model ] unless ; inline
+
 : convert-cell ( cell class -- )
     [ ?change-node-type ] curry change-cell ;
 
@@ -182,6 +185,7 @@ cell H{
     { T{ key-down f { C+ } "h" }     [ show-help-on-word ] }
     { T{ key-down f { C+ } "H" }     [ show-help-on-word ] }
     { T{ key-down f f "TAB" }        [ ask-for-completion ] }
+    { T{ key-down f f "ESC" }        [ [ parent-node ] change-cell* ] }
 } set-gestures
 
 : previous-character* ( editor -- )
