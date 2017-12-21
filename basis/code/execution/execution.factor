@@ -91,17 +91,14 @@ M: word transform
 :: try-definition ( quot def -- )
     [ def f >>defined? quot with-compilation-unit t >>defined? drop ] try ; inline
 
-: register-alt ( alt def -- )
-    swap [ suffix ] curry change-alt drop ;
-
 GENERIC: define ( def -- )
 
-M: vocab define ( def -- )
-    path [ vocabs:create-vocab drop ] [ add-interactive-vocab ] bi ;
+M:: vocab define ( def -- )
+    def path [ vocabs:create-vocab def target<< ] [ add-interactive-vocab ] bi ;
 
 M:: word define ( def -- )
     [ def factor-name
-      def path words:create-word dup dup def f >>alt register-alt
+      def path words:create-word dup dup def target<<
       def transform set-recursion rewrite-closures first
       def effect words:define-declared
     ] def try-definition ;
@@ -111,5 +108,5 @@ M:: word define ( def -- )
 
 : run-word ( word -- )
     [ ?define ]
-    [ alt>> first f pane new-pane dup swapd <pane-stream> [ execute( -- ) ] with-output-stream ]
+    [ target>> f pane new-pane dup swapd <pane-stream> [ execute( -- ) ] with-output-stream ]
     [ save-result ] tri ;

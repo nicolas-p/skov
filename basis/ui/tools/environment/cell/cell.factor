@@ -139,7 +139,7 @@ M: cell graft*
     [ ?change-node-type ] curry change-cell ;
 
 : show-help-on-word ( cell -- )
-    [ control-value target/alt
+    [ control-value target>>
         [ (browser-window) ] [ show-browser ] if*
     ] with-interactive-vocabs ;
 

@@ -5,21 +5,20 @@ combinators.short-circuit combinators.smart compiler.units
 effects fry hashtables.private kernel listener locals math
 math.order math.parser namespaces prettyprint sequences
 sequences.deep sequences.extras sets splitting strings
-ui.gadgets vectors vocabs.parser ;
+ui.gadgets vectors vocabs.parser definitions ;
 QUALIFIED: vocabs
-QUALIFIED: definitions
 QUALIFIED: words
 IN: code
 
-TUPLE: element < identity-tuple  name parent contents default-name ;
+TUPLE: element < identity-tuple  name parent contents default-name target ;
 
 TUPLE: vocab < element ;
-TUPLE: word < element  defined? alt result ;
+TUPLE: word < element  defined? result ;
 
 TUPLE: node < element  quoted? ;
 TUPLE: introduce < node  id ;
 TUPLE: return < node ;
-TUPLE: call < node  target completion ;
+TUPLE: call < node  completion ;
 TUPLE: text < node ;
 TUPLE: setter < node  id ;
 TUPLE: getter < node  id ;
@@ -75,9 +74,13 @@ SYMBOL: right
     ! as the child of an existing element
     new swap >>name add-element ;
 
+: ?forget ( elt -- elt )
+    ! removes the corresponding Factor vocabulary or word
+    dup target>> [ [ forget ] with-compilation-unit ] when* ;
+
 : remove-element ( elt -- parent )
     ! removes a node from its parent
-    dup parent>> [ contents>> remove-eq! drop ] keep ;
+    ?forget dup parent>> [ contents>> remove-eq! drop ] keep ;
 
 : replace* ( seq old rep -- seq )
     ! replaces an element with another element in a sequence
@@ -330,15 +333,3 @@ CONSTANT: special-variadic-words { "call" }
 : save-result ( str word  -- )
     ! stores a string as the result of a word
     swap dupd result new swap >>contents swap >>parent >>result drop ;
-
-: forget-alt ( vocab/word -- )
-    ! deletes the Factor vocabulary or word that corresponds to the element
-    { { [ dup vocab? ] [ path [ vocabs:forget-vocab ] with-compilation-unit ] }
-      { [ dup word? ] [ alt>> [ [ definitions:forget ] with-compilation-unit ] each ] }
-      [ drop ]
-    } cond ;
-
-: target/alt ( elt -- factor-word )
-    { { [ dup call? ] [ target>> ] }
-      { [ dup word? ] [ alt>> [ f ] [ first ] if-empty ] }
-      [ drop f ] } cond ;
