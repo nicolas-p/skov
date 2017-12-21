@@ -28,7 +28,7 @@ environment { 700 600 } set-tool-dim
       >>pixel-format-attributes
       "Skov" >>title open-status-window ] with-ui ;
 
-: save-skov-image ( env -- )
+: save-image-and-vocabs ( env -- )
     drop save export-vocabs ;
 
 : load-vocabs ( env -- )
@@ -37,8 +37,6 @@ environment { 700 600 } set-tool-dim
 environment H{
     { T{ key-down f { C+ } "h" } [ drop show-browser ] }
     { T{ key-down f { C+ } "H" } [ drop show-browser ] }
-    { T{ key-down f { C+ } "e" } [ save-skov-image ] }
-    { T{ key-down f { C+ } "E" } [ save-skov-image ] }
-    { T{ key-up f { C+ } "l" } [ load-vocabs ] }
-    { T{ key-up f { C+ } "L" } [ load-vocabs ] }
+    { save-action [ save-image-and-vocabs ] }
+    { open-action [ load-vocabs ] }
 } set-gestures

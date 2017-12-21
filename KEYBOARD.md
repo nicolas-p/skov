@@ -2,8 +2,8 @@
 
 Control H       Show help (for the selected word)
 
-Control L       Load vocabularies from the 'work' directory
-Control E       Export vocabularies to the 'work' directory and save the image
+Command O       Load vocabularies from the 'work' directory
+Command S       Export vocabularies to the 'work' directory and save the image
 
 Control V       Create a new vocabulary
 Control N       Create a new word
