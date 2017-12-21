@@ -1,22 +1,22 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors code colors combinators.smart kernel locals
-models sequences ui.gadgets ui.gadgets.borders code.execution combinators
-ui.gadgets.buttons ui.gadgets.buttons.round ui.gadgets.icons
-ui.gadgets.labels ui.gadgets.packs ui.gestures ui.pens.tile
-ui.tools.environment.theme ui.tools.environment.tree
-ui.tools.environment.cell system 
-ui.tools.environment.navigation.dot-pattern ;
+USING: accessors code code.execution colors combinators
+combinators.smart kernel locals models sequences system
+ui.gadgets ui.gadgets.borders ui.gadgets.buttons
+ui.gadgets.buttons.round ui.gadgets.icons ui.gadgets.labels
+ui.gadgets.packs ui.gestures ui.pens.gradient-rounded
+ui.pens.tile ui.tools.environment.cell
+ui.tools.environment.navigation.dot-pattern
+ui.tools.environment.theme ui.tools.environment.tree ;
 FROM: models => change-model ;
 IN: ui.tools.environment.navigation
 
 TUPLE: navigation < pack ;
 
 : <category> ( name -- gadget )
-    <label> [ t >>bold? ] change-font { 20 0 } <border> "category"
-    "left" "middle" "right" [ 2-theme-image ] tri-curry@ tri
-    os windows? [ blue-background ] [ transparent ] if dark-text-colour
-    <tile-pen> >>interior { 0 22 } >>min-dim horizontal >>orientation ;
+    <label> [ t >>bold? ] change-font { 26 0 } <border>
+    blue-background dark-text-colour <gradient-pointy> >>interior
+    { 0 22 } >>min-dim horizontal >>orientation ;
 
 : <name-bar> ( vocab/word selection -- gadget )
     <cell> { 0 30 } >>min-dim ;

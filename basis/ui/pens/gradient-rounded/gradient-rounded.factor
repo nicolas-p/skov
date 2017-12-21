@@ -8,6 +8,7 @@ IN: ui.pens.gradient-rounded
 TUPLE: gradient-shape < caching-pen  colors foreground shape last-vertices last-colors ;
 TUPLE: gradient-squircle < gradient-shape ;
 TUPLE: gradient-arrow < gradient-shape ;
+TUPLE: gradient-pointy < gradient-shape ;
 TUPLE: gradient-dynamic-shape < gradient-shape  selected? ;
 
 : <gradient-squircle> ( colors foreground -- gradient )
@@ -15,6 +16,9 @@ TUPLE: gradient-dynamic-shape < gradient-shape  selected? ;
 
 : <gradient-arrow> ( colors foreground -- gradient )
     gradient-arrow new swap >>foreground swap >>colors ;
+
+: <gradient-pointy> ( colors foreground -- gradient )
+    gradient-pointy new swap >>foreground swap >>colors ;
 
 : <gradient-dynamic-shape> ( colors foreground selected? -- gradient )
     gradient-dynamic-shape new swap >>selected? swap >>foreground swap >>colors ;
@@ -35,6 +39,18 @@ CONSTANT: points 100
 
 :: arrow ( -- seq )
     { { -0.25 1 } { 0 0.5 } { -0.25 0 } } ;
+
+:: tan-point* ( y -- xy )
+    y tau * 4 / tan 300 / 0.5 min y 1.5 / + y 2array ;
+
+: wide-narrow* ( -- seq )
+    0.0 1.0 1 points / <range> [ tan-point* ] map reverse ;
+
+: narrow-wide* ( -- seq )
+    wide-narrow* unzip [ reverse ] dip zip ;
+
+: narrow-wide-narrow* ( -- seq )
+    wide-narrow* unzip drop narrow-wide* unzip [ [ max ] 2map ] dip zip ;
 
 : wide-narrow ( -- seq )
     0.0 1.0 1 points / <range> [ tan-point ] map reverse ;
@@ -123,6 +139,10 @@ M:: gradient-squircle recompute-pen ( gadget gradient -- )
 
 M:: gradient-arrow recompute-pen ( gadget gradient -- )
     gadget dim>> dup \ arrow dup f vertices dup gradient last-vertices<<
+    gradient colors>> vertices-colors gradient last-colors<< ;
+
+M:: gradient-pointy recompute-pen ( gadget gradient -- )
+    gadget dim>> dup \ narrow-wide-narrow* dup t vertices dup gradient last-vertices<<
     gradient colors>> vertices-colors gradient last-colors<< ;
 
 M:: gradient-dynamic-shape recompute-pen ( gadget gradient -- )
