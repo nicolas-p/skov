@@ -31,8 +31,8 @@ CONSTANT: points 100
 : squircle-point ( theta -- xy )
     [ cos ] [ sin ] bi [ [ abs sqrt ] [ sgn ] bi * 0.5 * 0.5 + ] bi@ 2array ;
 
-:: tan-point ( y -- xy )
-    y tau * 4 / tan 300 / 0.5 min y 6 / + y 2array ;
+:: tan-point ( y slope -- xy )
+    y tau * 4 / tan 300 / 0.5 min y slope / + y 2array ;
 
 :: squircle ( -- seq )
     1/4 tau * 3/4 tau * 1/2 tau * points / <range> [ squircle-point ] map ;
@@ -40,33 +40,21 @@ CONSTANT: points 100
 :: arrow ( -- seq )
     { { -0.25 1 } { 0 0.5 } { -0.25 0 } } ;
 
-:: tan-point* ( y -- xy )
-    y tau * 4 / tan 300 / 0.5 min y 1.5 / + y 2array ;
+:: wide-narrow ( slope -- seq )
+    0.0 1.0 1 points / <range> [ slope tan-point ] map reverse ;
 
-: wide-narrow* ( -- seq )
-    0.0 1.0 1 points / <range> [ tan-point* ] map reverse ;
-
-: narrow-wide* ( -- seq )
-    wide-narrow* unzip [ reverse ] dip zip ;
-
-: narrow-wide-narrow* ( -- seq )
-    wide-narrow* unzip drop narrow-wide* unzip [ [ max ] 2map ] dip zip ;
-
-: wide-narrow ( -- seq )
-    0.0 1.0 1 points / <range> [ tan-point ] map reverse ;
-
-: narrow-wide ( -- seq )
+: narrow-wide ( slope -- seq )
     wide-narrow unzip [ reverse ] dip zip ;
 
-: wide-narrow-wide ( -- seq )
-    wide-narrow unzip drop narrow-wide unzip [ [ min ] 2map ] dip zip ;
+:: wide-narrow-wide ( slope -- seq )
+    slope wide-narrow unzip drop slope narrow-wide unzip [ [ min ] 2map ] dip zip ;
 
-: narrow-wide-narrow ( -- seq )
-    wide-narrow unzip drop narrow-wide unzip [ [ max ] 2map ] dip zip ;
+:: narrow-wide-narrow ( slope -- seq )
+    slope wide-narrow unzip drop slope narrow-wide unzip [ [ max ] 2map ] dip zip ;
 
 :: vertices ( dim left-shape right-shape symmetric? -- seq )
     dim first2 :> ( x y )
-    left-shape right-shape [ execute( -- seq ) [ y v*n ] map ] bi@
+    left-shape right-shape [ call( -- seq ) [ y v*n ] map ] bi@
     reverse symmetric? [ [ first2 [ neg ] dip 2array ] map ] unless
     [ first2 swap x swap - swap 2array ] map append
     x 2 / y 2 / 2array prefix dup second suffix ;
@@ -123,31 +111,31 @@ CONSTANT: points 100
     gadget [ side below ] [ side execute( x -- x ) ] bi side compare ;
 
 :: find-half-shape ( gadget side -- shape )  {
-        { [ gadget left 10 < ] [ \ squircle ] }
-        { [ gadget side above-wider? gadget side below-wider? and ] [ \ wide-narrow-wide ] }
-        { [ gadget side above-wider? gadget side below-wider? not and ] [ \ wide-narrow ] }
-        { [ gadget side above-wider? not gadget side below-wider? and ] [ \ narrow-wide ] }
-        { [ gadget side above-wider? not gadget side below-wider? not and ] [ \ narrow-wide-narrow ] }
+        { [ gadget left 10 < ] [ [ squircle ] ] }
+        { [ gadget side above-wider? gadget side below-wider? and ] [ [ 6 wide-narrow-wide ] ] }
+        { [ gadget side above-wider? gadget side below-wider? not and ] [ [ 6 wide-narrow ] ] }
+        { [ gadget side above-wider? not gadget side below-wider? and ] [ [ 6 narrow-wide ] ] }
+        { [ gadget side above-wider? not gadget side below-wider? not and ] [ [ 6 narrow-wide-narrow ] ] }
     } cond ;
 
 : find-shape ( gadget -- left-shape right-shape )
     [ \ left find-half-shape ] [ \ right find-half-shape ] bi ;
 
-M:: gradient-squircle recompute-pen ( gadget gradient -- )
-    gadget dim>> dup \ squircle dup t vertices dup gradient last-vertices<<
+:: (recompute-pen) ( gadget gradient left-shape right-shape symmetric? -- )
+    gadget dim>> dup left-shape right-shape symmetric? vertices dup gradient last-vertices<<
     gradient colors>> vertices-colors gradient last-colors<< ;
 
-M:: gradient-arrow recompute-pen ( gadget gradient -- )
-    gadget dim>> dup \ arrow dup f vertices dup gradient last-vertices<<
-    gradient colors>> vertices-colors gradient last-colors<< ;
+M: gradient-squircle recompute-pen ( gadget gradient -- )
+    [ squircle ] dup t (recompute-pen) ;
 
-M:: gradient-pointy recompute-pen ( gadget gradient -- )
-    gadget dim>> dup \ narrow-wide-narrow* dup t vertices dup gradient last-vertices<<
-    gradient colors>> vertices-colors gradient last-colors<< ;
+M: gradient-arrow recompute-pen ( gadget gradient -- )
+    [ arrow ] dup f (recompute-pen) ;
+
+M: gradient-pointy recompute-pen ( gadget gradient -- )
+    [ 1.5 narrow-wide-narrow ] dup t (recompute-pen) ;
 
 M:: gradient-dynamic-shape recompute-pen ( gadget gradient -- )
-    gadget dim>> dup gadget find-shape t vertices dup gradient last-vertices<<
-    gradient colors>> vertices-colors gradient last-colors<< ;
+    gadget gradient gadget find-shape t (recompute-pen) ;
 
 PRIVATE>
 
