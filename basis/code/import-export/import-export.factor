@@ -2,8 +2,8 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays classes combinators combinators.smart
 eval io io.directories io.encodings.utf8 io.files io.files.info
-io.pathnames kernel locals math namespaces prettyprint prettyprint.config sequences
-code system ui.gadgets code.execution ;
+io.pathnames kernel locals math namespaces prettyprint prettyprint.config
+sequences code system ui.gadgets code.execution ;
 FROM: code => call ;
 IN: code.import-export
 
@@ -29,8 +29,11 @@ M: element (export)
 M: vocab (export)
     words [ export ] map >array 1array ;
 
+M: node (export)
+    [ quoted?>> ] [ contents>> [ export ] map >array ] bi 2array ;
+
 M: call (export)
-    [ path ] [ contents>> [ export ] map >array ] bi 2array ;
+    [ path ] [ quoted?>> ] [ contents>> [ export ] map >array ] tri 3array ;
 
 :: write-vocab-file ( vocab -- )
     vocab vocab-directory-path make-directory?
@@ -63,8 +66,11 @@ GENERIC: (import) ( seq element -- element )
 M: element (import)
     swap first [ import add-element ] each ;
 
+M: node (import)
+    swap first2 [ >>quoted? ] [ [ import add-element ] each ] bi* ;
+
 M: call (import)
-    swap first2 [ >>target ] [ [ import add-element ] each ] bi* ;
+    swap first3 [ >>target ] [ >>quoted? ] [ [ import add-element ] each ] tri* ;
 
 : sub-directories ( path -- seq )
     dup directory-entries [ directory? ] filter [ name>> append-path ] with map ;
