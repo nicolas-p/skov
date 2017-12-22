@@ -186,7 +186,7 @@ M: element factor-name
     name>> ;
 
 M: call factor-name
-    name>> dup special-words member? [ "special " swap prepend ] when ;
+    name>> dup special-words member? [ "special " prepend ] when ;
 
 GENERIC: path ( elt -- str )
 
