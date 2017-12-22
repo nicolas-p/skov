@@ -26,7 +26,7 @@ TUPLE: navigation < pack ;
 
 :: new-item ( navigation class -- )
     navigation control-value [ vocab? ] find-parent
-    class add-from-class navigation set-control-value ;
+    class add-from-class contents>> last navigation set-control-value ;
 
 : find-navigation ( gadget -- navigation )
     [ navigation? ] find-parent ;
