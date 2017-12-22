@@ -5,8 +5,8 @@ io.directories.hierarchy io.pathnames kernel memory namespaces sequences ui.them
 ui.images splitting system io.files io.encodings.utf8 math effects math.order
 code.import-export parser help help.markup words debugger ;
 
-! Setting Skov version in YYYY-MM-DD format
-gmt timestamp>ymd skov-version set-global
+! Setting Skov version in YYYY-MM format
+gmt timestamp>ymd 7 head skov-version set-global
 
 ! Setting the Factor directory as working directory
 image-path parent-directory set-current-directory
@@ -71,7 +71,7 @@ os windows = [
 "misc" delete-tree
 "work/README.txt" delete-file
 "README.md" delete-file
-"git-id" delete-file
+"git-id" ?delete-file
 "changes" delete-tree
 "make-skov.factor" delete-file
 
