@@ -55,7 +55,7 @@ TUPLE: cell-editor < editor ;
     { { [ name empty? ] [ ] }
       { [ cell control-value call? not ] [ name >>name ] }
       { [ cell control-value clone name >>name find-target empty? not ]
-        [ name >>name dup find-target first >>target ] }
+        [ name >>name dup find-target [ length 1 > ] [ >>completion ] [ first >>target ] smart-if ] }
       [ ]
     } cond
     cell set-control-value
