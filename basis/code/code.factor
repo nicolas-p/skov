@@ -148,15 +148,16 @@ SYMBOL: right
     } cond
     names elt contents>> [ default-name<< ] 2each ;
 
-:: change-node-type ( elt class -- new-elt )
+:: change-node-type ( node class -- new-node )
     ! replaces a node by a node of a different type that has the same name and contents
-    elt class new elt name>> >>name elt contents>> [ add-element ] each replace-element ;
+    node class new node name>> >>name node quoted?>> >>quoted?
+    node contents>> [ add-element ] each replace-element ;
 
 : no-return? ( node -- ? )
     ! tells if the word that contains the node has no "return" child
     [ word? ] find-parent returns empty? ;
 
-: ?change-node-type ( elt class -- new-elt )
+: ?change-node-type ( node class -- new-node )
     ! replaces a node by a node of a different type that has the same name and contents
     ! only if certain conditions are met
     2dup {
