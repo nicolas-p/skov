@@ -71,46 +71,46 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
     model value>> [ word? ] find-parent ?add-words drop
     model value>> node? [
         [ top-node? ] dark-background "I" [ introduce ?change-node-type ]
-            "Convert cell into an input cell    ( Ctrl I )" add-button
+            "Convert cell into an input cell    ( Control I )" add-button
         [ top-node? ] yellow-background "G" [ getter ?change-node-type ]
-            "Convert cell into a get cell    ( Ctrl G )" add-button
+            "Convert cell into a get cell    ( Control G )" add-button
         [ top-node? ] white-background "T" [ text ?change-node-type ]
-            "Convert cell into a text cell    ( Ctrl T )" add-button
+            "Convert cell into a text cell    ( Control T )" add-button
         <gadget> add-gadget
         [ drop t ] green-background "W" [ call ?change-node-type ]
-            "Convert cell into a word cell    ( Ctrl W )" add-button
+            "Convert cell into a word cell    ( Control W )" add-button
         <gadget> add-gadget
         [ bottom-node? ] yellow-background "S" [ setter ?change-node-type ]
-             "Convert cell into a set cell    ( Ctrl S )" add-button
+             "Convert cell into a set cell    ( Control S )" add-button
         [ [ bottom-node? ] [ no-return? ] [ return? ] tri or and ]
             dark-background "O" [ return ?change-node-type ]
-            "Convert cell into an output cell    ( Ctrl O )" add-button
+            "Convert cell into an output cell    ( Control O )" add-button
         <gadget> { 20 0 } >>dim add-gadget
         model value>> bottom-node?
             [ inactive-background "" [ drop ] ]
             [ blue-background model value>> quoted?>> "︾" "︽" ?
               [ drop model [ (un)quote ] change-model ] ] if <round-button>
-            model value>> quoted?>> "Unquote" "Quote" ? "    ( Ctrl Q )" append 
+            model value>> quoted?>> "Unquote" "Quote" ? "    ( Control Q )" append 
             >>tooltip add-gadget
         <gadget> add-gadget
         [ leftmost-node? not ] blue-background "⇐" [ left exchange-node-side ]
-            "Exchange cell and cell on the left    ( Ctrl ← )" add-button
+            "Exchange cell and cell on the left    ( Command ← )" add-button
         [ rightmost-node? not ] blue-background "⇒" [ right exchange-node-side ]
-            "Exchange cell and cell on the right    ( Ctrl → )" add-button
+            "Exchange cell and cell on the right    ( Command → )" add-button
         <gadget> add-gadget
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "←" [ left insert-node-side ]
-            "Insert new cell on the left    ( Alt ← )" add-button
+            "Insert new cell on the left    ( Option ← )" add-button
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
             blue-background "→" [ right insert-node-side ]
-            "Insert new cell on the right    ( Alt → )" add-button
+            "Insert new cell on the right    ( Option → )" add-button
         [ drop t ] blue-background "↓" [ insert-new-parent ]
-            "Insert new cell below    ( Alt ↓ )" add-button
+            "Insert new cell below    ( Option ↓ )" add-button
         <gadget> add-gadget
         [ bottom-node? not ] red-background "⇓" [ replace-parent ]
-            "Replace cell below    ( Ctrl R )" add-button
+            "Replace cell below    ( Control R )" add-button
         [ [ top-node? ] [ bottom-node? ] bi and not ] red-background "✕" [ remove-element ]
-            "Delete cell and everything above    ( Ctrl D )" add-button
+            "Delete cell and everything above    ( Control D )" add-button
     ] when drop ;
 
 : path-cell-colors ( cell -- bg-color text-color )
