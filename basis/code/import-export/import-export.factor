@@ -48,7 +48,7 @@ M: call (export)
     call target>> :> this-path
     call dup find-target
     [ [ number? not ] [ vocabulary>> this-path = ] [ t ] smart-if* ] filter
-    first >>target drop ;
+    ?first >>target drop ;
 
 : find-targets ( def -- )
     calls [ find-target-with-path ] each ;
