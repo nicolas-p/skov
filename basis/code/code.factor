@@ -216,7 +216,7 @@ M: node path
 
 : input-output-names ( word -- seq seq )
     ! returns two sequences containing the input and output names of a word
-    [ introduces ] [ returns ] bi [ [ name>> ] map members ] bi@ ;
+    [ introduces ] [ returns ] bi [ [ name>> ] map sift members ] bi@ ;
 
 SINGLETON: recursion
 
@@ -230,7 +230,7 @@ M: sink (in-out)
 
 M:: call (in-out) ( call -- seq seq )
     call target>>
-    { { [ dup recursion? ] [ drop call parent>> input-output-names ] }
+    { { [ dup recursion? ] [ drop call [ word? ] find-parent input-output-names ] }
       { [ dup number? ] [ drop { } { "" } ] }
       { [ dup not ] [ drop { } { } ] }
       [ "declared-effect" words:word-prop convert-stack-effect ]
