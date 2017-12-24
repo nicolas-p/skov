@@ -135,7 +135,7 @@ M:: path-display model-changed ( model path-display -- )
     model value>> call? [
         model value>> target>> number? [
             model value>> completion>>
-            [ model value>> name>> matching-words [ <path-item> ] map add-gadgets ]
+            [ model value>> completion>> [ <path-item> ] map add-gadgets ]
             [ model value>> target>> [ <path-item> add-gadget ] when* ] if
         ] unless
     ] when drop ;
@@ -149,7 +149,7 @@ M:: path-display model-changed ( model path-display -- )
 
 : choose-word ( path-item -- )
     [ word>> ] [ parent>> model>> ] bi
-    [ swap >>target dup target>> name>> >>name f >>completion ] with change-model ;
+    [ swap >>target dup target>> name>> short-name >>name f >>completion ] with change-model ;
 
 : select-word ( path-item -- )
     dark-background second <solid> >>interior relayout-1 ;

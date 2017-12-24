@@ -148,7 +148,7 @@ M: cell graft*
 
 :: ask-for-completion ( cell -- )
     cell children>> [ editor? ] filter first editor-string
-    [ cell model>> [ swap >>name t >>completion ] with change-model
+    [ cell model>> [ swap [ >>name ] [ matching-words >>completion ] bi ] with change-model
       cell selection>> notify-connections ] unless-empty ;
 
 cell H{

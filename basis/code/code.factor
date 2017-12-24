@@ -275,13 +275,16 @@ CONSTANT: special-variadic-words { "call" }
       [ elt (in-out) ]
     } cond ;
 
+: short-name ( str -- str )
+    " (constructor)" " (accessor)" " (mutator)" [ "" replace ] tri@ ;
+
 :: matching-words ( str -- seq )
     ! returns all Factor words whose name begins with a certain string
     interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str head? ] filter ;
 
 :: matching-words-exact ( str -- seq )
     ! returns all Factor words that have a certain name
-    interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> str = ] filter ;
+    interactive-vocabs get [ vocabs:vocab-words ] map concat [ name>> short-name str = ] filter ;
 
 :: find-target ( call -- seq )
     ! returns the Factor word that has the same name as the call
