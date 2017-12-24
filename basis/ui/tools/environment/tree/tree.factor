@@ -109,7 +109,7 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
         <gadget> add-gadget
         [ bottom-node? not ] red-background "⇓" [ replace-parent ]
             "Replace cell below    ( Control R )" add-button
-        [ { [ top-node? ] [ bottom-node? ] [ leftmost-node? ] [ rightmost-node? ] } 1&& not ]
+        [ drop t ]
             red-background "✕" [ remove-element ]
             "Delete cell and everything above    ( Control D )" add-button
     ] when drop ;
