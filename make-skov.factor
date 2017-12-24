@@ -38,7 +38,7 @@ os macosx = [
   "Skov.app/Contents/Info.plist" utf8 [
     ">factor<" ">skov<" replace
     ">Factor<" ">Skov<" replace 
-    ">0.98<" gmt timestamp>ymd ">" "<" surround replace
+    ">0.98<" gmt timestamp>ymd 7 head ">" "<" surround replace
     "Factor developers<" "Factor and Skov developers<" replace
     "Factor.icns" "Skov.icns</string>
     <key>ATSApplicationFontsPath</key>
