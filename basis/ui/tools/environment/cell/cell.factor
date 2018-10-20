@@ -34,8 +34,7 @@ TUPLE: cell-editor < editor ;
 
 :: cell-colors ( cell -- bg-color text-color )
     cell control-value
-    { { [ dup subtree-input? ] [ drop inactive-background light-text-colour ] }
-      { [ dup input/output? ] [ drop dark-background light-text-colour ] }
+    { { [ dup input/output? ] [ drop dark-background light-text-colour ] }
       { [ dup text? ] [ drop white-background dark-text-colour ] }
       { [ dup call? ] [ drop green-background dark-text-colour ] }
       { [ dup getter? ] [ drop yellow-background dark-text-colour ] }
