@@ -37,7 +37,7 @@ M:: special-pile layout* ( pack -- )
     ] unless ;
 
 : <quoted-cell> ( cell -- pile )
-    <special-pile> <shelf> rot add-gadget add-gadget <gadget> { 0 3 } >>dim add-gadget ;
+    <special-pile> <shelf> rot add-gadget add-gadget <gadget> { 0 6 } >>dim add-gadget ;
 
 :: build-tree ( node selection -- pile )
     <special-pile> { 0 1 } >>gap
