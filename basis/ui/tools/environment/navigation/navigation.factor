@@ -13,9 +13,10 @@ IN: ui.tools.environment.navigation
 
 TUPLE: navigation < pack ;
 
-: <category> ( name -- gadget )
-    <label> [ t >>bold? ] change-font { 26 0 } <border>
-    blue-background dark-text-colour <gradient-pointy> >>interior
+: <category> ( background name -- gadget )
+    <label>
+    [ t >>bold? ] change-font { 26 0 } <border>
+    swap dark-text-colour <gradient-pointy> >>interior
     { 0 22 } >>min-dim horizontal >>orientation ;
 
 : <name-bar> ( vocab/word selection -- gadget )
@@ -39,9 +40,9 @@ M:: navigation model-changed ( model gadget -- )
     model value>> parents [ vocab? ] filter reverse
     dup last :> voc
     [ model <name-bar> ] map add-gadgets
-    "Vocabularies" <category> { 0 10 } <border> <dot-pattern> add-gadget
+    blue-background "Vocabularies" <category> { 0 10 } <border> <dot-pattern> add-gadget
     voc contents>> [ vocab? ] filter vocab new "⨁" >>name suffix [ model <name-bar> ] map add-gadgets
-    "Words" <category> { 0 10 } <border> <dot-pattern> add-gadget
+    green-background "Words" <category> { 0 10 } <border> <dot-pattern> add-gadget
     voc contents>> [ word? ] filter word new "⨁" >>name suffix [ 
         [ model <name-bar> add-gadget ] 
         [ [ model value>> eq? ]
