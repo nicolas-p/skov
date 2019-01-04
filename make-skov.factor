@@ -65,15 +65,24 @@ os windows = [
 "vocab:help/stylesheet/stylesheet.factor" run-file
 
 ! Deleting all Factor code files and other stuff
-"basis" delete-tree
-"core" delete-tree
-"extra" delete-tree
-"misc" delete-tree
-"work/README.txt" delete-file
-"README.md" delete-file
-"git-id" ?delete-file
-"changes" delete-tree
-"make-skov.factor" delete-file
+{ "basis"
+  "core"
+  "extra"
+  "misc"
+  "changes"
+  "vm"
+} [ [ delete-tree ] try ] each
+{ "work/README.txt"
+  "README.md"
+  "git-id"
+  "make-skov.factor"
+  "boot.unix-x86.64.image"
+  "build.cmd"
+  "build.sh"
+  "factor.image.fresh"
+  "GNUmakefile"
+  "Nmakefile"
+} [ ?delete-file ] each
 
 ! Choosing dark mode
 dark-mode
@@ -108,7 +117,7 @@ all-words [ [
     [ "^" = ] [ drop "pow" ] smart-when
     [ "2^" = ] [ drop "pow2" ] smart-when
     [ "10^" = ] [ drop "pow10" ] smart-when
-  ] change-name
+  ] change-name drop
 ] each
 
 ! Updating the help page of every word
