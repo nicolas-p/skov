@@ -2,7 +2,7 @@ USING: accessors arrays assocs colors combinators
 combinators.short-circuit combinators.smart kernel locals math
 math.functions math.order math.ranges math.vectors opengl.gl
 sequences ui.gadgets ui.gadgets.packs ui.pens ui.pens.caching
-ui.pens.gradient ;
+ui.pens.gradient system ;
 IN: ui.pens.gradient-rounded
 
 TUPLE: gradient-shape < caching-pen  colors foreground shape last-vertices last-colors ;
@@ -145,7 +145,7 @@ M: gradient-shape draw-interior
     [ last-colors>> draw-triangle-fan ] tri ;
 
 M: gradient-shape pen-background
-     2drop transparent ;
+     os windows? [ nip colors>> first2 avg-color ] [ 2drop transparent ] if ;
 
 M: gradient-shape pen-foreground
     nip foreground>> ;

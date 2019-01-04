@@ -1,5 +1,5 @@
 USING: accessors colors kernel locals math opengl opengl.gl
-sequences ui.pens ui.tools.environment.theme ;
+sequences ui.pens ui.tools.environment.theme system ;
 IN: ui.pens.title-gradient
 
 TUPLE: title-gradient  colors foreground selected? ;
@@ -50,7 +50,7 @@ M: title-gradient draw-interior
     [ dim>> ] dip colors>> draw-title ;
 
 M: title-gradient pen-background
-     2drop transparent ;
+     os windows? [ nip colors>> first2 avg-color ] [ 2drop transparent ] if ;
 
 M: title-gradient pen-foreground
     nip foreground>> ;

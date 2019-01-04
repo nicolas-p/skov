@@ -1,7 +1,7 @@
 ! Copyright (C) 2015-2017 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: arrays accessors colors kernel locals math math.constants
-math.functions opengl.gl sequences ui.gadgets
+math.functions opengl.gl sequences ui.gadgets system
 ui.render ui.tools.environment.theme ;
 IN: ui.tools.environment.navigation.dot-pattern
 
@@ -21,13 +21,15 @@ CONSTANT: dr 8
     ] each ;
 
 M: dot-pattern draw-gadget*
-    dim>> [ first2 ] [ first 2 / dr /i ] bi
-    GL_POINT_SMOOTH glEnable
-    9 glPointSize
-    GL_POINTS glBegin
-    blue-background second >rgba-components drop 0.12 glColor4f
-    <iota> [ draw-dot-ring ] 2with each
-    glEnd ;
+    os windows? [ drop ] [
+        dim>> [ first2 ] [ first 2 / dr /i ] bi
+        GL_POINT_SMOOTH glEnable
+        9 glPointSize
+        GL_POINTS glBegin
+        blue-background second >rgba-components drop 0.12 glColor4f
+        <iota> [ draw-dot-ring ] 2with each
+        glEnd 
+    ] if ;
 
 M: dot-pattern pref-dim*
     drop { 0 65 } ;

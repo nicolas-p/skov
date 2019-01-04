@@ -82,12 +82,14 @@ TUPLE: cell-editor < editor ;
     cell selected? not and ;
 
 M:: cell model-changed ( model cell -- )
+    cell cell-colors :> text-color :> bg-color
     cell dup clear-gadget
     cell no-label? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
     <label> set-font add-gadget
     <cell-editor> f >>visible?
-        cell cell-colors :> text-color drop
-        set-font [ text-color >>foreground transparent >>background ] change-font add-gadget
+        set-font [ text-color >>foreground 
+                   os windows? [ bg-color first2 avg-color ] [ transparent ] if
+                   >>background ] change-font add-gadget
     model value>> node? [
         cell selected? model value>> parent>> and [
             inactive-background "✕"
