@@ -1,9 +1,8 @@
 ! Copyright (C) 2016 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
-USING: accessors combinators combinators.smart fry help.topics
-kernel listener locals models namespaces sequences
-ui.gadgets.buttons.round strings ui.gadgets ui.gadgets.packs vocabs
-words code.execution ;
+USING: accessors code.execution combinators.smart fry
+help.topics kernel models ui.gadgets ui.gadgets.buttons.round
+ui.gadgets.packs vocabs words ;
 IN: ui.gadgets.buttons.activate
 
 : <activate-button> ( vocab-name -- gadget )

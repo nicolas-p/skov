@@ -3,9 +3,9 @@
 USING: accessors arrays assocs classes.parser classes.tuple code
 combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
-locals.types math math.statistics quotations sequences
-sequences.deep sets splitting
-ui.gadgets.panes vocabs.parser ;
+locals.types math math.statistics namespaces quotations
+sequences sequences.deep sets splitting ui.gadgets.panes
+vocabs.parser ;
 FROM: code => call ;
 QUALIFIED: words
 QUALIFIED: vocabs
