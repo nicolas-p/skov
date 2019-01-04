@@ -82,6 +82,10 @@ os windows = [
   "factor.image.fresh"
   "GNUmakefile"
   "Nmakefile"
+  ".gitignore"
+  ".gitattributes"
+  ".travis.yml"
+  ".dir-locals.el"
 } [ ?delete-file ] each
 
 ! Choosing dark mode
