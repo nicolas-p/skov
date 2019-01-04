@@ -4,7 +4,7 @@ USING: accessors arrays assocs classes.parser classes.tuple code
 combinators combinators.smart compiler.units debugger effects io
 io.streams.string kernel listener locals locals.rewrite.closures
 locals.types math math.statistics quotations sequences
-sequences.deep sets splitting ui.gadgets.buttons.activate
+sequences.deep sets splitting
 ui.gadgets.panes vocabs.parser ;
 FROM: code => call ;
 QUALIFIED: words
@@ -90,6 +90,16 @@ M: word transform
 
 :: try-definition ( quot def -- )
     [ def f >>defined? quot with-compilation-unit t >>defined? drop ] try ; inline
+
+: interactive? ( vocab-name -- ? )
+    interactive-vocabs get-global member? ;
+
+: add-interactive-vocab ( vocab-name -- )
+    [ interactive? not ] 
+    [ interactive-vocabs [ swap suffix ] change-global ] smart-when* ;
+
+: remove-interactive-vocab ( vocab-name -- )
+    interactive-vocabs [ remove ] change-global ;
 
 GENERIC: define ( def -- )
 

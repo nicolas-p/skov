@@ -3,21 +3,8 @@
 USING: accessors combinators combinators.smart fry help.topics
 kernel listener locals models namespaces sequences
 ui.gadgets.buttons.round strings ui.gadgets ui.gadgets.packs vocabs
-words ;
+words code.execution ;
 IN: ui.gadgets.buttons.activate
-
-: interactive? ( vocab-name -- ? )
-    interactive-vocabs get-global member? ;
-
-: vocab-name ( obj -- str )
-    name>> [ word? ] [ vocabulary>> ] smart-when ;
-
-: add-interactive-vocab ( vocab-name -- )
-    [ interactive? not ] 
-    [ interactive-vocabs [ swap suffix ] change-global ] smart-when* ;
-
-: remove-interactive-vocab ( vocab-name -- )
-    interactive-vocabs [ remove ] change-global ;
 
 : <activate-button> ( vocab-name -- gadget )
     dup '[ _ swap [ not ] change-selected? 
@@ -32,6 +19,9 @@ TUPLE: active/inactive < pack ;
     
 : vocab/word? ( obj -- ? )
     [ vocab? ] [ [ link? ] [ name>> word? ] [ drop f ] smart-if ] bi or ;
+
+: vocab-name ( obj -- str )
+    name>> [ word? ] [ vocabulary>> ] smart-when ;
 
 M: active/inactive model-changed
     dup clear-gadget swap
