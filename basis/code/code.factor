@@ -176,6 +176,7 @@ SYMBOL: right
       { [ dup introduce? ] [ drop "input" ] }
       { [ dup return? ] [ drop "output" ] }
       { [ dup call? ] [ drop "word" ] }
+      { [ dup vocab? ] [ drop "vocabulary" ] }
       { [ dup getter? ] [ drop "get" ] }
       { [ dup setter? ] [ drop "set" ] }
       [ class-of unparse ] } cond >string ;
