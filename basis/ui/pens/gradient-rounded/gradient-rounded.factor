@@ -121,6 +121,10 @@ CONSTANT: points 100
 : find-shape ( gadget -- left-shape right-shape )
     [ \ left find-half-shape ] [ \ right find-half-shape ] bi ;
 
+: add-spikes ( seq -- seq )
+    [ [ second 0.5 = ] [ drop { -10 0.5 } ] smart-when ] map
+    [ second 0.5 - abs [ 0.05 < ] [ 0 > ] bi and ] reject ;
+
 :: (recompute-pen) ( gadget gradient left-shape right-shape symmetric? -- )
     gadget dim>> dup left-shape right-shape symmetric? vertices dup gradient last-vertices<<
     gradient colors>> vertices-colors gradient last-colors<< ;
@@ -132,7 +136,7 @@ M: gradient-arrow recompute-pen ( gadget gradient -- )
     [ arrow ] dup f (recompute-pen) ;
 
 M: gradient-pointy recompute-pen ( gadget gradient -- )
-    [ 1.5 narrow-wide-narrow ] dup t (recompute-pen) ;
+    [ 1.5 narrow-wide-narrow add-spikes ] dup t (recompute-pen) ;
 
 M:: gradient-dynamic-shape recompute-pen ( gadget gradient -- )
     gadget gradient gadget find-shape t (recompute-pen) ;
