@@ -93,21 +93,21 @@ M:: tree-toolbar model-changed ( model tree-toolbar -- )
             model value>> quoted?>> "Unquote" "Quote" ? "    ( Control Q )" append 
             >>tooltip add-gadget
         <gadget> add-gadget
-        [ leftmost-node? not ] blue-background "⇐" [ left exchange-node-side ]
+        [ leftmost-node? not ] blue-background "←" [ left exchange-node-side ]
             "Exchange cell and cell on the left    ( Command ← )" add-button
-        [ rightmost-node? not ] blue-background "⇒" [ right exchange-node-side ]
+        [ rightmost-node? not ] blue-background "→" [ right exchange-node-side ]
             "Exchange cell and cell on the right    ( Command → )" add-button
         <gadget> add-gadget
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
-            blue-background "←" [ left insert-node-side ]
+            blue-background "⇐" [ left insert-node-side ]
             "Insert new cell on the left    ( Option ← )" add-button
         [ parent>> { [ word? ] [ variadic? ] } 1|| ]
-            blue-background "→" [ right insert-node-side ]
+            blue-background "⇒" [ right insert-node-side ]
             "Insert new cell on the right    ( Option → )" add-button
-        [ drop t ] blue-background "↓" [ insert-new-parent ]
+        [ drop t ] blue-background "⇓" [ insert-new-parent ]
             "Insert new cell below    ( Option ↓ )" add-button
         <gadget> add-gadget
-        [ bottom-node? not ] red-background "⇓" [ replace-parent ]
+        [ bottom-node? not ] red-background "↓" [ replace-parent ]
             "Replace cell below    ( Control R )" add-button
         [ drop t ]
             red-background "✕" [ remove-element ]
