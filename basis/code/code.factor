@@ -101,8 +101,10 @@ SYMBOL: right
 
 :: exchange-node-side ( node side -- node )
     ! exchanges a node and the node the left/right
-    node parent>> contents>> :> nodes
-    node nodes index dup 1 side left eq? [ - ] [ + ] if nodes exchange node ;
+    node parent>> [ vocab? ] [ [ [ class-of ] sort-with ] change-contents ] smart-when
+    contents>> :> nodes
+    node nodes index dup side left eq? -1 1 ? +
+    nodes length 1 - min 0 max nodes exchange node ;
 
 : top-node? ( node -- ? )
     ! tells if the node has no children

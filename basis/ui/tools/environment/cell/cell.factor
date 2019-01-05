@@ -7,10 +7,10 @@ math.vectors models namespaces sequences splitting system
 ui.commands ui.gadgets ui.gadgets.borders
 ui.gadgets.buttons.round ui.gadgets.editors
 ui.gadgets.editors.private ui.gadgets.frames ui.gadgets.grids
-ui.gadgets.labels ui.gadgets.worlds ui.gestures
-ui.pens.gradient-rounded ui.pens.solid ui.pens.tile ui.render
-ui.pens.title-gradient
-ui.text ui.tools.browser ui.tools.environment.theme ;
+ui.gadgets.labels ui.gadgets.packs ui.gadgets.worlds ui.gestures
+ui.pens.gradient-rounded ui.pens.solid ui.pens.tile
+ui.pens.title-gradient ui.render ui.text ui.tools.browser
+ui.tools.environment.theme ;
 FROM: code => call ;
 FROM: models => change-model ;
 IN: ui.tools.environment.cell
@@ -92,10 +92,20 @@ M:: cell model-changed ( model cell -- )
                    >>background ] change-font add-gadget
     model value>> node? [
         cell selected? model value>> parent>> and [
-            inactive-background "✕"
-            [ drop model value>> remove-element cell selection>> set-model ] <round-button>
-            model value>> vocab? "Delete vocabulary" "Delete word" ? "    ( Ctrl R )" append
-            >>tooltip add-gadget ] when
+            <shelf> { 5 0 } >>gap
+                inactive-background "✕"
+                [ drop model value>> remove-element cell selection>> set-model ] <round-button>
+                model value>> vocab? "Delete vocabulary" "Delete word" ? "    ( Ctrl R )" append
+                >>tooltip add-gadget
+                model value>> word? [
+                    inactive-background "↑"
+                    [ drop model value>> left exchange-node-side cell selection>> set-model ] <round-button>
+                    "Move up" >>tooltip add-gadget
+                    inactive-background "↓"
+                    [ drop model value>> right exchange-node-side cell selection>> set-model ] <round-button>
+                    "Move down" >>tooltip add-gadget
+                ] when
+            add-gadget ] when
         model value>> executable? [
             cell selection>> value>> parent>> cell control-value eq? [
                 blue-background "➤"
@@ -116,7 +126,7 @@ M:: cell layout* ( cell -- )
     cell children>> second f >>visible? drop
     cell call-next-method
     cell children>> rest rest [ 
-        dup tooltip>> "Show" swap subseq? cell dim>> first 35 - 15 ? 5 2array >>loc 
+        dup pack? not cell dim>> first 35 - 15 ? 5 2array >>loc 
         dup pref-dim >>dim drop
      ] each ;
 
