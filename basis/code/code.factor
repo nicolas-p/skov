@@ -3,7 +3,7 @@
 USING: accessors arrays classes combinators
 combinators.short-circuit combinators.smart compiler.units
 effects fry hashtables.private kernel listener locals math
-math.order math.parser namespaces prettyprint sequences
+math.order math.parser namespaces prettyprint sequences sorting
 sequences.deep sequences.extras sets splitting strings
 ui.gadgets vectors vocabs.parser definitions ;
 QUALIFIED: vocabs
