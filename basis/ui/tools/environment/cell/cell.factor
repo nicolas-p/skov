@@ -108,11 +108,11 @@ M:: cell model-changed ( model cell -- )
             add-gadget ] when
         model value>> executable? [
             cell selection>> value>> parent>> cell control-value eq? [
-                blue-background "➤"
+                blue-background "Result"
                 [ drop model value>> cell selection>> set-model ] <round-button>
                 "Show word    ( Shift Enter )" >>tooltip
             ] [
-                inactive-background "➤"
+                inactive-background "Result"
                 [ drop model value>> dup run-word result>> cell selection>> set-model ] <round-button>
                 "Show result    ( Shift Enter )" >>tooltip 
             ] if add-gadget ] when
@@ -126,7 +126,7 @@ M:: cell layout* ( cell -- )
     cell children>> second f >>visible? drop
     cell call-next-method
     cell children>> rest rest [ 
-        dup pack? not cell dim>> first 35 - 15 ? 5 2array >>loc 
+        dup pack? not cell dim>> first 63 - 15 ? 5 2array >>loc 
         dup pref-dim >>dim drop
      ] each ;
 
