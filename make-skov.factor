@@ -13,7 +13,6 @@ image-path parent-directory set-current-directory
 
 ! Loading all bitmaps into the image
 { 
-  "vocab:ui/tools/environment/theme/"
   "vocab:definitions/icons/"
   "vocab:ui/theme/images"
   "vocab:ui/tools/error-list/icons"

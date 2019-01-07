@@ -34,12 +34,3 @@ CONSTANT: faded-text-colour HEXCOLOR: 93A1A1
 
 : with-background ( gadget -- gadget )
     content-background-colour <solid> >>interior ;
-
-: theme-image ( name -- image-name )
-    "vocab:ui/tools/environment/theme/" prepend-path ".png" append <image-name> ;
-
-: 2-theme-image ( prefix suffix -- image-name )
-    "--" glue theme-image ;
-
-: 2-theme-image-pen ( str str -- pen )
-    2-theme-image <image-pen> t >>fill? ;
