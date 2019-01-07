@@ -126,7 +126,7 @@ M:: cell layout* ( cell -- )
     cell children>> second f >>visible? drop
     cell call-next-method
     cell children>> rest rest [ 
-        dup pack? not cell dim>> first 63 - 15 ? 5 2array >>loc 
+        dup pack? not cell dim>> first 68 - 15 ? 5 2array >>loc 
         dup pref-dim >>dim drop
      ] each ;
 

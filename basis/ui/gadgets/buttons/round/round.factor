@@ -8,7 +8,9 @@ IN: ui.gadgets.buttons.round
 TUPLE: round-button < button ;
 
 M: round-button pref-dim*
-    gadget-child pref-dim first2 [ 10 + ] dip [ 20 max ] bi@ 2array ;
+    gadget-child [ text>> length 1 > ]
+    [ pref-dim first2 [ 15 + ] dip [ 20 max ] bi@ 2array ]
+    [ { 20 20 } ] smart-if* ;
 
 :: <round-button> ( colors label quot -- button )
     label quot round-button new-button
