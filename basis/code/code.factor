@@ -78,9 +78,9 @@ SYMBOL: right
     ! removes the corresponding Factor vocabulary or word
     dup target>> [ [ forget ] with-compilation-unit ] when* ;
 
-: remove-element ( elt -- parent )
+:: remove-element ( elt -- parent )
     ! removes a node from its parent
-    ?forget dup parent>> [ contents>> remove-eq! drop ] keep ;
+    elt ?forget parent>> [ elt swap remove-eq ] change-contents ;
 
 : replace* ( seq old rep -- seq )
     ! replaces an element with another element in a sequence
