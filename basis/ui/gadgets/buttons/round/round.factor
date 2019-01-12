@@ -1,7 +1,7 @@
 ! Copyright (C) 2015 Nicolas Pénet.
 ! See http://factorcode.org/license.txt for BSD license.
 USING: accessors arrays colors colors.gray kernel locals math
-math.order sequences ui.gadgets ui.gadgets.buttons
+math.order sequences ui.gadgets ui.gadgets.buttons combinators.smart
 ui.pens.gradient-rounded ui.tools.environment.theme ;
 IN: ui.gadgets.buttons.round
 
