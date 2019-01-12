@@ -77,14 +77,14 @@ TUPLE: cell-editor < editor ;
     cell new { 12 0 } >>size min-cell-width cell-height 2array >>min-dim
     swap >>selection swap <model> >>model horizontal >>orientation ;
 
-:: no-label? ( cell -- ? )
+:: collapsed? ( cell -- ? )
     cell control-value subtree-input?
     cell selected? not and ;
 
 M:: cell model-changed ( model cell -- )
     cell cell-colors :> text-color :> bg-color
     cell dup clear-gadget
-    cell no-label? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
+    cell collapsed? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
     <label> set-font add-gadget
     <cell-editor> f >>visible?
         set-font [ text-color >>foreground 
@@ -135,6 +135,9 @@ M: cell focusable-child*
 
 M: cell graft*
     [ selected? ] [ request-focus ] smart-when* ;
+
+M: cell pref-dim*
+    dup call-next-method swap collapsed? [ 12 over set-second ] when ;
 
 :: select-cell ( cell -- )
     cell control-value name>> "⨁" = [ 
