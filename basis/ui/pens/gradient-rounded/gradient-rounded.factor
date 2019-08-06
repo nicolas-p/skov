@@ -145,7 +145,7 @@ M: gradient-shape draw-interior
     [ last-colors>> draw-triangle-fan ] tri ;
 
 M: gradient-shape pen-background
-     os windows? [ nip colors>> first2 avg-color ] [ 2drop transparent ] if ;
+     2drop transparent ;
 
 M: gradient-shape pen-foreground
     nip foreground>> ;

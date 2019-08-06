@@ -50,7 +50,7 @@ M: title-gradient draw-interior
     [ dim>> ] dip colors>> draw-title ;
 
 M: title-gradient pen-background
-     os windows? [ nip colors>> first2 avg-color ] [ 2drop transparent ] if ;
+     2drop transparent ;
 
 M: title-gradient pen-foreground
     nip foreground>> ;

@@ -86,10 +86,8 @@ M:: cell model-changed ( model cell -- )
     cell dup clear-gadget
     cell collapsed? [ "" ] [ model value>> name-or-default make-spaces-visible ] if
     <label> set-font add-gadget
-    <cell-editor> f >>visible?
-        set-font [ text-color >>foreground 
-                   os windows? [ bg-color first2 avg-color ] [ transparent ] if
-                   >>background ] change-font add-gadget
+    <cell-editor> f >>visible? set-font
+    [ text-color >>foreground transparent >>background ] change-font add-gadget
     model value>> node? [
         cell selected? model value>> parent>> and [
             <shelf> { 5 0 } >>gap
